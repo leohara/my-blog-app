@@ -6,9 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint && npm eslint . --ext .js,.jsx,.ts,.tsx,.mjs",
-    "lint:fix": "next lint --fix &&  npm eslint . --ext .js,.jsx,.ts,.tsx,.mjs --fix",
-    "typecheck": "tsc --skipLibCheck true--noEmit",
+    "lint": "next lint && npx eslint . --ext .js,.jsx,.ts,.tsx,.mjs",
+    "lint:fix": "next lint --fix && npx eslint . --ext .js,.jsx,.ts,.tsx,.mjs --fix",
+    "typecheck": "tsc --skipLibCheck true --noEmit",
     "typecheck:full": "tsc --skipLibCheck false --noEmit",
     "clean": "git clean -xdf node_modules dist .next",
     "prepare": "husky"
