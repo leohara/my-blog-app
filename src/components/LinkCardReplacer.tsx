@@ -1,50 +1,67 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { createRoot, Root } from "react-dom/client";
 import LinkCard from "./LinkCard";
 
 export default function LinkCardReplacer() {
   const rootsRef = useRef<Map<Element, Root>>(new Map());
-  const isMountedRef = useRef(true);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  const mountLinkCard = useCallback((element: Element) => {
+    const rootsMap = rootsRef.current;
+
+    // 既にrootが作成されている場合はスキップ
+    if (rootsMap.has(element)) {
+      return;
+    }
+
+    const url = element.getAttribute("data-link-card");
+    if (url) {
+      // React 18のcreateRootを使用してコンポーネントをマウント
+      const root = createRoot(element as HTMLElement);
+      root.render(<LinkCard url={url} />);
+      rootsMap.set(element, root);
+    }
+  }, []);
 
   useEffect(() => {
-    // コンポーネントがマウントされていることを記録
-    isMountedRef.current = true;
-
     // 現在のrootsMapへの参照を保存
     const rootsMap = rootsRef.current;
 
-    // 少し遅延させてDOMが完全に準備されるのを待つ
+    // IntersectionObserverを使用して、ビューポートに入った要素のみを処理
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            mountLinkCard(entry.target);
+            // 一度処理したら監視を解除
+            observerRef.current?.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        rootMargin: "100px", // ビューポートの100px手前から読み込み開始
+      },
+    );
+
+    // DOMが準備されたら要素を探して監視開始
     const timeoutId = setTimeout(() => {
-      if (!isMountedRef.current) return;
-
-      // data-link-card属性を持つ要素を検索
       const linkCardElements = document.querySelectorAll("[data-link-card]");
-
       linkCardElements.forEach((element) => {
-        // 既にrootが作成されている場合はスキップ
-        if (rootsMap.has(element)) {
-          return;
-        }
-
-        const url = element.getAttribute("data-link-card");
-        if (url && isMountedRef.current) {
-          // React 18のcreateRootを使用してコンポーネントをマウント
-          const root = createRoot(element as HTMLElement);
-          root.render(<LinkCard url={url} />);
-          rootsMap.set(element, root);
-        }
+        observerRef.current?.observe(element);
       });
     }, 0);
 
     // クリーンアップ関数
     return () => {
-      isMountedRef.current = false;
       clearTimeout(timeoutId);
 
-      // 次のマクロタスクでunmountを実行
-      setTimeout(() => {
+      // Observerを切断
+      observerRef.current?.disconnect();
+
+      // 非同期でunmountを実行してReactのレンダリングと競合しないようにする
+      queueMicrotask(() => {
         rootsMap.forEach((root) => {
           try {
             root.unmount();
@@ -54,9 +71,9 @@ export default function LinkCardReplacer() {
           }
         });
         rootsMap.clear();
-      }, 0);
+      });
     };
-  }, []);
+  }, [mountLinkCard]);
 
   return null;
 }

@@ -1,50 +1,72 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-interface OGPData {
-  title: string;
-  description: string;
-  image?: string;
-  siteName?: string;
-  url: string;
-}
+import React, { useEffect, useState } from "react";
+import type { OGPData } from "@/types/ogp";
+import { decodeHtmlEntities } from "@/lib/html-entities";
+import { ogpCache } from "@/lib/ogp-cache";
 
 interface LinkCardProps {
   url: string;
 }
 
-export default function LinkCard({ url }: LinkCardProps) {
+const LinkCard = React.memo(function LinkCard({ url }: LinkCardProps) {
   const [ogpData, setOgpData] = useState<OGPData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    // キャッシュをチェック
+    const cachedData = ogpCache.get(url);
+    if (cachedData) {
+      setOgpData(cachedData);
+      setLoading(false);
+      return;
+    }
+
+    const abortController = new AbortController();
+
     const fetchOGP = async () => {
       try {
-        const response = await fetch(`/api/ogp?url=${encodeURIComponent(url)}`);
+        const response = await fetch(
+          `/api/ogp?url=${encodeURIComponent(url)}`,
+          { signal: abortController.signal },
+        );
+
         if (!response.ok) throw new Error("Failed to fetch");
         const data = await response.json();
 
-        // 画像URLのHTMLエンティティをデコード
-        if (data.image) {
-          data.image = data.image
-            .replace(/&amp;/g, "&")
-            .replace(/&lt;/g, "<")
-            .replace(/&gt;/g, ">")
-            .replace(/&quot;/g, '"')
-            .replace(/&#39;/g, "'");
+        // アンマウント後の実行を防ぐ
+        if (!abortController.signal.aborted) {
+          // 画像URLのHTMLエンティティをデコード
+          if (data.image) {
+            data.image = decodeHtmlEntities(data.image);
+          }
+          setOgpData(data);
+          // キャッシュに保存
+          ogpCache.set(url, data);
         }
-
-        setOgpData(data);
-      } catch {
-        setError(true);
+      } catch (error) {
+        // AbortErrorは無視
+        if (
+          error instanceof Error &&
+          error.name !== "AbortError" &&
+          !abortController.signal.aborted
+        ) {
+          setError(true);
+        }
       } finally {
-        setLoading(false);
+        if (!abortController.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchOGP();
+
+    // クリーンアップ: fetchリクエストをキャンセル
+    return () => {
+      abortController.abort();
+    };
   }, [url]);
 
   // エラー時はシンプルなリンクを表示
@@ -105,15 +127,11 @@ export default function LinkCard({ url }: LinkCardProps) {
                 <img
                   src={ogpData.image}
                   alt=""
+                  loading="lazy"
                   onError={(e) => {
                     // 画像の読み込みに失敗した場合
                     const target = e.target as HTMLImageElement;
-                    console.error("Image failed to load:", ogpData.image);
-                    console.error("Error event:", e);
                     target.style.display = "none";
-                  }}
-                  onLoad={() => {
-                    console.log("Image loaded successfully:", ogpData.image);
                   }}
                 />
               </div>
@@ -125,4 +143,6 @@ export default function LinkCard({ url }: LinkCardProps) {
   }
 
   return null;
-}
+});
+
+export default LinkCard;

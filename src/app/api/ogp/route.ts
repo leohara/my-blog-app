@@ -1,12 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-
-interface OGPData {
-  title: string;
-  description: string;
-  image?: string;
-  siteName?: string;
-  url: string;
-}
+import type { OGPData } from "@/types/ogp";
+import { decodeHtmlEntities } from "@/lib/html-entities";
 
 // URLの安全性をチェック
 function isValidUrl(urlString: string): boolean {
@@ -103,12 +97,7 @@ async function fetchOGPData(url: string): Promise<OGPData | null> {
     let imageUrl = getMetaContent("og:image");
     if (imageUrl) {
       // HTMLエンティティをデコード
-      imageUrl = imageUrl
-        .replace(/&amp;/g, "&")
-        .replace(/&lt;/g, "<")
-        .replace(/&gt;/g, ">")
-        .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, "'");
+      imageUrl = decodeHtmlEntities(imageUrl);
 
       try {
         // 相対URLの場合は絶対URLに変換
