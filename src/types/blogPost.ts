@@ -11,6 +11,7 @@ export interface BlogPostSummary {
   id: string;
   slug: string;
   title: string;
+  excerpt?: string;
   createdAt: string;
 }
 
