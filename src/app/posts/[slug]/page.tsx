@@ -1,4 +1,5 @@
 import { getBlogPostBySlug } from "@/lib/contentful";
+import { markdownToHtml } from "@/lib/markdown";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Image from "next/image";
@@ -15,6 +16,9 @@ export default async function PostPage({ params }: Props) {
     notFound();
   }
 
+  // マークダウンをHTMLに変換
+  const contentHtml = await markdownToHtml(post.content);
+
   return (
     <div className="max-w-4xl mx-auto p-8">
       <Link
@@ -28,7 +32,10 @@ export default async function PostPage({ params }: Props) {
         <p className="text-gray-600">
           {new Date(post.createdAt).toLocaleDateString("ja-JP")}
         </p>
-        <div className="whitespace-pre-wrap mt-8">{post.content}</div>
+        <div
+          className="mt-8 prose-content"
+          dangerouslySetInnerHTML={{ __html: contentHtml }}
+        />
         {post.thumbnail.url &&
           post.thumbnail.width > 0 &&
           post.thumbnail.height > 0 && (
