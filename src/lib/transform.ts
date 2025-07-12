@@ -29,7 +29,6 @@ export function transformContentfulEntryLight(
     id: entry.sys.id,
     slug: entry.fields.slug || "",
     title: entry.fields.title || "",
-    content: entry.fields.content || "",
     createdAt: entry.sys.createdAt,
   };
 }

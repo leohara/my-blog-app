@@ -11,7 +11,6 @@ export interface BlogPostSummary {
   id: string;
   slug: string;
   title: string;
-  content: string; // 抜粋として使用
   createdAt: string;
 }
 

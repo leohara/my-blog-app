@@ -9,7 +9,7 @@ export default async function Home() {
   const postsWithExcerpts = await Promise.all(
     posts.map(async (post) => ({
       ...post,
-      excerpt: await generateExcerpt(post.content, 100),
+      excerpt: await generateExcerpt(post.slug, 100),
     })),
   );
 
