@@ -36,7 +36,6 @@ export default function LinkCard({ url }: LinkCardProps) {
             .replace(/&#39;/g, "'");
         }
 
-        console.log("OGP data received:", data);
         setOgpData(data);
       } catch {
         setError(true);
