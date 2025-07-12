@@ -23,7 +23,7 @@ function transformThumbnail(asset: Asset<undefined, string>): Thumbnail {
  * ContentfulのエントリーをBlogPostSummary型に変換（一覧表示用）
  */
 export function transformContentfulEntryLight(
-  entry: ContentfulBlogPost
+  entry: ContentfulBlogPost,
 ): BlogPostSummary {
   return {
     id: entry.sys.id,

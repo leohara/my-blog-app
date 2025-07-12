@@ -29,17 +29,19 @@ export default async function PostPage({ params }: Props) {
           {new Date(post.createdAt).toLocaleDateString("ja-JP")}
         </p>
         <div className="whitespace-pre-wrap mt-8">{post.content}</div>
-        {post.thumbnail.url && post.thumbnail.width > 0 && post.thumbnail.height > 0 && (
-          <Image
-            src={post.thumbnail.url}
-            alt={post.thumbnail.title || "Blog post image"}
-            width={post.thumbnail.width}
-            height={post.thumbnail.height}
-            className="mt-4"
-            quality={90}
-            priority
-          />
-        )}
+        {post.thumbnail.url &&
+          post.thumbnail.width > 0 &&
+          post.thumbnail.height > 0 && (
+            <Image
+              src={post.thumbnail.url}
+              alt={post.thumbnail.title || "Blog post image"}
+              width={post.thumbnail.width}
+              height={post.thumbnail.height}
+              className="mt-4"
+              quality={90}
+              priority
+            />
+          )}
       </article>
     </div>
   );
