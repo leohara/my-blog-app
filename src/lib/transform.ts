@@ -1,4 +1,4 @@
-import type { BlogPost, Thumbnail } from "@/types/blogPost";
+import type { BlogPost, BlogPostSummary, Thumbnail } from "@/types/blogPost";
 import type { ContentfulBlogPost } from "@/types/ContentfulTypes";
 import type { Asset } from "contentful";
 
@@ -20,7 +20,22 @@ function transformThumbnail(asset: Asset<undefined, string>): Thumbnail {
 }
 
 /**
- * ContentfulのエントリーをBlogPost型に変換
+ * ContentfulのエントリーをBlogPostSummary型に変換（一覧表示用）
+ */
+export function transformContentfulEntryLight(
+  entry: ContentfulBlogPost
+): BlogPostSummary {
+  return {
+    id: entry.sys.id,
+    slug: entry.fields.slug || "",
+    title: entry.fields.title || "",
+    content: entry.fields.content || "",
+    createdAt: entry.sys.createdAt,
+  };
+}
+
+/**
+ * ContentfulのエントリーをBlogPost型に変換（詳細表示用）
  */
 export function transformContentfulEntry(entry: ContentfulBlogPost): BlogPost {
   return {

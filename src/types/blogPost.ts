@@ -6,7 +6,16 @@ export interface Thumbnail {
   height: number;
 }
 
-// ブログ記事全体の型
+// ブログ記事のサマリー型（一覧表示用）
+export interface BlogPostSummary {
+  id: string;
+  slug: string;
+  title: string;
+  content: string; // 抜粋として使用
+  createdAt: string;
+}
+
+// ブログ記事全体の型（詳細表示用）
 export interface BlogPost {
   id: string;
   slug: string;
