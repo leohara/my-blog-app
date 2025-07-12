@@ -253,8 +253,8 @@ body {
 
 .link-card-image {
   flex-shrink: 0;
-  width: 120px;
-  height: 90px;
+  width: 140px;
+  height: 105px;
 }
 
 .link-card-image img {
