@@ -50,16 +50,3 @@ export async function getBlogPostBySlug(
     return null;
   }
 }
-
-export async function getBlogPostById(id: string): Promise<BlogPost | null> {
-  try {
-    const entry = await client.getEntry<BlogPostFields>(id, {
-      include: 2,
-    });
-
-    return transformContentfulEntry(entry);
-  } catch (error) {
-    console.error(`Failed to fetch blog post with id ${id}:`, error);
-    return null;
-  }
-}
