@@ -15,7 +15,14 @@ export async function markdownToHtml(markdown: string): Promise<string> {
     .use(remarkHtml) // HTMLへの変換
     .process(markdown);
 
-  return result.toString();
+  // マーカーをHTMLに変換
+  let html = result.toString();
+  html = html.replace(
+    /\$\$LINKCARD:([^$]+)\$\$/g,
+    '<div data-link-card="$1"></div>',
+  );
+
+  return html;
 }
 
 /**
