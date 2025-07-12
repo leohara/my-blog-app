@@ -37,7 +37,7 @@ export async function getBlogPostBySlug(
       content_type: "blog",
       "fields.slug": slug,
       limit: 1,
-      include: 2, // リンクを2階層まで解決（記事詳細用）
+      include: 1,
     });
 
     if (response.items.length > 0) {
