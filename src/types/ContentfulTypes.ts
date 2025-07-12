@@ -15,4 +15,6 @@ export interface BlogPostFields {
 }
 
 // Contentfulのエントリータイプ
+// 第二引数: リンクを解決する階層数
+// 第三引数: locale
 export type ContentfulBlogPost = Entry<BlogPostFields, undefined, string>;
