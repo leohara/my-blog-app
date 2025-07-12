@@ -5,18 +5,10 @@ inputs:
   node-version:
     description: "Node.js version"
     required: true
-  npm-version:
-    description: "NPM version"
-    required: true
 
 runs:
   using: composite
   steps:
-    - name: Setup npm
-      uses: npm/action-setup@v4
-      with:
-        version: ${{ inputs.npm-version }}
-
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
