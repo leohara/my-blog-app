@@ -11,12 +11,11 @@ on:
     types: [submitted]
 
 jobs:
-  claude:
+  # Job for handling PR comments and reviews
+  claude-pr:
     if: |
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
-      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude'))
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -30,7 +29,86 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Run Claude Code
+      - name: Run Claude Code for PR Review
+        id: claude
+        uses: anthropics/claude-code-action@beta
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+
+          # This is an optional setting that allows Claude to read CI results on PRs
+          additional_permissions: |
+            actions: read
+
+          # Optional: Specify model (defaults to Claude Sonnet 4, uncomment for Claude Opus 4)
+          # model: "claude-opus-4-20250514"
+
+          # Optional: Customize the trigger phrase (default: @claude)
+          # trigger_phrase: "/claude"
+
+          # Optional: Allow Claude to run specific commands
+          allowed_tools: "Bash(npm install),Bash(npm run build),Bash(npm run test*),Bash(npm run lint*),Bash(npm run lint:fix),Bash(npm run format:fix)"
+
+          # Custom instructions for PR CI error fixing
+          custom_instructions: |
+            You are an expert developer specializing in fixing CI/CD errors. Always respond in Japanese.
+            
+            Your primary task is to fix CI errors in pull requests:
+            
+            1. First, analyze the CI logs to understand the error:
+               - Check GitHub Actions logs for failed steps
+               - Identify test failures, build errors, or linting issues
+               - Look for TypeScript errors, ESLint warnings, or test failures
+            
+            2. Fix the errors systematically:
+               - For test failures: Fix the failing tests or update test expectations
+               - For TypeScript errors: Correct type definitions or fix type mismatches
+               - For linting errors: Apply proper formatting and fix style issues
+               - For build errors: Resolve dependency issues or configuration problems
+            
+            3. Error resolution approach:
+               - Always read the full error message and stack trace
+               - Fix the root cause, not just symptoms
+               - Ensure fixes don't break other parts of the code
+               - Run tests locally before pushing changes
+            
+            4. Before committing fixes:
+               - Run: npm run lint:fix
+               - Run: npm run format:fix
+               - Run: npm run test
+               - Run: npm run build
+               - Verify all CI checks will pass
+            
+            5. Communication format:
+               ## CIエラーの概要
+               検出されたエラーの要約
+               
+               ## 修正内容
+               実施した修正の詳細
+               
+               ## 確認結果
+               ローカルでのテスト実行結果
+            
+            Focus only on fixing CI errors. Do not add new features or refactor code unless necessary for the fix.
+
+  # Job for handling Issue comments
+  claude-issue:
+    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Run Claude Code for Issue
         id: claude
         uses: anthropics/claude-code-action@beta
         with:
@@ -50,9 +128,9 @@ jobs:
           # assignee_trigger: "claude-bot"
 
           # Optional: Allow Claude to run specific commands
-          allowed_tools: "Bash(npm install),Bash(npm run build),Bash(npm run test*),Bash(npm run lint*),Bash(npm run format*)"
+          allowed_tools: "Bash(npm install),Bash(npm run build),Bash(npm run test*),Bash(npm run lint*),Bash(npm run format*),Bash(npm run lint:fix),Bash(npm run format:fix)"
 
-          # Optional: Add custom instructions for Claude to customize its behavior for your project
+          # Custom instructions for issue handling and implementation
           custom_instructions: |
             You are an expert developer committing from GitHub issues. Always respond in Japanese.
             
