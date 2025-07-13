@@ -17,7 +17,7 @@ describe("CodeBlockEnhancer - Simple Tests", () => {
       disconnect() {
         return null;
       }
-    } as any;
+    } as unknown as typeof IntersectionObserver;
   });
 
   it("should render without errors", () => {

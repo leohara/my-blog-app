@@ -14,7 +14,7 @@ export function CodeBlockEnhancer() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const codeBlocks = (entry.target as HTMLElement).querySelectorAll(
-              ".code-block-wrapper"
+              ".code-block-wrapper",
             );
 
             codeBlocks.forEach((block) => {
@@ -47,7 +47,7 @@ export function CodeBlockEnhancer() {
           }
         });
       },
-      { rootMargin: "100px" }
+      { rootMargin: "100px" },
     );
 
     // Start observing the document body
@@ -57,6 +57,7 @@ export function CodeBlockEnhancer() {
     return () => {
       observer.disconnect();
       // Unmount all React roots
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       const currentRoots = roots.current;
       currentRoots.forEach((root) => root.unmount());
       currentRoots.clear();

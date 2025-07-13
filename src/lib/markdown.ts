@@ -12,8 +12,11 @@ import { rehypeCodeCopy } from "./rehype-code-copy";
  * @returns HTML文字列
  */
 export async function markdownToHtml(markdown: string): Promise<string> {
-  console.log("[markdownToHtml] Processing markdown with length:", markdown.length);
-  
+  console.log(
+    "[markdownToHtml] Processing markdown with length:",
+    markdown.length,
+  );
+
   const result = await remark()
     .use(remarkGfm) // GitHub Flavored Markdownのサポート
     .use(remarkLinkCard) // リンクカードプラグインを追加
@@ -60,7 +63,10 @@ export async function markdownToHtml(markdown: string): Promise<string> {
   );
 
   console.log("[markdownToHtml] Final HTML length:", html.length);
-  console.log("[markdownToHtml] Contains code-block-wrapper:", html.includes("code-block-wrapper"));
-  
+  console.log(
+    "[markdownToHtml] Contains code-block-wrapper:",
+    html.includes("code-block-wrapper"),
+  );
+
   return html;
 }

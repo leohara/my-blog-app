@@ -20,13 +20,13 @@ const esmPackages = [
   "remark-rehype", // Used in markdown.ts
   "rehype-pretty-code", // Used in markdown.ts
   "rehype-stringify", // Used in markdown.ts
-  
+
   // === AST Utilities ===
   "hast-util-to-string", // Used in rehype-code-copy.ts
-  
+
   // === Syntax Highlighting ===
   "shiki", // Used by rehype-pretty-code
-  
+
   // === Dependencies of above packages ===
   "mdast-.*", // Markdown AST (used by remark)
   "hast-.*", // HTML AST (used by rehype)

@@ -161,7 +161,9 @@ describe("LinkCard", () => {
       // Should show fallback icon instead of image
       await waitFor(() => {
         expect(document.querySelector("img")).not.toBeInTheDocument();
-        expect(document.querySelector(".link-card-image-fallback")).toBeInTheDocument();
+        expect(
+          document.querySelector(".link-card-image-fallback"),
+        ).toBeInTheDocument();
         expect(document.querySelector("svg")).toBeInTheDocument();
       });
     });

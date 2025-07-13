@@ -11,27 +11,29 @@ export function rehypeCodeCopy() {
   return (tree: Root) => {
     let figureCount = 0;
     let processedCount = 0;
-    
+
     visit(tree, "element", (node: Element, index, parent) => {
       // Look for figure elements that are code blocks
       if (node.tagName === "figure") {
         figureCount++;
-        
+
         // Check if this is a rehype-pretty-code figure
         // The property might be stored in different ways
-        const isCodeFigure = 
+        const isCodeFigure =
           node.properties?.["dataRehypePrettyCodeFigure"] !== undefined ||
           node.properties?.["data-rehype-pretty-code-figure"] !== undefined ||
-          (node.properties && "dataRehypePrettyCodeFigure" in node.properties) ||
-          (node.properties && "data-rehype-pretty-code-figure" in node.properties);
-        
+          (node.properties &&
+            "dataRehypePrettyCodeFigure" in node.properties) ||
+          (node.properties &&
+            "data-rehype-pretty-code-figure" in node.properties);
+
         if (isCodeFigure) {
           processedCount++;
-          
+
           // Find the pre element
           const preElement = node.children.find(
             (child): child is Element =>
-              child.type === "element" && child.tagName === "pre"
+              child.type === "element" && child.tagName === "pre",
           );
 
           if (preElement) {
@@ -57,10 +59,12 @@ export function rehypeCodeCopy() {
         }
       }
     });
-    
+
     // Only log in development
     if (process.env.NODE_ENV === "development") {
-      console.log(`[rehype-code-copy] Processed ${processedCount} of ${figureCount} figures`);
+      console.log(
+        `[rehype-code-copy] Processed ${processedCount} of ${figureCount} figures`,
+      );
     }
   };
 }
