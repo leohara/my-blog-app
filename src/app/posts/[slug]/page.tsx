@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import LinkCardReplacer from "@/components/LinkCardReplacer";
+import { CodeBlockEnhancer } from "@/components/CodeBlockEnhancer";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -52,6 +53,7 @@ export default async function PostPage({ params }: Props) {
           )}
       </article>
       <LinkCardReplacer />
+      <CodeBlockEnhancer />
     </div>
   );
 }

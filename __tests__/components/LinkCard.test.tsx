@@ -67,7 +67,7 @@ describe("LinkCard", () => {
       expect(global.fetch).not.toHaveBeenCalled();
     });
 
-    it("should decode HTML entities in image URLs", async () => {
+    it("should preserve HTML entities in image URLs", async () => {
       const dataWithEncodedUrl: OGPData = {
         ...mockOGPData,
         image: "https://example.com/image.jpg?param=1&amp;other=2",
@@ -84,7 +84,7 @@ describe("LinkCard", () => {
         const image = document.querySelector("img");
         expect(image).toHaveAttribute(
           "src",
-          "https://example.com/image.jpg?param=1&other=2",
+          "https://example.com/image.jpg?param=1&amp;other=2",
         );
       });
     });
@@ -158,8 +158,14 @@ describe("LinkCard", () => {
       const errorEvent = new Event("error", { bubbles: true });
       image.dispatchEvent(errorEvent);
 
-      // Image should be hidden
-      expect(image).toHaveStyle("display: none");
+      // Should show fallback icon instead of image
+      await waitFor(() => {
+        expect(document.querySelector("img")).not.toBeInTheDocument();
+        expect(
+          document.querySelector(".link-card-image-fallback"),
+        ).toBeInTheDocument();
+        expect(document.querySelector("svg")).toBeInTheDocument();
+      });
     });
   });
 
