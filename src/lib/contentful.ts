@@ -37,7 +37,7 @@ export async function getBlogPostBySlug(
       content_type: "blog",
       "fields.slug": slug,
       limit: 1,
-      include: 2, // リンクを2階層まで解決（記事詳細用）
+      include: 1,
     });
 
     if (response.items.length > 0) {
@@ -47,19 +47,6 @@ export async function getBlogPostBySlug(
     return null;
   } catch (error) {
     console.error(`Failed to fetch blog post with slug ${slug}:`, error);
-    return null;
-  }
-}
-
-export async function getBlogPostById(id: string): Promise<BlogPost | null> {
-  try {
-    const entry = await client.getEntry<BlogPostFields>(id, {
-      include: 2,
-    });
-
-    return transformContentfulEntry(entry);
-  } catch (error) {
-    console.error(`Failed to fetch blog post with id ${id}:`, error);
     return null;
   }
 }

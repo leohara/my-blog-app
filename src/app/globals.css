@@ -184,3 +184,102 @@ body {
     background-color: #1f2937;
   }
 }
+
+/* Link Card Styles */
+.link-card {
+  margin: 1.5rem 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.link-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.link-card a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.link-card-body {
+  display: flex;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+.link-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.link-card-title {
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.4;
+  margin-bottom: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.link-card-description {
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.link-card-url {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.link-card-site {
+  font-weight: 500;
+}
+
+.link-card-image {
+  flex-shrink: 0;
+  width: 140px;
+  height: 105px;
+}
+
+.link-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Dark mode support for link cards */
+@media (prefers-color-scheme: dark) {
+  .link-card {
+    border-color: #374151;
+    background-color: #1f2937;
+  }
+
+  .link-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
+
+  .link-card-description {
+    color: #9ca3af;
+  }
+
+  .link-card-url {
+    color: #6b7280;
+  }
+}

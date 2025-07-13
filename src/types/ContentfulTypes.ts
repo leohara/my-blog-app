@@ -4,14 +4,17 @@ import type { Entry, EntryFieldTypes } from "contentful";
 export interface BlogPostFields {
   fields: {
     title: EntryFieldTypes.Text;
-    content: EntryFieldTypes.Text;
     slug: EntryFieldTypes.Text;
-    tags: EntryFieldTypes.Array<EntryFieldTypes.Symbol>;
-    thumbnail?: EntryFieldTypes.AssetLink;
     published: EntryFieldTypes.Boolean;
+    excerpt: EntryFieldTypes.Text;
+    thumbnail?: EntryFieldTypes.AssetLink;
+    tags: EntryFieldTypes.Array<EntryFieldTypes.Symbol>;
+    content: EntryFieldTypes.Text;
   };
   contentTypeId: "blog";
 }
 
 // Contentfulのエントリータイプ
+// 第二引数: リンクを解決する階層数
+// 第三引数: locale
 export type ContentfulBlogPost = Entry<BlogPostFields, undefined, string>;
