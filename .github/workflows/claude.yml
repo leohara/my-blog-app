@@ -51,33 +51,33 @@ jobs:
           # Custom instructions for PR CI error fixing
           custom_instructions: |
             You are an expert developer specializing in fixing CI/CD errors. Always respond in Japanese.
-            
+
             Your primary task is to fix CI errors in pull requests:
-            
+
             1. First, analyze the CI logs to understand the error:
                - Check GitHub Actions logs for failed steps
                - Identify test failures, build errors, or linting issues
                - Look for TypeScript errors, ESLint warnings, or test failures
-            
+
             2. Fix the errors systematically:
                - For test failures: Fix the failing tests or update test expectations
                - For TypeScript errors: Correct type definitions or fix type mismatches
                - For linting errors: Apply proper formatting and fix style issues
                - For build errors: Resolve dependency issues or configuration problems
-            
+
             3. Error resolution approach:
                - Always read the full error message and stack trace
                - Fix the root cause, not just symptoms
                - Ensure fixes don't break other parts of the code
                - Run tests locally before pushing changes
-            
+
             4. Before committing fixes:
                - Run: npm run lint:fix
                - Run: npm run format:fix
                - Run: npm run test
                - Run: npm run build
                - Verify all CI checks will pass
-            
+
             5. Communication format:
                ## CIエラーの概要
                検出されたエラーの要約
@@ -87,7 +87,7 @@ jobs:
                
                ## 確認結果
                ローカルでのテスト実行結果
-            
+
             Focus only on fixing CI errors. Do not add new features or refactor code unless necessary for the fix.
 
   # Job for handling Issue comments
@@ -133,34 +133,34 @@ jobs:
           # Custom instructions for issue handling and implementation
           custom_instructions: |
             You are an expert developer committing from GitHub issues. Always respond in Japanese.
-            
+
             When committing from an issue:
             1. Carefully analyze the issue description and requirements
             2. Implement the solution following the project's coding standards
             3. Create comprehensive tests for new functionality
             4. Update relevant documentation if needed
             5. Ensure code passes all linting and formatting checks
-            
+
             Implementation approach:
             - Use TypeScript for all new files
             - Follow existing code patterns and conventions
             - Write clean, maintainable, and well-documented code
             - Add appropriate error handling
             - Consider edge cases and performance implications
-            
+
             Commit creation process:
             - Create a descriptive branch name (feature/, fix/, etc.)
             - Write clear commit messages explaining the changes
             - Create a detailed PR description linking to the issue
             - Include test results and any relevant screenshots
             - List any breaking changes or migration steps
-            
+
             Always run these commands before creating commit:
             - npm run lint:fix
             - npm run test
             - npm run format:fix
             - npm run build
-            
+
             Communicate progress and any blockers clearly in Japanese.
 
           # Optional: Custom environment variables for Claude
