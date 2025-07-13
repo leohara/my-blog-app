@@ -6,20 +6,22 @@ import { decodeHtmlEntities } from "@/lib/html-entities";
 function isValidUrl(urlString: string): boolean {
   try {
     const url = new URL(urlString);
-    // HTTPSのみ許可
+    // HTTPSのみ許可 - 中間者攻撃を防ぎ、通信の機密性を確保
     if (url.protocol !== "https:") return false;
 
     // 内部IPアドレスをブロック
+    // TODO: 他にも考慮するべきIPアドレスがあるか調査
     const hostname = url.hostname;
     if (
-      hostname === "localhost" ||
-      hostname === "127.0.0.1" ||
-      hostname.startsWith("192.168.") ||
-      hostname.startsWith("10.") ||
-      hostname.startsWith("172.") ||
-      hostname.startsWith("169.254.") || // リンクローカルアドレス（AWS等のメタデータ）
-      hostname === "::1" || // IPv6 localhost
-      hostname === "0.0.0.0"
+      hostname === "localhost" || // localhost
+      hostname === "127.0.0.1" || // ループバックアドレス
+      hostname.startsWith("10.") || // 10.x.x.x - プライベートネットワーク (クラスA)
+      hostname.startsWith("172.") || // 172.16.x.x - プライベートネットワーク (クラスB)
+      hostname.startsWith("192.168.") || // 192.168.x.x - プライベートネットワーク (クラスC)
+      hostname.startsWith("169.254.") || // 169.254.x.x - リンクローカルアドレス
+      hostname === "::1" || // IPv6ループバックアドレス
+      hostname === "[::1]" || // IPv6ループバックアドレス (ブラケット付きIPv6表記)
+      hostname === "0.0.0.0" // 全てのインターフェースを示す特殊アドレス (予期しない動作を防ぐ)
     ) {
       return false;
     }
@@ -31,9 +33,11 @@ function isValidUrl(urlString: string): boolean {
 }
 
 async function fetchOGPData(url: string): Promise<OGPData | null> {
+  let timeoutId: NodeJS.Timeout | undefined;
+
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5秒タイムアウト
+    timeoutId = setTimeout(() => controller.abort(), 5000); // 5秒タイムアウト
 
     const response = await fetch(url, {
       signal: controller.signal,
@@ -41,7 +45,6 @@ async function fetchOGPData(url: string): Promise<OGPData | null> {
         "User-Agent": "Mozilla/5.0 (compatible; LinkCardBot/1.0)",
       },
     });
-    clearTimeout(timeoutId);
 
     if (!response.ok) return null;
 
@@ -123,6 +126,10 @@ async function fetchOGPData(url: string): Promise<OGPData | null> {
   } catch (error) {
     console.error(`Failed to fetch OGP data for ${url}:`, error);
     return null;
+  } finally {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
   }
 }
 
