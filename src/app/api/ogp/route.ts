@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { OGPData } from "@/types/ogp";
 import { decodeHtmlEntities } from "@/lib/html-entities";
+import { OGP_FETCH_TIMEOUT } from "@/lib/link-card-constants";
 
 // URLの安全性をチェック
 function isValidUrl(urlString: string): boolean {
@@ -37,7 +38,7 @@ async function fetchOGPData(url: string): Promise<OGPData | null> {
 
   try {
     const controller = new AbortController();
-    timeoutId = setTimeout(() => controller.abort(), 5000); // 5秒タイムアウト
+    timeoutId = setTimeout(() => controller.abort(), OGP_FETCH_TIMEOUT); // 5秒タイムアウト
 
     const response = await fetch(url, {
       signal: controller.signal,

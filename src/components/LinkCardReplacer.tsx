@@ -3,6 +3,7 @@
 import { useEffect, useRef, useCallback } from "react";
 import { createRoot, Root } from "react-dom/client";
 import LinkCard from "./LinkCard";
+import { INTERSECTION_ROOT_MARGIN } from "@/lib/link-card-constants";
 
 export default function LinkCardReplacer() {
   const rootsRef = useRef<Map<Element, Root>>(new Map());
@@ -41,7 +42,7 @@ export default function LinkCardReplacer() {
         });
       },
       {
-        rootMargin: "100px", // ビューポートの100px手前から読み込み開始
+        rootMargin: INTERSECTION_ROOT_MARGIN, // ビューポートの100px手前から読み込み開始
       },
     );
 
