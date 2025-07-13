@@ -82,18 +82,80 @@ body {
   font-family: var(--font-mono), monospace;
 }
 
+/* Syntax Highlighting Styles */
 .prose-content pre {
-  background-color: rgba(0, 0, 0, 0.05);
-  padding: 1rem;
   border-radius: 0.5rem;
   overflow-x: auto;
   margin-bottom: 1.5rem;
+  line-height: 1.5;
 }
 
 .prose-content pre code {
-  background-color: transparent;
+  background-color: transparent !important;
   padding: 0;
   font-size: 0.875rem;
+  display: block;
+}
+
+/* Shiki code blocks */
+.prose-content [data-rehype-pretty-code-fragment] pre {
+  padding: 1rem;
+  background-color: #282c34 !important; /* One Dark Pro background */
+  position: relative;
+}
+
+.prose-content [data-rehype-pretty-code-fragment] code {
+  color: #abb2bf; /* One Dark Pro text color */
+}
+
+/* Code block with language label */
+.prose-content div[data-rehype-pretty-code-fragment] {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+/* Language label */
+.prose-content [data-rehype-pretty-code-fragment] pre[data-language]::before {
+  content: attr(data-language);
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #abb2bf;
+  border-bottom-left-radius: 0.25rem;
+}
+
+/* Line highlighting */
+.prose-content code [data-highlighted-line] {
+  background-color: rgba(59, 130, 246, 0.1);
+  display: block;
+  margin: 0 -1rem;
+  padding: 0 1rem;
+  border-left: 4px solid #3b82f6;
+}
+
+/* Line numbers */
+.prose-content code[data-line-numbers] {
+  counter-reset: line;
+}
+
+.prose-content code[data-line-numbers] > [data-line]::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 1rem;
+  margin-right: 1.5rem;
+  text-align: right;
+  color: #6b7280;
+}
+
+/* Inline code syntax highlighting */
+.prose-content :not(pre) > code[data-theme="light"],
+.prose-content :not(pre) > code[data-theme="dark"] {
+  padding: 0.125rem 0.375rem;
 }
 
 .prose-content blockquote {
@@ -154,8 +216,18 @@ body {
     background-color: rgba(255, 255, 255, 0.1);
   }
   
-  .prose-content pre {
-    background-color: rgba(255, 255, 255, 0.05);
+  /* Dark mode syntax highlighting */
+  .prose-content [data-rehype-pretty-code-fragment] pre {
+    background-color: #282c34 !important;
+  }
+  
+  .prose-content code [data-highlighted-line] {
+    background-color: rgba(59, 130, 246, 0.2);
+    border-left-color: #60a5fa;
+  }
+  
+  .prose-content code[data-line-numbers] > [data-line]::before {
+    color: #6b7280;
   }
   
   .prose-content blockquote {
