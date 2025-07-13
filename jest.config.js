@@ -1,4 +1,5 @@
 const nextJest = require("next/jest");
+const esmPackages = require("./jest.esm-packages");
 
 const createJestConfig = nextJest({
   // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
@@ -30,9 +31,9 @@ const customJestConfig = {
       functions: 100,
     },
   },
-  transformIgnorePatterns: [
-    "node_modules/(?!(unified|unist-.*|vfile|vfile-.*|trough|bail|is-plain-obj|hast-.*|mdast-.*|micromark.*|decode-named-character-reference|character-entities-legacy|character-entities-html4|trim-lines|property-information|space-separated-tokens|comma-separated-tokens|stringify-entities|character-entities-html4|ccount|escape-string-regexp|markdown-table|zwitch|longest-streak|hast-util-.*|estree-util-.*|mdurl|remark-.*|@mdx-js)/)",
-  ],
+  // ESMモジュールをトランスパイルするための設定
+  // 詳細なパッケージリストは jest.esm-packages.js を参照
+  transformIgnorePatterns: [`node_modules/(?!(${esmPackages.join("|")}))`],
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
