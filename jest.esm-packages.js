@@ -9,59 +9,31 @@
  */
 
 const esmPackages = [
-  // === Unified Ecosystem ===
-  // Unified は Markdown/MDX 処理のコアエコシステム
+  // === Core Unified Ecosystem ===
   "unified",
-  "unist-.*", // Universal Syntax Tree utilities
-  "vfile", // Virtual file format
-  "vfile-.*",
-  "trough",
-  "bail",
-  "devlop",
-  "to-vfile",
+  "unist-util-visit", // Used in rehype-code-copy.ts and remark-link-card.ts
+  "vfile", // Virtual file format (dependency of unified)
 
-  // === Markdown/MDX Processing ===
-  "remark", // Markdown processor
-  "remark-.*", // Remark plugins
-  "rehype", // HTML processor
-  "rehype-.*", // HTML processor plugins
-  "rehype-parse", // HTML parser
-  "rehype-stringify", // HTML stringifier
-  "mdast-.*", // Markdown AST utilities
-  "micromark.*", // Markdown parser/tokenizer
-  "@mdx-js", // MDX support
-
-  // === HTML/AST Utilities ===
-  "hast-.*", // HTML AST utilities
-  "hast-util-.*",
-  "hastscript",
-  "parse5", // HTML parser
-  "web-namespaces",
-  "html-void-elements",
-
+  // === Markdown/HTML Processing ===
+  "remark", // Used in markdown.ts
+  "remark-gfm", // Used in markdown.ts
+  "remark-rehype", // Used in markdown.ts
+  "rehype-pretty-code", // Used in markdown.ts
+  "rehype-stringify", // Used in markdown.ts
+  
+  // === AST Utilities ===
+  "hast-util-to-string", // Used in rehype-code-copy.ts
+  
   // === Syntax Highlighting ===
-  "shiki", // Syntax highlighter
-  "@shikijs",
-
-  // === String/Text Processing ===
-  "decode-named-character-reference",
-  "character-entities-legacy",
-  "character-entities-html4",
-  "trim-lines",
-  "stringify-entities",
-  "ccount",
-  "escape-string-regexp",
-  "markdown-table",
-  "mdurl",
-
-  // === Utility Libraries ===
-  "is-plain-obj",
-  "property-information",
-  "space-separated-tokens",
-  "comma-separated-tokens",
-  "zwitch",
-  "longest-streak",
-  "estree-util-.*",
+  "shiki", // Used by rehype-pretty-code
+  
+  // === Dependencies of above packages ===
+  "mdast-.*", // Markdown AST (used by remark)
+  "hast-.*", // HTML AST (used by rehype)
+  "micromark.*", // Markdown parser (used by remark)
+  "unist-.*", // Universal Syntax Tree utilities
+  "remark-parse", // Parser for remark
+  "remark-stringify", // Stringifier for remark
 ];
 
 module.exports = esmPackages;
