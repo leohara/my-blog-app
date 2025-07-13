@@ -26,10 +26,22 @@ function LinkCardImage({ src, alt }: LinkCardImageProps) {
     setImageError(true);
   };
 
+  // 画像のalt属性をより説明的にする
+  const imageAlt = alt || "Website preview image";
+  const loadingAlt = `Loading preview image for ${alt || "website"}`;
+  const errorAlt = `Preview image unavailable for ${alt || "website"}`;
+
   return (
-    <div className="link-card-image">
+    <div 
+      className="link-card-image"
+      role="img"
+      aria-label={imageError ? errorAlt : imageLoading ? loadingAlt : imageAlt}
+    >
       {imageLoading && !imageError && (
-        <div className="link-card-image-placeholder">
+        <div 
+          className="link-card-image-placeholder"
+          aria-hidden="true"
+        >
           <div className="animate-pulse bg-gray-200 dark:bg-gray-700 w-full h-full rounded"></div>
         </div>
       )}
@@ -37,22 +49,28 @@ function LinkCardImage({ src, alt }: LinkCardImageProps) {
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={src}
-          alt={alt}
+          alt={imageAlt}
           loading="lazy"
           onLoad={handleImageLoad}
           onError={handleImageError}
           className={`transition-opacity duration-300 ${
             imageLoading ? "opacity-0" : "opacity-100"
           }`}
+          aria-hidden={imageLoading ? "true" : "false"}
         />
       ) : (
-        <div className="link-card-image-fallback">
+        <div 
+          className="link-card-image-fallback"
+          role="img"
+          aria-label={errorAlt}
+        >
           <svg
             className="w-8 h-8 text-gray-400 dark:text-gray-500"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
           >
             <path
               strokeLinecap="round"
@@ -71,13 +89,18 @@ const LinkCard = React.memo(function LinkCard({ url }: LinkCardProps) {
   const [ogpData, setOgpData] = useState<OGPData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [announceText, setAnnounceText] = useState<string>("");
 
   useEffect(() => {
+    // スクリーンリーダー用のローディング開始アナウンス
+    setAnnounceText(`Loading link preview for ${url}`);
+    
     // キャッシュをチェック
     const cachedData = ogpCache.get(url);
     if (cachedData) {
       setOgpData(cachedData);
       setLoading(false);
+      setAnnounceText(`Link preview loaded for ${cachedData.title || url}`);
       return;
     }
 
@@ -98,6 +121,7 @@ const LinkCard = React.memo(function LinkCard({ url }: LinkCardProps) {
           setOgpData(data);
           // キャッシュに保存
           ogpCache.set(url, data);
+          setAnnounceText(`Link preview loaded for ${data.title || url}`);
         }
       } catch (error) {
         // AbortErrorは無視
@@ -107,6 +131,7 @@ const LinkCard = React.memo(function LinkCard({ url }: LinkCardProps) {
           !abortController.signal.aborted
         ) {
           setError(true);
+          setAnnounceText(`Failed to load link preview for ${url}`);
         }
       } finally {
         if (!abortController.signal.aborted) {
@@ -131,6 +156,7 @@ const LinkCard = React.memo(function LinkCard({ url }: LinkCardProps) {
         target="_blank"
         rel="noopener noreferrer"
         className="text-blue-600 hover:underline"
+        aria-label={`External link to ${url} (preview unavailable)`}
       >
         {url}
       </a>
@@ -140,25 +166,30 @@ const LinkCard = React.memo(function LinkCard({ url }: LinkCardProps) {
   // ローディング中は改善されたスケルトンを表示
   if (loading) {
     return (
-      <div className="link-card">
+      <div 
+        className="link-card"
+        role="status"
+        aria-live="polite"
+        aria-label="Loading link preview"
+      >
         <div className="link-card-body">
           <div className="link-card-info">
             {/* タイトルのスケルトン */}
-            <div className="link-card-skeleton-title">
+            <div className="link-card-skeleton-title" aria-hidden="true">
               <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-5 rounded w-4/5 mb-2"></div>
             </div>
             {/* 説明のスケルトン */}
-            <div className="link-card-skeleton-description">
+            <div className="link-card-skeleton-description" aria-hidden="true">
               <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-4 rounded w-full mb-1"></div>
               <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-4 rounded w-5/6 mb-2"></div>
             </div>
             {/* URLのスケルトン */}
-            <div className="link-card-skeleton-url">
+            <div className="link-card-skeleton-url" aria-hidden="true">
               <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-3 rounded w-2/5"></div>
             </div>
           </div>
           {/* 画像のスケルトン */}
-          <div className="link-card-image">
+          <div className="link-card-image" aria-hidden="true">
             <div className="link-card-image-skeleton">
               <div className="animate-pulse bg-gray-200 dark:bg-gray-700 w-full h-full rounded">
                 <div className="flex items-center justify-center h-full">
@@ -166,6 +197,7 @@ const LinkCard = React.memo(function LinkCard({ url }: LinkCardProps) {
                     className="w-8 h-8 text-gray-300 dark:text-gray-600"
                     fill="currentColor"
                     viewBox="0 0 20 20"
+                    aria-hidden="true"
                   >
                     <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
                   </svg>
@@ -174,24 +206,43 @@ const LinkCard = React.memo(function LinkCard({ url }: LinkCardProps) {
             </div>
           </div>
         </div>
+        {/* スクリーンリーダー用のアナウンスメント */}
+        <div className="sr-only" aria-live="polite" aria-atomic="true">
+          {announceText}
+        </div>
       </div>
     );
   }
 
   // OGPデータを使ってリンクカードを表示
   if (ogpData) {
+    const siteName = ogpData.siteName || new URL(url).hostname;
+    const linkDescription = `Link to ${ogpData.title} on ${siteName}${ogpData.description ? `: ${ogpData.description}` : ''}`;
+    
     return (
-      <div className="link-card">
-        <a href={url} target="_blank" rel="noopener noreferrer">
+      <article className="link-card" role="article">
+        <a 
+          href={url} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          aria-label={linkDescription}
+          className="link-card-link"
+        >
           <div className="link-card-body">
             <div className="link-card-info">
-              <div className="link-card-title">{ogpData.title}</div>
+              <h3 className="link-card-title" aria-describedby={`desc-${encodeURIComponent(url)}`}>
+                {ogpData.title}
+              </h3>
               {ogpData.description && (
-                <div className="link-card-description">
+                <div 
+                  className="link-card-description"
+                  id={`desc-${encodeURIComponent(url)}`}
+                  role="text"
+                >
                   {ogpData.description}
                 </div>
               )}
-              <div className="link-card-url">
+              <div className="link-card-url" role="text" aria-label={`Website: ${siteName}`}>
                 {ogpData.siteName && (
                   <span className="link-card-site">{ogpData.siteName}</span>
                 )}
@@ -203,7 +254,11 @@ const LinkCard = React.memo(function LinkCard({ url }: LinkCardProps) {
             )}
           </div>
         </a>
-      </div>
+        {/* スクリーンリーダー用のアナウンスメント */}
+        <div className="sr-only" aria-live="polite" aria-atomic="true">
+          {announceText}
+        </div>
+      </article>
     );
   }
 
