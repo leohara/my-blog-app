@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import type { OGPData } from "@/types/ogp";
-import { decodeHtmlEntities } from "@/lib/html-entities";
 import { ogpCache } from "@/lib/ogp-cache";
 
 interface LinkCardProps {
@@ -37,10 +36,6 @@ const LinkCard = React.memo(function LinkCard({ url }: LinkCardProps) {
 
         // アンマウント後の実行を防ぐ
         if (!abortController.signal.aborted) {
-          // 画像URLのHTMLエンティティをデコード
-          if (data.image) {
-            data.image = decodeHtmlEntities(data.image);
-          }
           setOgpData(data);
           // キャッシュに保存
           ogpCache.set(url, data);
