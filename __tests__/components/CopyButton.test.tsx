@@ -109,7 +109,7 @@ describe("CopyButton", () => {
 
       await waitFor(() => {
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          "Failed to copy code:",
+          "[CopyButton] Failed to copy code:",
           expect.any(Error),
         );
       });
