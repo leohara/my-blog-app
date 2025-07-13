@@ -101,7 +101,8 @@ jobs:
 
             **Assess Scope:**
             - For very minor changes that don't require a deep review (e.g., fixing a typo in documentation), you can provide a brief, affirmative comment like "LGTM, thanks for the fix!" instead of a full review
-            # allowed_tools: "Bash(npm run test),Bash(npm run lint),Bash(npm run typecheck),Bash(npm run test:coverage)"
+          
+          allowed_tools: "Bash(npm run test),Bash(npm run lint),Bash(npm run typecheck),Bash(npm run test:coverage),Bash(gh issue create *)"
 
           # Optional: Skip review for certain conditions
           # if: |
