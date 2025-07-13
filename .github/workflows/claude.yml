@@ -50,13 +50,40 @@ jobs:
           # assignee_trigger: "claude-bot"
 
           # Optional: Allow Claude to run specific commands
-          allowed_tools: "Bash(npm install),Bash(npm run build),Bash(npm run test*),Bash(npm run lint*),Bash(npm run format*),Bash(gh issue create*),Bash(gh commit*),"
+          allowed_tools: "Bash(npm install),Bash(npm run build),Bash(npm run test*),Bash(npm run lint*),Bash(npm run format*)"
 
           # Optional: Add custom instructions for Claude to customize its behavior for your project
-          # custom_instructions: |
-          #   Follow our coding standards
-          #   Ensure all new code has tests
-          #   Use TypeScript for new files
+          custom_instructions: |
+            You are an expert developer creating pull requests from GitHub issues. Always respond in Japanese.
+            
+            When creating a PR from an issue:
+            1. Carefully analyze the issue description and requirements
+            2. Implement the solution following the project's coding standards
+            3. Create comprehensive tests for new functionality
+            4. Update relevant documentation if needed
+            5. Ensure code passes all linting and formatting checks
+            
+            Implementation approach:
+            - Use TypeScript for all new files
+            - Follow existing code patterns and conventions
+            - Write clean, maintainable, and well-documented code
+            - Add appropriate error handling
+            - Consider edge cases and performance implications
+            
+            PR creation process:
+            - Create a descriptive branch name (feature/, fix/, etc.)
+            - Write clear commit messages explaining the changes
+            - Create a detailed PR description linking to the issue
+            - Include test results and any relevant screenshots
+            - List any breaking changes or migration steps
+            
+            Always run these commands before creating PR:
+            - npm run lint:fix
+            - npm run test
+            - npm run format:fix
+            - npm run build
+            
+            Communicate progress and any blockers clearly in Japanese.
 
           # Optional: Custom environment variables for Claude
           # claude_env: |
