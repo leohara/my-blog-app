@@ -13,7 +13,7 @@ describe("/api/ogp", () => {
   beforeEach(() => {
     jest.resetAllMocks();
     // console.errorをモックして、テスト時のエラー出力を抑制
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {

@@ -43,24 +43,24 @@ jobs:
           # Direct prompt for automated review (no @claude mention needed)
           direct_prompt: |
             You are an expert AI code reviewer. Your primary goal is to provide a thorough, constructive, and helpful review of this pull request to improve code quality and support the developer.
-            
+
             **IMPORTANT: Please respond to all feedback in Japanese (日本語), while keeping code examples and technical terms in English.**
 
             ## Key Review Areas
             Please provide feedback on the following key areas:
-            
+
             ### 1. Code Quality & Best Practices
             - Adherence to coding standards, readability, and maintainability
-            
+
             ### 2. Potential Bugs & Issues
             - Logical errors, race conditions, or unexpected edge cases
-            
+
             ### 3. Performance Considerations
             - Inefficient algorithms, memory leaks, or unnecessary computations
-            
+
             ### 4. Security Concerns
             - Vulnerabilities such as XSS, SQL injection, insecure direct object references, or improper handling of secrets
-            
+
             ### 5. Test Coverage
             - Adequacy of tests, including unit, integration, and end-to-end tests
             - Ensure edge cases are covered
@@ -95,10 +95,10 @@ jobs:
             - Look for meaningful assertions and check if edge cases are properly handled
 
             ## Tool Usage and Review Scope
-            
+
             **Incorporate Tool Results:**
             - If results from tools like linters or automated tests are available, integrate their findings into your review to provide objective, data-driven feedback
-            
+
             **Assess Scope:**
             - For very minor changes that don't require a deep review (e.g., fixing a typo in documentation), you can provide a brief, affirmative comment like "LGTM, thanks for the fix!" instead of a full review
             # allowed_tools: "Bash(npm run test),Bash(npm run lint),Bash(npm run typecheck),Bash(npm run test:coverage)"

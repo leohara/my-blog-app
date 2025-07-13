@@ -22,16 +22,18 @@ describe("LinkCardReplacer", () => {
   beforeEach(() => {
     jest.useFakeTimers();
     // console.warnをモック
-    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
     // console.errorをモックして、act()警告を無視
     const originalError = console.error;
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation((...args) => {
-      // act()警告を含むメッセージを無視
-      if (typeof args[0] === 'string' && args[0].includes('wrapped in act')) {
-        return;
-      }
-      originalError.apply(console, args);
-    });
+    consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation((...args) => {
+        // act()警告を含むメッセージを無視
+        if (typeof args[0] === "string" && args[0].includes("wrapped in act")) {
+          return;
+        }
+        originalError.apply(console, args);
+      });
 
     // Reset DOM
     document.body.innerHTML = "";
