@@ -14,22 +14,41 @@ interface LinkCardImageProps {
 }
 
 function LinkCardImage({ src, alt }: LinkCardImageProps) {
+  const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
+
+  const handleImageLoad = () => {
+    setImageLoading(false);
+  };
+
+  const handleImageError = () => {
+    setImageLoading(false);
+    setImageError(true);
+  };
 
   return (
     <div className="link-card-image">
+      {imageLoading && !imageError && (
+        <div className="link-card-image-placeholder">
+          <div className="animate-pulse bg-gray-200 dark:bg-gray-700 w-full h-full rounded"></div>
+        </div>
+      )}
       {!imageError ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={src}
           alt={alt}
           loading="lazy"
-          onError={() => setImageError(true)}
+          onLoad={handleImageLoad}
+          onError={handleImageError}
+          className={`transition-opacity duration-300 ${
+            imageLoading ? "opacity-0" : "opacity-100"
+          }`}
         />
       ) : (
         <div className="link-card-image-fallback">
           <svg
-            className="w-8 h-8 text-gray-400"
+            className="w-8 h-8 text-gray-400 dark:text-gray-500"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -118,18 +137,41 @@ const LinkCard = React.memo(function LinkCard({ url }: LinkCardProps) {
     );
   }
 
-  // ローディング中はスケルトンを表示
+  // ローディング中は改善されたスケルトンを表示
   if (loading) {
     return (
-      <div className="link-card animate-pulse">
+      <div className="link-card">
         <div className="link-card-body">
           <div className="link-card-info">
-            <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-            <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+            {/* タイトルのスケルトン */}
+            <div className="link-card-skeleton-title">
+              <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-5 rounded w-4/5 mb-2"></div>
+            </div>
+            {/* 説明のスケルトン */}
+            <div className="link-card-skeleton-description">
+              <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-4 rounded w-full mb-1"></div>
+              <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-4 rounded w-5/6 mb-2"></div>
+            </div>
+            {/* URLのスケルトン */}
+            <div className="link-card-skeleton-url">
+              <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-3 rounded w-2/5"></div>
+            </div>
           </div>
+          {/* 画像のスケルトン */}
           <div className="link-card-image">
-            <div className="w-full h-full bg-gray-200 rounded"></div>
+            <div className="link-card-image-skeleton">
+              <div className="animate-pulse bg-gray-200 dark:bg-gray-700 w-full h-full rounded">
+                <div className="flex items-center justify-center h-full">
+                  <svg 
+                    className="w-8 h-8 text-gray-300 dark:text-gray-600"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
