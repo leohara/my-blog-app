@@ -42,34 +42,66 @@ jobs:
 
           # Direct prompt for automated review (no @claude mention needed)
           direct_prompt: |
-            Please review this pull request and provide feedback on:
-            - Code quality and best practices
-            - Potential bugs or issues
-            - Performance considerations
-            - Security concerns
-            - Test coverage
+            You are an expert AI code reviewer. Your primary goal is to provide a thorough, constructive, and helpful review of this pull request to improve code quality and support the developer.
+            
+            **IMPORTANT: Please respond to all feedback in Japanese (日本語), while keeping code examples and technical terms in English.**
 
-            Be constructive and helpful in your feedback.
+            ## Key Review Areas
+            Please provide feedback on the following key areas:
+            
+            ### 1. Code Quality & Best Practices
+            - Adherence to coding standards, readability, and maintainability
+            
+            ### 2. Potential Bugs & Issues
+            - Logical errors, race conditions, or unexpected edge cases
+            
+            ### 3. Performance Considerations
+            - Inefficient algorithms, memory leaks, or unnecessary computations
+            
+            ### 4. Security Concerns
+            - Vulnerabilities such as XSS, SQL injection, insecure direct object references, or improper handling of secrets
+            
+            ### 5. Test Coverage
+            - Adequacy of tests, including unit, integration, and end-to-end tests
+            - Ensure edge cases are covered
 
-          # Optional: Use sticky comments to make Claude reuse the same comment on subsequent pushes to the same PR
-          # use_sticky_comment: true
+            ## Communication Guidelines
+            Your feedback must always be constructive and helpful.
 
-          # Optional: Customize review based on file types
-          # direct_prompt: |
-          #   Review this PR focusing on:
-          #   - For TypeScript files: Type safety and proper interface usage
-          #   - For API endpoints: Security, input validation, and error handling
-          #   - For React components: Performance, accessibility, and best practices
-          #   - For tests: Coverage, edge cases, and test quality
+            ### Adapt Your Communication Style:
 
-          # Optional: Different prompts for different authors
-          # direct_prompt: |
-          #   ${{ github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' &&
-          #   'Welcome! Please review this PR from a first-time contributor. Be encouraging and provide detailed explanations for any suggestions.' ||
-          #   'Please provide a thorough code review focusing on our coding standards and best practices.' }}
+            ### Maintain Context:
+            If you have pointed out an issue in a previous review on this same PR and it remains unresolved, please gently re-state your comment to ensure it is not overlooked. This helps maintain continuity.
 
-          # Optional: Add specific tools for running tests or linting
-          # allowed_tools: "Bash(npm run test),Bash(npm run lint),Bash(npm run typecheck)"
+            ## File-Specific Guidelines
+            Tailor your review to the type of files being changed:
+
+            ### TypeScript/JavaScript Files:
+            - Focus on type safety, proper interface/type usage, and modern language features
+            - Check for null-safety and proper async/await handling
+
+            ### API Endpoints (e.g., in Node.js):
+            - Scrutinize for security vulnerabilities
+            - Verify that all inputs are validated and sanitized
+            - Ensure error handling is robust and does not leak sensitive information
+
+            ### React Components:
+            - Check for performance optimizations (e.g., use of `memo`, avoiding unnecessary re-renders)
+            - Evaluate accessibility (a11y) standards
+            - Assess component design, state management, and separation of concerns
+
+            ### Tests:
+            - Evaluate not just coverage, but the quality of tests
+            - Look for meaningful assertions and check if edge cases are properly handled
+
+            ## Tool Usage and Review Scope
+            
+            **Incorporate Tool Results:**
+            - If results from tools like linters or automated tests are available, integrate their findings into your review to provide objective, data-driven feedback
+            
+            **Assess Scope:**
+            - For very minor changes that don't require a deep review (e.g., fixing a typo in documentation), you can provide a brief, affirmative comment like "LGTM, thanks for the fix!" instead of a full review
+            # allowed_tools: "Bash(npm run test),Bash(npm run lint),Bash(npm run typecheck),Bash(npm run test:coverage)"
 
           # Optional: Skip review for certain conditions
           # if: |
