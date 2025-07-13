@@ -2,11 +2,50 @@
 
 import React, { useEffect, useState } from "react";
 import type { OGPData } from "@/types/ogp";
-import { decodeHtmlEntities } from "@/lib/html-entities";
 import { ogpCache } from "@/lib/ogp-cache";
 
 interface LinkCardProps {
   url: string;
+}
+
+interface LinkCardImageProps {
+  src: string;
+  alt: string;
+}
+
+function LinkCardImage({ src, alt }: LinkCardImageProps) {
+  const [imageError, setImageError] = useState(false);
+
+  return (
+    <div className="link-card-image">
+      {!imageError ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          onError={() => setImageError(true)}
+        />
+      ) : (
+        <div className="link-card-image-fallback">
+          <svg
+            className="w-8 h-8 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+        </div>
+      )}
+    </div>
+  );
 }
 
 const LinkCard = React.memo(function LinkCard({ url }: LinkCardProps) {
@@ -37,10 +76,6 @@ const LinkCard = React.memo(function LinkCard({ url }: LinkCardProps) {
 
         // アンマウント後の実行を防ぐ
         if (!abortController.signal.aborted) {
-          // 画像URLのHTMLエンティティをデコード
-          if (data.image) {
-            data.image = decodeHtmlEntities(data.image);
-          }
           setOgpData(data);
           // キャッシュに保存
           ogpCache.set(url, data);
@@ -122,19 +157,7 @@ const LinkCard = React.memo(function LinkCard({ url }: LinkCardProps) {
               </div>
             </div>
             {ogpData.image && (
-              <div className="link-card-image">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={ogpData.image}
-                  alt=""
-                  loading="lazy"
-                  onError={(e) => {
-                    // 画像の読み込みに失敗した場合
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = "none";
-                  }}
-                />
-              </div>
+              <LinkCardImage src={ogpData.image} alt={ogpData.title} />
             )}
           </div>
         </a>
