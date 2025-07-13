@@ -3,6 +3,18 @@ import type { OGPData } from "@/types/ogp";
 import { decodeHtmlEntities } from "@/lib/html-entities";
 import { OGP_FETCH_TIMEOUT } from "@/lib/link-card-constants";
 
+// Security constants
+const MAX_RESPONSE_SIZE = 10 * 1024 * 1024; // 10MB制限
+const RATE_LIMIT_MAX_REQUESTS = 100;
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1分間
+const ALLOWED_CONTENT_TYPES = [
+  "text/html",
+  "application/xhtml+xml",
+];
+
+// Rate limiting storage (in production, use Redis or database)
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+
 // URLの安全性をチェック
 function isValidUrl(urlString: string): boolean {
   try {
@@ -11,7 +23,6 @@ function isValidUrl(urlString: string): boolean {
     if (url.protocol !== "https:") return false;
 
     // 内部IPアドレスをブロック
-    // TODO: 他にも考慮するべきIPアドレスがあるか調査
     const hostname = url.hostname;
     if (
       hostname === "localhost" || // localhost
@@ -22,7 +33,14 @@ function isValidUrl(urlString: string): boolean {
       hostname.startsWith("169.254.") || // 169.254.x.x - リンクローカルアドレス
       hostname === "::1" || // IPv6ループバックアドレス
       hostname === "[::1]" || // IPv6ループバックアドレス (ブラケット付きIPv6表記)
-      hostname === "0.0.0.0" // 全てのインターフェースを示す特殊アドレス (予期しない動作を防ぐ)
+      hostname === "0.0.0.0" || // 全てのインターフェースを示す特殊アドレス (予期しない動作を防ぐ)
+      // IPv6プライベート範囲を追加
+      hostname.toLowerCase().startsWith("fc") || // fc00::/7 - IPv6ユニークローカルアドレス
+      hostname.toLowerCase().startsWith("fd") || // fd00::/8 - IPv6ユニークローカルアドレス (fc00::/7の一部)
+      hostname.toLowerCase().startsWith("fe8") || // fe80::/10 - IPv6リンクローカルアドレス
+      hostname.toLowerCase().startsWith("fe9") || // fe80::/10 - IPv6リンクローカルアドレス
+      hostname.toLowerCase().startsWith("fea") || // fe80::/10 - IPv6リンクローカルアドレス
+      hostname.toLowerCase().startsWith("feb") // fe80::/10 - IPv6リンクローカルアドレス
     ) {
       return false;
     }
@@ -30,6 +48,72 @@ function isValidUrl(urlString: string): boolean {
     return true;
   } catch {
     return false;
+  }
+}
+
+// Rate limiting check
+function checkRateLimit(clientId: string): boolean {
+  const now = Date.now();
+  const clientData = rateLimitStore.get(clientId);
+
+  if (!clientData || now > clientData.resetTime) {
+    // Reset or create new entry
+    rateLimitStore.set(clientId, {
+      count: 1,
+      resetTime: now + RATE_LIMIT_WINDOW_MS,
+    });
+    return true;
+  }
+
+  if (clientData.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return false; // Rate limit exceeded
+  }
+
+  // Increment count
+  clientData.count++;
+  return true;
+}
+
+// Content-Type validation
+function isValidContentType(contentType: string): boolean {
+  if (!contentType) return false;
+  
+  const mimeType = contentType.split(";")[0].trim().toLowerCase();
+  return ALLOWED_CONTENT_TYPES.includes(mimeType);
+}
+
+// Response size validation
+async function validateResponseSize(response: Response): Promise<string | null> {
+  const contentLength = response.headers.get("content-length");
+  
+  if (contentLength && parseInt(contentLength) > MAX_RESPONSE_SIZE) {
+    return null; // Content too large
+  }
+
+  try {
+    const reader = response.body?.getReader();
+    if (!reader) return null;
+
+    let totalSize = 0;
+    let html = "";
+    const decoder = new TextDecoder();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      totalSize += value.length;
+      if (totalSize > MAX_RESPONSE_SIZE) {
+        reader.releaseLock();
+        return null; // Content too large
+      }
+
+      html += decoder.decode(value, { stream: true });
+    }
+
+    return html;
+  } catch {
+    return null;
   }
 }
 
@@ -49,7 +133,19 @@ async function fetchOGPData(url: string): Promise<OGPData | null> {
 
     if (!response.ok) return null;
 
-    const html = await response.text();
+    // Content-Type validation
+    const contentType = response.headers.get("content-type");
+    if (!isValidContentType(contentType || "")) {
+      console.warn(`Invalid content type for ${url}: ${contentType}`);
+      return null;
+    }
+
+    // Response size validation
+    const html = await validateResponseSize(response);
+    if (!html) {
+      console.warn(`Response too large or invalid for ${url}`);
+      return null;
+    }
 
     // 正規表現でメタタグを抽出（属性の順序に依存しない）
     const getMetaContent = (property: string): string | undefined => {
@@ -135,6 +231,24 @@ async function fetchOGPData(url: string): Promise<OGPData | null> {
 }
 
 export async function GET(request: NextRequest) {
+  // Rate limiting check
+  const clientId = request.headers.get("x-forwarded-for") || 
+                   request.headers.get("x-real-ip") || 
+                   request.ip || 
+                   "unknown";
+  
+  if (!checkRateLimit(clientId)) {
+    return NextResponse.json(
+      { error: "Rate limit exceeded. Please try again later." },
+      { 
+        status: 429,
+        headers: {
+          "Retry-After": Math.ceil(RATE_LIMIT_WINDOW_MS / 1000).toString(),
+        },
+      },
+    );
+  }
+
   const searchParams = request.nextUrl.searchParams;
   const url = searchParams.get("url");
 
