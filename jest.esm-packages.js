@@ -23,7 +23,10 @@ const esmPackages = [
   // === Markdown/MDX Processing ===
   "remark", // Markdown processor
   "remark-.*", // Remark plugins
+  "rehype", // HTML processor
   "rehype-.*", // HTML processor plugins
+  "rehype-parse", // HTML parser
+  "rehype-stringify", // HTML stringifier
   "mdast-.*", // Markdown AST utilities
   "micromark.*", // Markdown parser/tokenizer
   "@mdx-js", // MDX support
