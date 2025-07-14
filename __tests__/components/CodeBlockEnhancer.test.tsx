@@ -29,4 +29,27 @@ describe("CodeBlockEnhancer - Simple Tests", () => {
     const { container } = render(<CodeBlockEnhancer />);
     expect(container.firstChild).toBeNull();
   });
+
+  describe("Async unmount behavior", () => {
+    it("should use queueMicrotask for cleanup operations", () => {
+      const originalQueueMicrotask = global.queueMicrotask;
+      const queueMicrotaskSpy = jest.fn(originalQueueMicrotask);
+      global.queueMicrotask = queueMicrotaskSpy;
+
+      const { unmount } = render(<CodeBlockEnhancer />);
+      
+      // Initially, queueMicrotask should not have been called
+      expect(queueMicrotaskSpy).not.toHaveBeenCalled();
+      
+      // Unmount the component
+      unmount();
+      
+      // After unmount, queueMicrotask should have been called
+      // This ensures cleanup happens asynchronously to avoid race conditions
+      expect(queueMicrotaskSpy).toHaveBeenCalled();
+      
+      // Restore original
+      global.queueMicrotask = originalQueueMicrotask;
+    });
+  });
 });
