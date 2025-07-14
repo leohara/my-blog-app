@@ -21,12 +21,6 @@ export function CodeBlockEnhancer() {
         // Debounce the processing with 100ms delay as suggested in review
         timeoutId = setTimeout(() => {
           try {
-            console.log(
-              "[CodeBlockEnhancer] Processing",
-              entries.length,
-              "entries",
-            );
-
             entries.forEach((entry) => {
               if (entry.isIntersecting) {
                 const target = entry.target as HTMLElement;
@@ -34,11 +28,6 @@ export function CodeBlockEnhancer() {
 
                 const codeBlocks = target.querySelectorAll(
                   ".code-block-wrapper",
-                );
-                console.log(
-                  "[CodeBlockEnhancer] Found",
-                  codeBlocks.length,
-                  "code blocks",
                 );
 
                 codeBlocks.forEach((block) => {
@@ -74,9 +63,6 @@ export function CodeBlockEnhancer() {
                           const root = createRoot(buttonContainer);
                           roots.current.set(block, root);
                           root.render(<CopyButton code={codeContent} />);
-                          console.log(
-                            "[CodeBlockEnhancer] Successfully mounted copy button",
-                          );
                         } catch (mountError) {
                           console.error(
                             "[CodeBlockEnhancer] Failed to mount React component:",
@@ -134,19 +120,23 @@ export function CodeBlockEnhancer() {
       try {
         // eslint-disable-next-line react-hooks/exhaustive-deps
         const currentRoots = roots.current;
-        currentRoots.forEach((root, block) => {
-          try {
-            root.unmount();
-          } catch (unmountError) {
-            console.warn(
-              "[CodeBlockEnhancer] Error unmounting root for block:",
-              block,
-              unmountError,
-            );
-          }
+
+        // Use queueMicrotask to unmount roots asynchronously
+        // This prevents race conditions with React's rendering
+        queueMicrotask(() => {
+          currentRoots.forEach((root, block) => {
+            try {
+              root.unmount();
+            } catch (unmountError) {
+              console.warn(
+                "[CodeBlockEnhancer] Error unmounting root for block:",
+                block,
+                unmountError,
+              );
+            }
+          });
+          currentRoots.clear();
         });
-        currentRoots.clear();
-        console.log("[CodeBlockEnhancer] Cleanup completed");
       } catch (cleanupError) {
         console.error(
           "[CodeBlockEnhancer] Error during cleanup:",
