@@ -37,17 +37,17 @@ describe("CodeBlockEnhancer - Simple Tests", () => {
       global.queueMicrotask = queueMicrotaskSpy;
 
       const { unmount } = render(<CodeBlockEnhancer />);
-      
+
       // Initially, queueMicrotask should not have been called
       expect(queueMicrotaskSpy).not.toHaveBeenCalled();
-      
+
       // Unmount the component
       unmount();
-      
+
       // After unmount, queueMicrotask should have been called
       // This ensures cleanup happens asynchronously to avoid race conditions
       expect(queueMicrotaskSpy).toHaveBeenCalled();
-      
+
       // Restore original
       global.queueMicrotask = originalQueueMicrotask;
     });
