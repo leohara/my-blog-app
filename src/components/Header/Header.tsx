@@ -20,6 +20,7 @@ export function Header() {
   const [animationStage, setAnimationStage] = useState<
     "hidden" | "circle" | "expanding" | "expanded"
   >("hidden");
+  const [isInitialMount, setIsInitialMount] = useState(true);
 
   // 現在のページがヘッダー表示対象かチェック
   const shouldShowHeader =
@@ -42,6 +43,8 @@ export function Header() {
 
       const timer3 = setTimeout(() => {
         setAnimationStage("expanded");
+        // 初回マウントフラグをオフにする
+        setIsInitialMount(false);
       }, ANIMATION_TIMING.STAGE_EXPANDED_DELAY);
 
       return () => {
@@ -86,7 +89,7 @@ export function Header() {
       <header
         role="banner"
         className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-700 ${
-          isVisible ? "translate-y-0" : "-translate-y-[calc(100%+1rem)]"
+          isInitialMount ? "translate-y-0" : isVisible ? "translate-y-0" : "-translate-y-[calc(100%+1rem)]"
         } ${animationStage === "expanded" ? CSS_CLASSES.BREATHE : ""}`}
       >
         <div className="relative">
@@ -121,13 +124,13 @@ export function Header() {
                 href="/"
                 aria-label="Go to home page"
                 className={`
-                  absolute top-1/2 left-1/2 -translate-y-1/2 flex items-center justify-center hover:scale-110 
-                  transition-all duration-700 ease-out font-quicksand
+                  absolute top-1/2 left-1/2 flex items-center justify-center hover:scale-110 
+                  font-quicksand
                   focus:outline-none
-                  ${animationStage === "circle" ? "w-8 h-8 -translate-x-1/2" : "w-12 h-12"}
-                  ${animationStage === "expanding" ? "-translate-x-[210px]" : ""}
-                  ${animationStage === "expanded" ? "-translate-x-[210px]" : ""}
-                  ${animationStage === "circle" || animationStage === "expanding" ? "rotate-0" : "rotate-[360deg]"}
+                  ${animationStage === "circle" ? "w-8 h-8 -translate-x-1/2 -translate-y-1/2 transition-transform duration-300 ease-out" : "w-12 h-12"}
+                  ${animationStage === "expanding" ? "animate-[logo-expand_600ms_ease-out_forwards]" : ""}
+                  ${animationStage === "expanded" ? "-translate-x-[210px] -translate-y-1/2 rotate-[-360deg] scale-100" : ""}
+                  ${animationStage === "hidden" ? "-translate-x-1/2 -translate-y-1/2 transition-transform duration-300 ease-out" : ""}
                 `}
                 onMouseEnter={() => setHoveredItem("logo")}
                 onMouseLeave={() => setHoveredItem(null)}
@@ -175,7 +178,7 @@ export function Header() {
                           focus:outline-none
                           ${pathname === item.href || (item.href === "/posts" && pathname.startsWith("/posts/")) ? "text-pink-700 font-semibold" : "text-[#3E2723] font-medium"}
                           ${
-                            animationStage === "expanded"
+                            animationStage === "expanding" || animationStage === "expanded"
                               ? "translate-y-0 opacity-100"
                               : "translate-y-4 opacity-0"
                           }
@@ -183,11 +186,11 @@ export function Header() {
                         `}
                         style={{
                           transitionDelay:
-                            animationStage === "expanded"
+                            animationStage === "expanding" || animationStage === "expanded"
                               ? `${ANIMATION_TIMING.TEXT_ANIMATION_DELAY}ms`
                               : "0ms",
                           animation:
-                            animationStage === "expanded"
+                            animationStage === "expanding" || animationStage === "expanded"
                               ? `wave-in 0.6s ${ANIMATION_TIMING.TEXT_ANIMATION_DELAY}ms ease-out forwards`
                               : "none",
                         }}
@@ -226,11 +229,11 @@ export function Header() {
                         <span
                           className={`
                           mx-2 text-pink-300 transition-all duration-700
-                          ${animationStage === "expanded" ? "opacity-100" : "opacity-0"}
+                          ${animationStage === "expanding" || animationStage === "expanded" ? "opacity-100" : "opacity-0"}
                         `}
                           style={{
                             transitionDelay:
-                              animationStage === "expanded"
+                              animationStage === "expanding" || animationStage === "expanded"
                                 ? `${ANIMATION_TIMING.TEXT_ANIMATION_DELAY + 50}ms`
                                 : "0ms",
                           }}
@@ -255,14 +258,14 @@ export function Header() {
                     hover:bg-pink-100/50
                     focus:outline-none
                     ${
-                      animationStage === "expanded"
+                      animationStage === "expanding" || animationStage === "expanded"
                         ? "translate-y-0 opacity-100"
                         : "translate-y-4 opacity-0"
                     }
                   `}
                   style={{
                     transitionDelay:
-                      animationStage === "expanded"
+                      animationStage === "expanding" || animationStage === "expanded"
                         ? `${ANIMATION_TIMING.TEXT_ANIMATION_DELAY}ms`
                         : "0ms",
                   }}

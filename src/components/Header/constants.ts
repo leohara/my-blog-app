@@ -7,10 +7,10 @@ export const ANIMATION_TIMING = {
   // Header expansion animation stages
   STAGE_CIRCLE_DELAY: 100,
   STAGE_EXPANDING_DELAY: 400,
-  STAGE_EXPANDED_DELAY: 700,
+  STAGE_EXPANDED_DELAY: 1000,
 
   // Text animation timing
-  TEXT_ANIMATION_DELAY: 700,
+  TEXT_ANIMATION_DELAY: 600,
   TEXT_WAVE_DELAY: 30,
 
   // Scroll behavior timing
