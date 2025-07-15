@@ -151,8 +151,8 @@ export function Header() {
                   font-quicksand
                   focus:outline-none
                   ${animationStage === "circle" ? "w-8 h-8 -translate-x-1/2 -translate-y-1/2 transition-transform duration-300 ease-out" : "w-12 h-12"}
-                  ${animationStage === "expanding" ? "animate-[logo-expand_600ms_ease-out_forwards]" : ""}
-                  ${animationStage === "expanded" ? "-translate-x-[210px] -translate-y-1/2 rotate-[-360deg] scale-100" : ""}
+                  ${animationStage === "expanding" ? "animate-[logo-expand_600ms_ease-out_forwards] md:animate-[logo-expand-desktop_600ms_ease-out_forwards]" : ""}
+                  ${animationStage === "expanded" ? "md:-translate-x-[210px] -translate-x-[120px] -translate-y-1/2 rotate-[-360deg] scale-100" : ""}
                   ${animationStage === "hidden" ? "-translate-x-1/2 -translate-y-1/2 transition-transform duration-300 ease-out" : ""}
                 `}
                 onMouseEnter={() => setHoveredItem("logo")}
@@ -177,11 +177,11 @@ export function Header() {
               </Link>
 
               {/* Navigation - Positioned on the right */}
-              <div className="absolute top-1/2 right-8 -translate-y-1/2 flex items-center gap-2 whitespace-nowrap">
+              <div className="absolute top-1/2 right-4 md:right-8 -translate-y-1/2 flex items-center gap-2 whitespace-nowrap">
                 {/* Desktop Navigation */}
                 <nav
                   role="navigation"
-                  className="hidden md:flex items-center gap-3"
+                  className="!hidden md:!flex items-center gap-3"
                 >
                   {NAV_ITEMS.map((item, index) => (
                     <div key={item.href} className="flex items-center">
@@ -272,7 +272,7 @@ export function Header() {
                   ))}
                 </nav>
 
-                {/* Mobile Menu Button */}
+                {/* Mobile Menu Button - Only visible on mobile */}
                 <button
                   type="button"
                   aria-label={
@@ -281,7 +281,7 @@ export function Header() {
                   aria-expanded={isMobileMenuOpen}
                   aria-controls="mobile-menu"
                   className={`
-                    md:hidden px-3 py-1.5 text-[#3E2723] text-sm font-medium font-nunito
+                    block md:!hidden px-3 py-1.5 text-[#3E2723] text-sm font-medium font-nunito
                     transition-all duration-500 ease-out rounded-full
                     hover:bg-pink-100/50
                     focus:outline-none
@@ -313,7 +313,7 @@ export function Header() {
       {isMobileMenuOpen && (
         <div
           id="mobile-menu"
-          className="fixed inset-0 bg-[#FAF9F6]/95 backdrop-blur-xl z-40 md:hidden"
+          className="fixed inset-0 bg-[#FAF9F6]/95 backdrop-blur-xl z-40 md:!hidden"
           role="dialog"
           aria-modal="true"
           aria-label="Mobile navigation menu"
