@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import type { OGPData } from "@/types/ogp";
+
 import { ogpCache } from "@/lib/ogp-cache";
+
+import type { OGPData } from "@/types/ogp";
 
 interface LinkCardProps {
   url: string;

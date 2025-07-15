@@ -1,5 +1,7 @@
-import { getBlogPosts } from "@/lib/contentful";
 import Link from "next/link";
+
+import { getBlogPosts } from "@/lib/contentful";
+
 import type { BlogPostSummary } from "@/types/blogPost";
 
 export default async function PostsPage() {

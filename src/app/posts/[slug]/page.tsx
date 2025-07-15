@@ -1,10 +1,11 @@
-import { getBlogPostBySlug } from "@/lib/contentful";
-import { markdownToHtml } from "@/lib/markdown";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import Image from "next/image";
-import LinkCardReplacer from "@/components/LinkCardReplacer";
+
 import { CodeBlockEnhancer } from "@/components/CodeBlockEnhancer";
+import LinkCardReplacer from "@/components/LinkCardReplacer";
+import { getBlogPostBySlug } from "@/lib/contentful";
+import { markdownToHtml } from "@/lib/markdown";
 
 interface Props {
   params: Promise<{ slug: string }>;

@@ -1,6 +1,9 @@
-import type { Metadata } from "next";
 import { Quicksand, Nunito } from "next/font/google";
+
 import { Header } from "@/components/Header/Header";
+
+import type { Metadata } from "next";
+
 import "./globals.css";
 
 const quicksand = Quicksand({

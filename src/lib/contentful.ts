@@ -1,8 +1,10 @@
 import { createClient } from "contentful";
+
 import {
   transformContentfulEntry,
   transformContentfulEntryLight,
 } from "./transform";
+
 import type { BlogPost, BlogPostSummary } from "@/types/blogPost";
 import type { BlogPostFields } from "@/types/ContentfulTypes";
 
