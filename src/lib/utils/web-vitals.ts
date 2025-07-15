@@ -18,11 +18,10 @@ function logMetric(metric: Metric) {
     // Color-coded console logs for different metrics
     const colors = {
       CLS: "#FFA500", // Orange
-      FID: "#00BFFF", // DeepSkyBlue
       FCP: "#32CD32", // LimeGreen
       LCP: "#FF1493", // DeepPink
       TTFB: "#9370DB", // MediumPurple
-      INP: "#FFD700", // Gold
+      INP: "#FFD700", // Gold (replaced FID)
     };
 
     const color = colors[metric.name as keyof typeof colors] || "#808080";
@@ -69,17 +68,16 @@ export async function initWebVitals() {
   if (typeof window === "undefined") return;
 
   try {
-    const { onCLS, onFID, onFCP, onLCP, onTTFB, onINP } = await import("web-vitals");
+    const { onCLS, onFCP, onLCP, onTTFB, onINP } = await import("web-vitals");
 
     // Core Web Vitals
     onCLS(reportWebVitals);
-    onFID(reportWebVitals);
+    onINP(reportWebVitals); // INP replaced FID in Web Vitals v3+
     onLCP(reportWebVitals);
 
     // Additional metrics
     onFCP(reportWebVitals);
     onTTFB(reportWebVitals);
-    onINP(reportWebVitals);
 
     if (process.env.NODE_ENV === "development") {
       console.log("%c✅ Web Vitals tracking initialized", "color: #4CAF50; font-weight: bold;");
