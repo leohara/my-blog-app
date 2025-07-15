@@ -1,20 +1,16 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useScrollHeader } from "./useScrollHeader";
+import { useState, useEffect } from "react";
+
 import { AnimatedText } from "./AnimatedText";
+import { HEADER_CONSTANTS } from "./constants";
+import { useScrollHeader } from "./useScrollHeader";
 
-const navItems = [
-  { href: "/", label: "Home" },
-  { href: "/posts", label: "Posts" },
-  { href: "/about", label: "About" },
-];
-
-// ヘッダーを表示するページのパス
-const headerPages = ["/", "/posts", "/about"];
+const { NAV_ITEMS, HEADER_PAGES, ANIMATION_TIMING, CSS_CLASSES } =
+  HEADER_CONSTANTS;
 
 export function Header() {
   const pathname = usePathname();
@@ -27,7 +23,8 @@ export function Header() {
 
   // 現在のページがヘッダー表示対象かチェック
   const shouldShowHeader =
-    headerPages.includes(pathname) || pathname.startsWith("/posts/");
+    HEADER_PAGES.includes(pathname as (typeof HEADER_PAGES)[number]) ||
+    pathname.startsWith("/posts/");
 
   // ページ遷移時またはマウント時のアニメーション
   useEffect(() => {
@@ -37,15 +34,15 @@ export function Header() {
 
       const timer1 = setTimeout(() => {
         setAnimationStage("circle");
-      }, 100);
+      }, ANIMATION_TIMING.STAGE_CIRCLE_DELAY);
 
       const timer2 = setTimeout(() => {
         setAnimationStage("expanding");
-      }, 400);
+      }, ANIMATION_TIMING.STAGE_EXPANDING_DELAY);
 
       const timer3 = setTimeout(() => {
         setAnimationStage("expanded");
-      }, 700);
+      }, ANIMATION_TIMING.STAGE_EXPANDED_DELAY);
 
       return () => {
         clearTimeout(timer1);
@@ -57,6 +54,28 @@ export function Header() {
     }
   }, [shouldShowHeader]);
 
+  // Keyboard navigation for mobile menu
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    if (isMobileMenuOpen) {
+      document.addEventListener("keydown", handleKeyDown);
+      // Prevent body scroll when menu is open
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "unset";
+    };
+  }, [isMobileMenuOpen]);
+
   // ヘッダーを表示しないページでは何も返さない
   if (!shouldShowHeader) {
     return null;
@@ -65,19 +84,20 @@ export function Header() {
   return (
     <>
       <header
+        role="banner"
         className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-700 ${
           isVisible ? "translate-y-0" : "-translate-y-[calc(100%+1rem)]"
-        } ${animationStage === "expanded" ? "animate-[breathe_3s_ease-in-out_infinite]" : ""}`}
+        } ${animationStage === "expanded" ? CSS_CLASSES.BREATHE : ""}`}
       >
         <div className="relative">
           {/* アニメーションコンテナ */}
           <div
             className={`
               relative transition-all ease-out
-              ${animationStage === "hidden" ? "w-0 h-0 opacity-0" : ""}
-              ${animationStage === "circle" ? "w-12 h-12 opacity-100 duration-300" : ""}
-              ${animationStage === "expanding" ? "w-[480px] h-16 opacity-100 duration-500" : ""}
-              ${animationStage === "expanded" ? "w-[480px] h-16 opacity-100" : ""}
+              ${animationStage === "hidden" ? CSS_CLASSES.HIDDEN : ""}
+              ${animationStage === "circle" ? CSS_CLASSES.CIRCLE : ""}
+              ${animationStage === "expanding" ? CSS_CLASSES.EXPANDING : ""}
+              ${animationStage === "expanded" ? CSS_CLASSES.EXPANDED : ""}
             `}
           >
             {/* Background with soft cream color */}
@@ -99,9 +119,11 @@ export function Header() {
               {/* Logo - Animated from center to left */}
               <Link
                 href="/"
+                aria-label="Go to home page"
                 className={`
                   absolute top-1/2 left-1/2 -translate-y-1/2 flex items-center justify-center hover:scale-110 
                   transition-all duration-700 ease-out font-quicksand
+                  focus:outline-none
                   ${animationStage === "circle" ? "w-8 h-8 -translate-x-1/2" : "w-12 h-12"}
                   ${animationStage === "expanding" ? "-translate-x-[210px]" : ""}
                   ${animationStage === "expanded" ? "-translate-x-[210px]" : ""}
@@ -131,14 +153,26 @@ export function Header() {
               {/* Navigation - Positioned on the right */}
               <div className="absolute top-1/2 right-8 -translate-y-1/2 flex items-center gap-2 whitespace-nowrap">
                 {/* Desktop Navigation */}
-                <nav className="hidden md:flex items-center gap-3">
-                  {navItems.map((item, index) => (
+                <nav
+                  role="navigation"
+                  className="hidden md:flex items-center gap-3"
+                >
+                  {NAV_ITEMS.map((item, index) => (
                     <div key={item.href} className="flex items-center">
                       <Link
                         href={item.href}
+                        aria-label={`Navigate to ${item.label} page`}
+                        aria-current={
+                          pathname === item.href ||
+                          (item.href === "/posts" &&
+                            pathname.startsWith("/posts/"))
+                            ? "page"
+                            : undefined
+                        }
                         className={`
                           relative px-4 py-2 text-sm font-nunito tracking-wide
                           transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]
+                          focus:outline-none
                           ${pathname === item.href || (item.href === "/posts" && pathname.startsWith("/posts/")) ? "text-pink-700 font-semibold" : "text-[#3E2723] font-medium"}
                           ${
                             animationStage === "expanded"
@@ -149,10 +183,12 @@ export function Header() {
                         `}
                         style={{
                           transitionDelay:
-                            animationStage === "expanded" ? "700ms" : "0ms",
+                            animationStage === "expanded"
+                              ? `${ANIMATION_TIMING.TEXT_ANIMATION_DELAY}ms`
+                              : "0ms",
                           animation:
                             animationStage === "expanded"
-                              ? "wave-in 0.6s 700ms ease-out forwards"
+                              ? `wave-in 0.6s ${ANIMATION_TIMING.TEXT_ANIMATION_DELAY}ms ease-out forwards`
                               : "none",
                         }}
                         onMouseEnter={() => setHoveredItem(item.label)}
@@ -186,7 +222,7 @@ export function Header() {
                       </Link>
 
                       {/* Separator */}
-                      {index < navItems.length - 1 && (
+                      {index < NAV_ITEMS.length - 1 && (
                         <span
                           className={`
                           mx-2 text-pink-300 transition-all duration-700
@@ -194,7 +230,9 @@ export function Header() {
                         `}
                           style={{
                             transitionDelay:
-                              animationStage === "expanded" ? "750ms" : "0ms",
+                              animationStage === "expanded"
+                                ? `${ANIMATION_TIMING.TEXT_ANIMATION_DELAY + 50}ms`
+                                : "0ms",
                           }}
                         >
                           ·
@@ -206,10 +244,16 @@ export function Header() {
 
                 {/* Mobile Menu Button */}
                 <button
+                  type="button"
+                  aria-label={
+                    isMobileMenuOpen ? "Close mobile menu" : "Open mobile menu"
+                  }
+                  aria-expanded={isMobileMenuOpen}
                   className={`
                     md:hidden px-3 py-1.5 text-[#3E2723] text-sm font-medium font-nunito
                     transition-all duration-500 ease-out rounded-full
                     hover:bg-pink-100/50
+                    focus:outline-none
                     ${
                       animationStage === "expanded"
                         ? "translate-y-0 opacity-100"
@@ -218,7 +262,9 @@ export function Header() {
                   `}
                   style={{
                     transitionDelay:
-                      animationStage === "expanded" ? "700ms" : "0ms",
+                      animationStage === "expanded"
+                        ? `${ANIMATION_TIMING.TEXT_ANIMATION_DELAY}ms`
+                        : "0ms",
                   }}
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >
@@ -232,24 +278,40 @@ export function Header() {
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-[#FAF9F6]/95 backdrop-blur-xl z-40 md:hidden">
+        <div
+          className="fixed inset-0 bg-[#FAF9F6]/95 backdrop-blur-xl z-40 md:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Mobile navigation menu"
+        >
           <div className="flex flex-col items-center justify-center h-full gap-8">
             <button
-              className="absolute top-8 right-8 text-[#3E2723] text-2xl"
+              type="button"
+              aria-label="Close mobile menu"
+              className="absolute top-8 right-8 text-[#3E2723] text-2xl focus:outline-none"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               ×
             </button>
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="text-[#3E2723] text-2xl font-medium font-nunito hover:opacity-80 transition-opacity"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
+            <nav role="navigation" aria-label="Mobile navigation">
+              {NAV_ITEMS.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-label={`Navigate to ${item.label} page`}
+                  aria-current={
+                    pathname === item.href ||
+                    (item.href === "/posts" && pathname.startsWith("/posts/"))
+                      ? "page"
+                      : undefined
+                  }
+                  className="block text-[#3E2723] text-2xl font-medium font-nunito hover:opacity-80 transition-opacity mb-4 focus:outline-none"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
           </div>
         </div>
       )}
