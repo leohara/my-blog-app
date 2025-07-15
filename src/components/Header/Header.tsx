@@ -89,7 +89,11 @@ export function Header() {
       <header
         role="banner"
         className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-700 ${
-          isInitialMount ? "translate-y-0" : isVisible ? "translate-y-0" : "-translate-y-[calc(100%+1rem)]"
+          isInitialMount
+            ? "translate-y-0"
+            : isVisible
+              ? "translate-y-0"
+              : "-translate-y-[calc(100%+1rem)]"
         } ${animationStage === "expanded" ? CSS_CLASSES.BREATHE : ""}`}
       >
         <div className="relative">
@@ -178,7 +182,8 @@ export function Header() {
                           focus:outline-none
                           ${pathname === item.href || (item.href === "/posts" && pathname.startsWith("/posts/")) ? "text-pink-700 font-semibold" : "text-[#3E2723] font-medium"}
                           ${
-                            animationStage === "expanding" || animationStage === "expanded"
+                            animationStage === "expanding" ||
+                            animationStage === "expanded"
                               ? "translate-y-0 opacity-100"
                               : "translate-y-4 opacity-0"
                           }
@@ -186,11 +191,13 @@ export function Header() {
                         `}
                         style={{
                           transitionDelay:
-                            animationStage === "expanding" || animationStage === "expanded"
+                            animationStage === "expanding" ||
+                            animationStage === "expanded"
                               ? `${ANIMATION_TIMING.TEXT_ANIMATION_DELAY}ms`
                               : "0ms",
                           animation:
-                            animationStage === "expanding" || animationStage === "expanded"
+                            animationStage === "expanding" ||
+                            animationStage === "expanded"
                               ? `wave-in 0.6s ${ANIMATION_TIMING.TEXT_ANIMATION_DELAY}ms ease-out forwards`
                               : "none",
                         }}
@@ -233,7 +240,8 @@ export function Header() {
                         `}
                           style={{
                             transitionDelay:
-                              animationStage === "expanding" || animationStage === "expanded"
+                              animationStage === "expanding" ||
+                              animationStage === "expanded"
                                 ? `${ANIMATION_TIMING.TEXT_ANIMATION_DELAY + 50}ms`
                                 : "0ms",
                           }}
@@ -258,14 +266,16 @@ export function Header() {
                     hover:bg-pink-100/50
                     focus:outline-none
                     ${
-                      animationStage === "expanding" || animationStage === "expanded"
+                      animationStage === "expanding" ||
+                      animationStage === "expanded"
                         ? "translate-y-0 opacity-100"
                         : "translate-y-4 opacity-0"
                     }
                   `}
                   style={{
                     transitionDelay:
-                      animationStage === "expanding" || animationStage === "expanded"
+                      animationStage === "expanding" ||
+                      animationStage === "expanded"
                         ? `${ANIMATION_TIMING.TEXT_ANIMATION_DELAY}ms`
                         : "0ms",
                   }}

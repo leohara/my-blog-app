@@ -71,13 +71,13 @@ export const HEADER_PAGES = ["/", "/posts", "/about"] as const;
 export const HEADER_SPACING = {
   // Top offset from viewport (top-4 in Tailwind = 4 * 4px)
   TOP_OFFSET: 16,
-  
+
   // Content padding top (pt-24 in Tailwind = 24 * 4px)
   CONTENT_PADDING_TOP: 96,
-  
+
   // Total space occupied by header (TOP_OFFSET + HEIGHT)
   TOTAL_HEADER_SPACE: 80,
-  
+
   // Gap between header bottom and content start
   CONTENT_GAP: 16,
 } as const;

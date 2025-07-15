@@ -7,7 +7,7 @@ interface PageContainerProps {
 
 /**
  * Common page container component that provides consistent layout and spacing
- * 
+ *
  * Layout details:
  * - pt-24 (96px) top padding to accommodate the fixed header
  * - Header is positioned at top-4 (16px) with height of 64px
@@ -16,7 +16,10 @@ interface PageContainerProps {
  * - max-w-4xl for content width constraint
  * - min-h-screen ensures full viewport height
  */
-export default function PageContainer({ children, className = "" }: PageContainerProps) {
+export default function PageContainer({
+  children,
+  className = "",
+}: PageContainerProps) {
   return (
     <div className={`min-h-screen max-w-4xl mx-auto p-8 pt-28 ${className}`}>
       {children}
