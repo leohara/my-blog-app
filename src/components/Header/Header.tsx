@@ -7,6 +7,7 @@ import { useState, useEffect, useMemo } from "react";
 
 import { AnimatedText } from "./AnimatedText";
 import { HEADER_CONSTANTS } from "./constants";
+import { useHeaderAnimation } from "./useHeaderAnimation";
 import { useScrollHeader } from "./useScrollHeader";
 
 const { NAV_ITEMS, HEADER_PAGES, ANIMATION_TIMING, CSS_CLASSES } =
@@ -17,45 +18,15 @@ export function Header() {
   const { isVisible } = useScrollHeader();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [animationStage, setAnimationStage] = useState<
-    "hidden" | "circle" | "expanding" | "expanded"
-  >("hidden");
-  const [isInitialMount, setIsInitialMount] = useState(true);
 
   // Check if current page should display header
   const shouldShowHeader =
     HEADER_PAGES.includes(pathname as (typeof HEADER_PAGES)[number]) ||
     pathname.startsWith("/posts/");
+  
+  // Use custom hook for animation state management
+  const { animationStage, isInitialMount } = useHeaderAnimation(shouldShowHeader);
 
-  // Animation on page transition or mount
-  useEffect(() => {
-    if (shouldShowHeader) {
-      // Execute animation in stages
-      setAnimationStage("hidden");
-
-      const timer1 = setTimeout(() => {
-        setAnimationStage("circle");
-      }, ANIMATION_TIMING.STAGE_CIRCLE_DELAY);
-
-      const timer2 = setTimeout(() => {
-        setAnimationStage("expanding");
-      }, ANIMATION_TIMING.STAGE_EXPANDING_DELAY);
-
-      const timer3 = setTimeout(() => {
-        setAnimationStage("expanded");
-        // Turn off initial mount flag
-        setIsInitialMount(false);
-      }, ANIMATION_TIMING.STAGE_EXPANDED_DELAY);
-
-      return () => {
-        clearTimeout(timer1);
-        clearTimeout(timer2);
-        clearTimeout(timer3);
-      };
-    } else {
-      setAnimationStage("hidden");
-    }
-  }, [shouldShowHeader]);
 
   // Keyboard navigation for mobile menu
   useEffect(() => {
@@ -230,6 +201,7 @@ export function Header() {
                           rounded-full scale-0 transition-all duration-500 blur-sm
                           ${hoveredItem === item.label ? "scale-110" : ""}
                         `}
+                          aria-hidden="true"
                         />
 
                         <span className="relative">
@@ -247,6 +219,7 @@ export function Header() {
                           ${pathname === item.href || (item.href === "/posts" && pathname.startsWith("/posts/")) ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"}
                           group-hover:h-1
                         `}
+                          aria-hidden="true"
                         />
                       </Link>
 
