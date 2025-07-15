@@ -1,8 +1,8 @@
-import { NextRequest } from "next/server";
-
 /**
  * @jest-environment node
  */
+import { NextRequest } from "next/server";
+
 import { GET } from "@/app/api/ogp/route";
 
 // Mock fetch globally
