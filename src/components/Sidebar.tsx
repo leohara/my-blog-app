@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { SIDEBAR_CONSTANTS } from "./Sidebar/constants";
+
 import type { BlogPostSummary } from "@/types/blogPost";
 import type { Heading } from "@/types/heading";
 
@@ -31,22 +33,30 @@ export function Sidebar({ posts, currentSlug, headings }: SidebarProps) {
         }
       },
       {
-        rootMargin: "-20% 0px -70% 0px",
-        threshold: 0,
+        rootMargin: SIDEBAR_CONSTANTS.INTERSECTION_OBSERVER_CONFIG.ROOT_MARGIN,
+        threshold: SIDEBAR_CONSTANTS.INTERSECTION_OBSERVER_CONFIG.THRESHOLD,
       },
     );
+
+    // 監視対象要素を記録
+    const observedElements: Element[] = [];
 
     // すべての見出し要素を監視
     for (const heading of headings) {
       const element = document.getElementById(heading.id);
       if (element) {
         observer.observe(element);
+        observedElements.push(element);
       } else {
         console.warn(`[Sidebar] Heading element not found: ${heading.id}`);
       }
     }
 
-    return () => observer.disconnect();
+    return () => {
+      // 個別にunobserveしてからdisconnect
+      for (const element of observedElements) observer.unobserve(element);
+      observer.disconnect();
+    };
   }, [headings]);
 
   // 見出しクリック時のスクロール処理
@@ -90,12 +100,12 @@ export function Sidebar({ posts, currentSlug, headings }: SidebarProps) {
                           : "text-gray-600 dark:text-gray-400"
                       } ${
                         heading.level === 1
-                          ? ""
+                          ? SIDEBAR_CONSTANTS.HEADING_STYLES.LEVEL_1
                           : heading.level === 2
-                            ? "pl-2"
+                            ? SIDEBAR_CONSTANTS.HEADING_STYLES.LEVEL_2
                             : heading.level === 3
-                              ? "pl-4"
-                              : "pl-6"
+                              ? SIDEBAR_CONSTANTS.HEADING_STYLES.LEVEL_3
+                              : SIDEBAR_CONSTANTS.HEADING_STYLES.LEVEL_4
                       }`}
                     >
                       {heading.text}
@@ -107,7 +117,7 @@ export function Sidebar({ posts, currentSlug, headings }: SidebarProps) {
           ) : (
             <div>
               <ul className="space-y-2">
-                {posts.slice(0, 10).map((post) => (
+                {posts.slice(0, SIDEBAR_CONSTANTS.DISPLAY_LIMITS.MAX_POSTS).map((post) => (
                   <li key={post.id}>
                     <Link
                       href={`/posts/${post.slug}`}
