@@ -1,0 +1,87 @@
+name: Lighthouse CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Setup environment
+        run: |
+          # Create .env.local with required environment variables
+          echo "CONTENTFUL_SPACE_ID=${{ secrets.CONTENTFUL_SPACE_ID }}" >> .env.local
+          echo "CONTENTFUL_ACCESS_TOKEN=${{ secrets.CONTENTFUL_ACCESS_TOKEN }}" >> .env.local
+          echo "CONTENTFUL_PREVIEW_ACCESS_TOKEN=${{ secrets.CONTENTFUL_PREVIEW_ACCESS_TOKEN }}" >> .env.local
+          echo "CONTENTFUL_ENVIRONMENT=${{ secrets.CONTENTFUL_ENVIRONMENT }}" >> .env.local
+          
+      - name: Run Lighthouse CI
+        run: |
+          npm install -g @lhci/cli@0.12.x
+          lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+          
+      - name: Upload Lighthouse results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-results
+          path: .lighthouseci/
+          
+      - name: Comment PR with Lighthouse results
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Read Lighthouse results
+            const lhciDir = '.lighthouseci';
+            if (fs.existsSync(lhciDir)) {
+              const files = fs.readdirSync(lhciDir);
+              const manifestFile = files.find(f => f.startsWith('manifest') && f.endsWith('.json'));
+              
+              if (manifestFile) {
+                const manifestPath = path.join(lhciDir, manifestFile);
+                const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+                
+                // Create comment with results
+                const comment = `## 🚦 Lighthouse CI Results
+                
+                Performance, Accessibility, Best Practices, and SEO scores:
+                
+                | URL | Performance | Accessibility | Best Practices | SEO |
+                |-----|-------------|---------------|----------------|-----|
+                ${manifest.map(result => {
+                  const scores = result.summary;
+                  return `| ${result.url} | ${Math.round(scores.performance * 100)} | ${Math.round(scores.accessibility * 100)} | ${Math.round(scores['best-practices'] * 100)} | ${Math.round(scores.seo * 100)} |`;
+                }).join('\n')}
+                
+                [View full report](${manifest[0].url})`;
+                
+                github.rest.issues.createComment({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: comment
+                });
+              }
+            }

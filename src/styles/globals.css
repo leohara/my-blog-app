@@ -1,0 +1,25 @@
+/**
+ * Global Styles - Main CSS Entry Point
+ * Imports all other style files and provides base configuration
+ */
+
+@import "tailwindcss";
+@import "./design-tokens.css";
+@import "./animations.css";
+@import "./utilities.css";
+@import "./components.css";
+
+/* Global reset and base styles are now in components.css */
+
+/* Tailwind CSS utilities can still be used alongside our design system */
+@layer base {
+  /* Additional global styles if needed */
+}
+
+@layer components {
+  /* Component-specific overrides if needed */
+}
+
+@layer utilities {
+  /* Utility-specific overrides if needed */
+}
