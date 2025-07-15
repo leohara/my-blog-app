@@ -296,8 +296,8 @@ describe("Sidebar", () => {
       );
 
       const sidebar = container.firstChild;
-      expect(sidebar).toHaveClass("hidden");
-      expect(sidebar).toHaveClass("lg:block");
+      expect(sidebar).toHaveClass("!hidden");
+      expect(sidebar).toHaveClass("lg:!block");
     });
 
     it("固定幅とスクロール可能な高さを持つ", () => {
