@@ -37,7 +37,7 @@ export default async function PostPage({ params }: Props) {
           {/* メインコンテンツ */}
           <main className="flex-1 px-6 py-8 lg:px-12 lg:py-12">
             <article className="mx-auto max-w-[650px]">
-              <h1 className="text-3xl lg:text-4xl font-serif leading-tight mb-4 font-lora">
+              <h1 className="text-3xl lg:text-4xl font-lora leading-tight mb-4">
                 {post.title}
               </h1>
               <time className="text-sm text-gray-600 dark:text-gray-400">
