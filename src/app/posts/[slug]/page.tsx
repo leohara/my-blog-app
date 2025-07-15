@@ -77,8 +77,7 @@ export default async function PostPage({ params }: Props) {
                   {post.title}
                 </h1>
                 <div
-                  className="flex items-center gap-4 text-sm"
-                  style={{ color: "var(--color-text-secondary)" }}
+                  className="flex items-center gap-4 text-sm text-secondary"
                 >
                   <time dateTime={post.createdAt}>
                     {new Date(post.createdAt).toLocaleDateString("ja-JP", {

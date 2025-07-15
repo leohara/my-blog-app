@@ -18,8 +18,7 @@ export default async function PostsPage() {
     <PageContainer>
       <div className="max-w-4xl mx-auto">
         <h1
-          className="text-4xl md:text-5xl font-bold mb-12 animate-fadeIn"
-          style={{ color: "var(--color-text-primary)" }}
+          className="text-4xl md:text-5xl font-bold mb-12 animate-fadeIn text-primary"
         >
           Posts
         </h1>
@@ -64,8 +63,7 @@ export default async function PostsPage() {
                           Featured
                         </span>
                         <time
-                          className="text-sm"
-                          style={{ color: "var(--color-text-secondary)" }}
+                          className="text-sm text-secondary"
                           dateTime={posts[0].createdAt}
                         >
                           {new Date(posts[0].createdAt).toLocaleDateString(
@@ -110,20 +108,14 @@ export default async function PostsPage() {
                           Read Article →
                         </span>
                         <span
-                          className="text-xs"
-                          style={{ color: "var(--color-text-secondary)" }}
+                          className="text-xs text-secondary"
                         >
                           5 min read
                         </span>
                       </div>
                     </div>
-                    <div className="w-full md:w-80 h-48 md:h-64 rounded-xl bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center">
-                      <span
-                        style={{
-                          color: "var(--color-text-secondary)",
-                          fontSize: "3rem",
-                        }}
-                      >
+                    <div className="post-card-placeholder">
+                      <span className="post-card-icon">
                         📝
                       </span>
                     </div>
@@ -154,8 +146,7 @@ export default async function PostsPage() {
                     >
                       <div className="flex items-center gap-2 mb-3">
                         <time
-                          className="text-xs"
-                          style={{ color: "var(--color-text-secondary)" }}
+                          className="text-xs text-secondary"
                           dateTime={post.createdAt}
                         >
                           {new Date(post.createdAt).toLocaleDateString(
@@ -167,8 +158,7 @@ export default async function PostsPage() {
                           )}
                         </time>
                         <span
-                          className="text-xs"
-                          style={{ color: "var(--color-text-secondary)" }}
+                          className="text-xs text-secondary"
                         >
                           • 3 min read
                         </span>
@@ -204,7 +194,7 @@ export default async function PostsPage() {
                         >
                           Read more
                         </span>
-                        <span style={{ color: "var(--color-interactive)" }}>
+                        <span className="text-interactive">
                           →
                         </span>
                       </div>
