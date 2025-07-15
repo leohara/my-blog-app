@@ -153,15 +153,9 @@ export async function markdownToHtml(
       // マーカー変換に失敗してもHTMLは返す
     }
 
-    // 見出し情報を取得（複数の取得方法を試行）
-    const headingsFromResultData =
-      ((result.data as Record<string, unknown>)?.headings as Heading[]) || [];
-    const headingsFromFileData =
-      ((result.data as Record<string, unknown>)?.headings as Heading[]) || [];
+    // 見出し情報を取得
     const headings: Heading[] =
-      headingsFromResultData.length > 0
-        ? headingsFromResultData
-        : headingsFromFileData;
+      ((result.data as Record<string, unknown>)?.headings as Heading[]) || [];
 
     return { html, headings };
   } catch (error) {
