@@ -41,6 +41,8 @@ export function Sidebar({ posts, currentSlug, headings }: SidebarProps) {
       const element = document.getElementById(heading.id);
       if (element) {
         observer.observe(element);
+      } else {
+        console.warn(`[Sidebar] Heading element not found: ${heading.id}`);
       }
     }
 
@@ -52,6 +54,10 @@ export function Sidebar({ posts, currentSlug, headings }: SidebarProps) {
     const element = document.getElementById(headingId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
+    } else {
+      console.warn(
+        `[Sidebar] Cannot scroll to heading: ${headingId} - element not found`,
+      );
     }
   };
 
