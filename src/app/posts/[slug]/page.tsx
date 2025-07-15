@@ -76,9 +76,7 @@ export default async function PostPage({ params }: Props) {
                 >
                   {post.title}
                 </h1>
-                <div
-                  className="flex items-center gap-4 text-sm text-secondary"
-                >
+                <div className="flex items-center gap-4 text-sm text-secondary">
                   <time dateTime={post.createdAt}>
                     {new Date(post.createdAt).toLocaleDateString("ja-JP", {
                       year: "numeric",

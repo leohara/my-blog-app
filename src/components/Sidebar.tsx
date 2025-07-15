@@ -117,20 +117,22 @@ export function Sidebar({ posts, currentSlug, headings }: SidebarProps) {
           ) : (
             <div>
               <ul className="space-y-2">
-                {posts.slice(0, SIDEBAR_CONSTANTS.DISPLAY_LIMITS.MAX_POSTS).map((post) => (
-                  <li key={post.id}>
-                    <Link
-                      href={`/posts/${post.slug}`}
-                      className={`block text-sm leading-relaxed hover:underline transition-colors ${
-                        post.slug === currentSlug
-                          ? "text-black dark:text-white font-medium"
-                          : "text-gray-600 dark:text-gray-400"
-                      }`}
-                    >
-                      {post.title}
-                    </Link>
-                  </li>
-                ))}
+                {posts
+                  .slice(0, SIDEBAR_CONSTANTS.DISPLAY_LIMITS.MAX_POSTS)
+                  .map((post) => (
+                    <li key={post.id}>
+                      <Link
+                        href={`/posts/${post.slug}`}
+                        className={`block text-sm leading-relaxed hover:underline transition-colors ${
+                          post.slug === currentSlug
+                            ? "text-black dark:text-white font-medium"
+                            : "text-gray-600 dark:text-gray-400"
+                        }`}
+                      >
+                        {post.title}
+                      </Link>
+                    </li>
+                  ))}
               </ul>
             </div>
           )}

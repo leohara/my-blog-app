@@ -17,9 +17,7 @@ export default async function PostsPage() {
   return (
     <PageContainer>
       <div className="max-w-4xl mx-auto">
-        <h1
-          className="text-4xl md:text-5xl font-bold mb-12 animate-fadeIn text-primary"
-        >
+        <h1 className="text-4xl md:text-5xl font-bold mb-12 animate-fadeIn text-primary">
           Posts
         </h1>
         {posts.length === 0 ? (
@@ -107,17 +105,13 @@ export default async function PostsPage() {
                         >
                           Read Article →
                         </span>
-                        <span
-                          className="text-xs text-secondary"
-                        >
+                        <span className="text-xs text-secondary">
                           5 min read
                         </span>
                       </div>
                     </div>
                     <div className="post-card-placeholder">
-                      <span className="post-card-icon">
-                        📝
-                      </span>
+                      <span className="post-card-icon">📝</span>
                     </div>
                   </div>
                 </article>
@@ -157,9 +151,7 @@ export default async function PostsPage() {
                             },
                           )}
                         </time>
-                        <span
-                          className="text-xs text-secondary"
-                        >
+                        <span className="text-xs text-secondary">
                           • 3 min read
                         </span>
                       </div>
@@ -194,9 +186,7 @@ export default async function PostsPage() {
                         >
                           Read more
                         </span>
-                        <span className="text-interactive">
-                          →
-                        </span>
+                        <span className="text-interactive">→</span>
                       </div>
                     </article>
                   </Link>

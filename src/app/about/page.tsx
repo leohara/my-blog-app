@@ -6,9 +6,7 @@ export default function AboutPage() {
   return (
     <PageContainer>
       <div className="max-w-4xl mx-auto animate-fadeIn">
-        <h1
-          className="text-4xl md:text-5xl font-bold mb-12 text-primary"
-        >
+        <h1 className="text-4xl md:text-5xl font-bold mb-12 text-primary">
           About
         </h1>
 

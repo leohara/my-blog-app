@@ -33,10 +33,16 @@ const animationReducer = (
       };
 
     case "NEXT_STAGE": {
-      const stages: AnimationStage[] = ["hidden", "circle", "expanding", "expanded"];
+      const stages: AnimationStage[] = [
+        "hidden",
+        "circle",
+        "expanding",
+        "expanded",
+      ];
       const nextStep = state.step + 1;
-      const nextStage = stages[nextStep] || "expanded";
-      
+      // eslint-disable-next-line security/detect-object-injection
+      const nextStage = stages[nextStep] ?? "expanded";
+
       return {
         ...state,
         stage: nextStage,
@@ -92,11 +98,11 @@ export const useHeaderAnimation = (shouldShowHeader: boolean) => {
       setTimeout(() => {
         dispatch({ type: "NEXT_STAGE" });
       }, ANIMATION_TIMING.STAGE_CIRCLE_DELAY),
-      
+
       setTimeout(() => {
         dispatch({ type: "NEXT_STAGE" });
       }, ANIMATION_TIMING.STAGE_EXPANDING_DELAY),
-      
+
       setTimeout(() => {
         dispatch({ type: "NEXT_STAGE" });
       }, ANIMATION_TIMING.STAGE_EXPANDED_DELAY),
@@ -104,14 +110,14 @@ export const useHeaderAnimation = (shouldShowHeader: boolean) => {
 
     // Cleanup function
     return () => {
-      timeouts.forEach(clearTimeout);
+      for (const timeout of timeouts) clearTimeout(timeout);
     };
   }, [shouldShowHeader]);
 
   return {
     animationStage: state.stage,
     isInitialMount: state.isInitialMount,
-    setIsInitialMount: (value: boolean) => 
+    setIsInitialMount: (value: boolean) =>
       dispatch({ type: "SET_INITIAL_MOUNT", payload: value }),
   };
 };

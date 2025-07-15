@@ -88,12 +88,12 @@ describe("Accessibility Navigation Tests", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUsePathname.mockReturnValue("/");
-    
+
     // Mock getElementById for heading clicks
     const mockElement = {
       scrollIntoView: jest.fn(),
     } as unknown as Element;
-    
+
     document.getElementById = jest.fn().mockReturnValue(mockElement);
   });
 
@@ -114,25 +114,39 @@ describe("Accessibility Navigation Tests", () => {
       render(<Header />);
 
       // Check for accessible link labels
-      expect(screen.getByRole("link", { name: /navigate to home page/i })).toBeInTheDocument();
-      expect(screen.getByRole("link", { name: /navigate to posts page/i })).toBeInTheDocument();
-      expect(screen.getByRole("link", { name: /navigate to about page/i })).toBeInTheDocument();
-      expect(screen.getByRole("link", { name: /go to home page/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("link", { name: /navigate to home page/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("link", { name: /navigate to posts page/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("link", { name: /navigate to about page/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("link", { name: /go to home page/i }),
+      ).toBeInTheDocument();
     });
 
     it("should indicate current page with aria-current", () => {
       mockUsePathname.mockReturnValue("/posts");
       render(<Header />);
 
-      const postsLink = screen.getByRole("link", { name: /navigate to posts page/i });
+      const postsLink = screen.getByRole("link", {
+        name: /navigate to posts page/i,
+      });
       expect(postsLink).toHaveAttribute("aria-current", "page");
     });
 
     it("should support keyboard navigation", () => {
       render(<Header />);
 
-      const homeLink = screen.getByRole("link", { name: /navigate to home page/i });
-      const postsLink = screen.getByRole("link", { name: /navigate to posts page/i });
+      const homeLink = screen.getByRole("link", {
+        name: /navigate to home page/i,
+      });
+      const postsLink = screen.getByRole("link", {
+        name: /navigate to posts page/i,
+      });
 
       // Test Tab navigation
       homeLink.focus();
@@ -148,8 +162,10 @@ describe("Accessibility Navigation Tests", () => {
     it("should handle Enter and Space keys on links", () => {
       render(<Header />);
 
-      const homeLink = screen.getByRole("link", { name: /navigate to home page/i });
-      
+      const homeLink = screen.getByRole("link", {
+        name: /navigate to home page/i,
+      });
+
       // Test Enter key
       fireEvent.keyDown(homeLink, { key: "Enter" });
       // Links don't typically respond to keyDown events, they respond to click events
@@ -170,7 +186,7 @@ describe("Accessibility Navigation Tests", () => {
 
       // Test mobile menu toggle
       fireEvent.click(menuButton);
-      
+
       // Check for mobile menu accessibility
       const mobileLinks = screen.getAllByRole("link");
       expect(mobileLinks.length).toBeGreaterThan(3); // Should have duplicate links for mobile
@@ -180,7 +196,7 @@ describe("Accessibility Navigation Tests", () => {
       render(<Header />);
 
       const menuButton = screen.getByRole("button", { name: /menu/i });
-      
+
       // Open mobile menu
       fireEvent.click(menuButton);
       expect(screen.getByText("×")).toBeInTheDocument();
@@ -194,16 +210,16 @@ describe("Accessibility Navigation Tests", () => {
       render(<Header />);
 
       const menuButton = screen.getByRole("button", { name: /menu/i });
-      
+
       // Open mobile menu
       fireEvent.click(menuButton);
-      
+
       // Focus should be manageable within mobile menu
       const mobileMenuLinks = screen.getAllByRole("link");
-      const firstMobileLink = mobileMenuLinks.find(link => 
-        link.getAttribute("aria-label")?.includes("navigate to home page")
+      const firstMobileLink = mobileMenuLinks.find((link) =>
+        link.getAttribute("aria-label")?.includes("navigate to home page"),
       );
-      
+
       if (firstMobileLink) {
         firstMobileLink.focus();
         expect(firstMobileLink).toHaveFocus();
@@ -213,7 +229,13 @@ describe("Accessibility Navigation Tests", () => {
 
   describe("Sidebar Navigation Accessibility", () => {
     it("should have proper heading hierarchy", () => {
-      render(<Sidebar posts={mockPosts} currentSlug="first-post" headings={mockHeadings} />);
+      render(
+        <Sidebar
+          posts={mockPosts}
+          currentSlug="first-post"
+          headings={mockHeadings}
+        />,
+      );
 
       // Check for proper button roles for headings
       const headingButtons = screen.getAllByRole("button");
@@ -221,10 +243,18 @@ describe("Accessibility Navigation Tests", () => {
     });
 
     it("should support keyboard navigation for headings", () => {
-      render(<Sidebar posts={mockPosts} currentSlug="first-post" headings={mockHeadings} />);
+      render(
+        <Sidebar
+          posts={mockPosts}
+          currentSlug="first-post"
+          headings={mockHeadings}
+        />,
+      );
 
       const firstHeading = screen.getByRole("button", { name: "Introduction" });
-      const secondHeading = screen.getByRole("button", { name: "Getting Started" });
+      const secondHeading = screen.getByRole("button", {
+        name: "Getting Started",
+      });
 
       // Test Tab navigation between headings
       firstHeading.focus();
@@ -238,10 +268,18 @@ describe("Accessibility Navigation Tests", () => {
     });
 
     it("should handle Enter and Space keys on heading buttons", () => {
-      render(<Sidebar posts={mockPosts} currentSlug="first-post" headings={mockHeadings} />);
+      render(
+        <Sidebar
+          posts={mockPosts}
+          currentSlug="first-post"
+          headings={mockHeadings}
+        />,
+      );
 
-      const headingButton = screen.getByRole("button", { name: "Introduction" });
-      
+      const headingButton = screen.getByRole("button", {
+        name: "Introduction",
+      });
+
       // Test Enter key
       fireEvent.keyDown(headingButton, { key: "Enter" });
       // Button should be accessible
@@ -253,10 +291,20 @@ describe("Accessibility Navigation Tests", () => {
     });
 
     it("should have proper indentation for heading levels", () => {
-      render(<Sidebar posts={mockPosts} currentSlug="first-post" headings={mockHeadings} />);
+      render(
+        <Sidebar
+          posts={mockPosts}
+          currentSlug="first-post"
+          headings={mockHeadings}
+        />,
+      );
 
-      const level1Heading = screen.getByRole("button", { name: "Introduction" });
-      const level2Heading = screen.getByRole("button", { name: "Getting Started" });
+      const level1Heading = screen.getByRole("button", {
+        name: "Introduction",
+      });
+      const level2Heading = screen.getByRole("button", {
+        name: "Getting Started",
+      });
       const level3Heading = screen.getByRole("button", { name: "Components" });
 
       // Check indentation classes
@@ -273,12 +321,12 @@ describe("Accessibility Navigation Tests", () => {
       expect(postLinks.length).toBeGreaterThan(0);
 
       // Check for proper href attributes
-      postLinks.forEach(link => {
+      for (const link of postLinks) {
         expect(link).toHaveAttribute("href");
         const href = link.getAttribute("href");
         expect(href).toBeTruthy();
         expect(href === "/posts" || href?.startsWith("/posts/")).toBe(true);
-      });
+      }
     });
 
     it("should indicate current post with proper styling", () => {
@@ -290,12 +338,20 @@ describe("Accessibility Navigation Tests", () => {
     });
 
     it("should handle heading clicks for smooth scrolling", () => {
-      render(<Sidebar posts={mockPosts} currentSlug="first-post" headings={mockHeadings} />);
+      render(
+        <Sidebar
+          posts={mockPosts}
+          currentSlug="first-post"
+          headings={mockHeadings}
+        />,
+      );
 
-      const headingButton = screen.getByRole("button", { name: "Introduction" });
-      
+      const headingButton = screen.getByRole("button", {
+        name: "Introduction",
+      });
+
       fireEvent.click(headingButton);
-      
+
       // Should call getElementById and scrollIntoView
       expect(document.getElementById).toHaveBeenCalledWith("introduction");
     });
@@ -305,7 +361,9 @@ describe("Accessibility Navigation Tests", () => {
     it("should maintain focus during navigation state changes", () => {
       const { rerender } = render(<Header />);
 
-      const homeLink = screen.getByRole("link", { name: /navigate to home page/i });
+      const homeLink = screen.getByRole("link", {
+        name: /navigate to home page/i,
+      });
       homeLink.focus();
       expect(homeLink).toHaveFocus();
 
@@ -322,16 +380,16 @@ describe("Accessibility Navigation Tests", () => {
       render(<Header />);
 
       const menuButton = screen.getByRole("button", { name: /menu/i });
-      
+
       // Open mobile menu
       fireEvent.click(menuButton);
-      
+
       // Get all focusable elements in mobile menu
       const mobileMenuContainer = screen.getByText("×").closest("div");
       const focusableElements = mobileMenuContainer?.querySelectorAll(
-        'a[href], button, [tabindex]:not([tabindex="-1"])'
+        'a[href], button, [tabindex]:not([tabindex="-1"])',
       );
-      
+
       expect(focusableElements?.length).toBeGreaterThan(0);
     });
 
@@ -339,13 +397,13 @@ describe("Accessibility Navigation Tests", () => {
       render(<Header />);
 
       const menuButton = screen.getByRole("button", { name: /menu/i });
-      
+
       // Open mobile menu
       fireEvent.click(menuButton);
-      
+
       // Close mobile menu
       fireEvent.keyDown(document, { key: "Escape" });
-      
+
       // Focus should return to menu button or be properly managed
       const focusedElement = document.activeElement;
       expect(focusedElement).toBeTruthy();
@@ -357,7 +415,9 @@ describe("Accessibility Navigation Tests", () => {
       render(<Header />);
 
       // Check for aria-hidden on decorative spans
-      const decorativeElements = document.querySelectorAll('[aria-hidden="true"]');
+      const decorativeElements = document.querySelectorAll(
+        '[aria-hidden="true"]',
+      );
       expect(decorativeElements.length).toBeGreaterThan(0);
     });
 
@@ -371,21 +431,31 @@ describe("Accessibility Navigation Tests", () => {
     });
 
     it("should have proper heading structure", () => {
-      render(<Sidebar posts={mockPosts} currentSlug="first-post" headings={mockHeadings} />);
+      render(
+        <Sidebar
+          posts={mockPosts}
+          currentSlug="first-post"
+          headings={mockHeadings}
+        />,
+      );
 
       // All heading buttons should be accessible
       const headingButtons = screen.getAllByRole("button");
-      headingButtons.forEach(button => {
+      for (const button of headingButtons) {
         // Buttons in our implementation don't have explicit type="button"
         // but they should be accessible
         expect(button).toBeInTheDocument();
         expect(button.textContent).toBeTruthy();
-      });
+      }
     });
 
     it("should handle dynamic content updates accessibly", () => {
       const { rerender } = render(
-        <Sidebar posts={mockPosts} currentSlug="first-post" headings={mockHeadings} />
+        <Sidebar
+          posts={mockPosts}
+          currentSlug="first-post"
+          headings={mockHeadings}
+        />,
       );
 
       // Update with different headings
@@ -394,12 +464,20 @@ describe("Accessibility Navigation Tests", () => {
       ];
 
       rerender(
-        <Sidebar posts={mockPosts} currentSlug="first-post" headings={newHeadings} />
+        <Sidebar
+          posts={mockPosts}
+          currentSlug="first-post"
+          headings={newHeadings}
+        />,
       );
 
       // Should update accessibly
-      expect(screen.getByRole("button", { name: "Conclusion" })).toBeInTheDocument();
-      expect(screen.queryByRole("button", { name: "Introduction" })).not.toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Conclusion" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: "Introduction" }),
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -409,31 +487,33 @@ describe("Accessibility Navigation Tests", () => {
 
       // Check that text elements are rendered
       const textElements = screen.getAllByRole("link");
-      textElements.forEach(element => {
+      for (const element of textElements) {
         // Elements should be visible and accessible
         expect(element).toBeInTheDocument();
         expect(element).toBeVisible();
-      });
+      }
     });
 
     it("should provide focus indicators", () => {
       render(<Header />);
 
-      const homeLink = screen.getByRole("link", { name: /navigate to home page/i });
-      
+      const homeLink = screen.getByRole("link", {
+        name: /navigate to home page/i,
+      });
+
       // Focus the element
       homeLink.focus();
-      
+
       // Should have focus styling (this would need to be verified with actual CSS)
       expect(homeLink).toHaveFocus();
     });
 
     it("should support high contrast mode", () => {
       // Mock high contrast media query
-      Object.defineProperty(window, 'matchMedia', {
+      Object.defineProperty(window, "matchMedia", {
         writable: true,
-        value: jest.fn().mockImplementation(query => ({
-          matches: query === '(prefers-contrast: high)',
+        value: jest.fn().mockImplementation((query) => ({
+          matches: query === "(prefers-contrast: high)",
           media: query,
           onchange: null,
           addListener: jest.fn(),

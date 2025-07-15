@@ -23,10 +23,10 @@ export function Header() {
   const shouldShowHeader =
     HEADER_PAGES.includes(pathname as (typeof HEADER_PAGES)[number]) ||
     pathname.startsWith("/posts/");
-  
-  // Use custom hook for animation state management
-  const { animationStage, isInitialMount } = useHeaderAnimation(shouldShowHeader);
 
+  // Use custom hook for animation state management
+  const { animationStage, isInitialMount } =
+    useHeaderAnimation(shouldShowHeader);
 
   // Keyboard navigation for mobile menu
   useEffect(() => {

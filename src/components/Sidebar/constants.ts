@@ -8,7 +8,7 @@ export const INTERSECTION_OBSERVER_CONFIG = {
   // Top: -20% ensures heading is well into view before being marked active
   // Bottom: -70% ensures heading stays active until mostly out of view
   ROOT_MARGIN: "-20% 0px -70% 0px",
-  
+
   // Threshold for intersection detection (0 = any intersection)
   THRESHOLD: 0,
 } as const;

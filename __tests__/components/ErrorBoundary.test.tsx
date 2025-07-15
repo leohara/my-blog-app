@@ -19,11 +19,16 @@ const ThrowError = ({ shouldThrow }: { shouldThrow: boolean }) => {
 };
 
 // Simple Error Boundary implementation
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+  fallback: React.ComponentType<{ resetErrorBoundary: () => void }>;
+}
+
 class ErrorBoundary extends React.Component<
-  { children: React.ReactNode; fallback: React.ComponentType<any> },
+  ErrorBoundaryProps,
   { hasError: boolean }
 > {
-  constructor(props: { children: React.ReactNode; fallback: React.ComponentType<any> }) {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
   }
@@ -35,7 +40,11 @@ class ErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       const FallbackComponent = this.props.fallback;
-      return <FallbackComponent resetErrorBoundary={() => this.setState({ hasError: false })} />;
+      return (
+        <FallbackComponent
+          resetErrorBoundary={() => this.setState({ hasError: false })}
+        />
+      );
     }
 
     return this.props.children;
@@ -43,7 +52,11 @@ class ErrorBoundary extends React.Component<
 }
 
 // Error fallback component
-const ErrorFallback = ({ resetErrorBoundary }: any) => (
+const ErrorFallback = ({
+  resetErrorBoundary,
+}: {
+  resetErrorBoundary: () => void;
+}) => (
   <div role="alert">
     <h2>Animation Error</h2>
     <p>Something went wrong with the animation system</p>
@@ -118,7 +131,7 @@ describe("Error Boundary Tests", () => {
 
       // Simulate recovery
       shouldThrow = false;
-      
+
       // Click retry button
       const retryButton = screen.getByText("Try again");
       retryButton.click();
@@ -135,18 +148,22 @@ describe("Error Boundary Tests", () => {
 
     it("should handle malformed animation state gracefully", () => {
       mockUseHeaderAnimation.mockImplementation(() => ({
-        animationStage: "invalid-stage" as any,
+        animationStage: "invalid-stage" as
+          | "hidden"
+          | "circle"
+          | "expanding"
+          | "expanded",
         isInitialMount: false,
         setIsInitialMount: jest.fn(),
       }));
 
       const TestComponent = () => {
         const animation = useHeaderAnimation(true);
-        
+
         // This should not throw even with invalid state
         const validStages = ["hidden", "circle", "expanding", "expanded"];
         const isValidState = validStages.includes(animation.animationStage);
-        
+
         return (
           <div>
             <div>Animation Stage: {animation.animationStage}</div>
@@ -162,7 +179,9 @@ describe("Error Boundary Tests", () => {
       );
 
       // Should render without throwing
-      expect(screen.getByText("Animation Stage: invalid-stage")).toBeInTheDocument();
+      expect(
+        screen.getByText("Animation Stage: invalid-stage"),
+      ).toBeInTheDocument();
       expect(screen.getByText("Is Valid: false")).toBeInTheDocument();
     });
   });
@@ -173,6 +192,7 @@ describe("Error Boundary Tests", () => {
       let currentStageIndex = 0;
 
       mockUseHeaderAnimation.mockImplementation(() => ({
+        // eslint-disable-next-line security/detect-object-injection
         animationStage: stages[currentStageIndex],
         isInitialMount: currentStageIndex === 0,
         setIsInitialMount: jest.fn(),
@@ -180,21 +200,22 @@ describe("Error Boundary Tests", () => {
 
       const TestComponent = () => {
         const animation = useHeaderAnimation(true);
-        
+
         // Safe stage handling
         const getStageClasses = (stage: string) => {
-          const stageMap = {
+          const stageMap: Record<string, string> = {
             hidden: "w-0 h-0 opacity-0",
             circle: "w-12 h-12 opacity-100",
             expanding: "w-[320px] md:w-[480px] h-16 opacity-100",
             expanded: "w-[320px] md:w-[480px] h-16 opacity-100",
           };
-          
-          return stageMap[stage as keyof typeof stageMap] || "w-0 h-0 opacity-0";
+
+          // eslint-disable-next-line security/detect-object-injection
+          return stageMap[stage] || "w-0 h-0 opacity-0";
         };
 
         const classes = getStageClasses(animation.animationStage);
-        
+
         return (
           <div className={classes} data-testid="animated-element">
             Stage: {animation.animationStage}
@@ -209,9 +230,9 @@ describe("Error Boundary Tests", () => {
       );
 
       // Test each stage transition
-      stages.forEach((stage, index) => {
+      for (const [index, stage] of stages.entries()) {
         currentStageIndex = index;
-        
+
         rerender(
           <ErrorBoundary fallback={ErrorFallback}>
             <TestComponent />
@@ -221,7 +242,7 @@ describe("Error Boundary Tests", () => {
         const element = screen.getByTestId("animated-element");
         expect(element).toBeInTheDocument();
         expect(element).toHaveTextContent(`Stage: ${stage}`);
-      });
+      }
     });
 
     it("should handle interrupted animations gracefully", () => {
@@ -245,7 +266,7 @@ describe("Error Boundary Tests", () => {
 
       const TestComponent = ({ show }: { show: boolean }) => {
         const animation = useHeaderAnimation(show);
-        
+
         return (
           <div data-testid="header-container">
             <div>Show: {show.toString()}</div>
@@ -266,7 +287,7 @@ describe("Error Boundary Tests", () => {
 
       // Interrupt animation
       shouldAnimate = false;
-      
+
       rerender(
         <ErrorBoundary fallback={ErrorFallback}>
           <TestComponent show={false} />
@@ -296,19 +317,23 @@ describe("Error Boundary Tests", () => {
       mockUseHeaderAnimation.mockImplementation(() => {
         // Simulate missing dependencies
         return {
-          animationStage: undefined as any,
-          isInitialMount: undefined as any,
+          animationStage: undefined as unknown as
+            | "hidden"
+            | "circle"
+            | "expanding"
+            | "expanded",
+          isInitialMount: undefined as unknown as boolean,
           setIsInitialMount: jest.fn(),
         };
       });
 
       const TestComponent = () => {
         const animation = useHeaderAnimation(true);
-        
+
         // Safe fallback handling
         const stage = animation.animationStage || "hidden";
         const isInitial = animation.isInitialMount ?? true;
-        
+
         return (
           <div>
             <div>Stage: {stage}</div>

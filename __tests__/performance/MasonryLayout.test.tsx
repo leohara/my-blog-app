@@ -1,8 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from "@testing-library/react";
 import { performance } from "perf_hooks";
+
+import { render, screen } from "@testing-library/react";
 
 import PostsPage from "@/app/posts/page";
 import { BlogPostSummary } from "@/types/blogPost";
@@ -14,13 +15,20 @@ jest.mock("@/lib/contentful", () => ({
 
 // Mock PageContainer to avoid layout issues in tests
 jest.mock("@/components/PageContainer", () => {
-  return function MockPageContainer({ children }: { children: React.ReactNode }) {
+  return function MockPageContainer({
+    children,
+  }: {
+    children: React.ReactNode;
+  }) {
     return <div data-testid="page-container">{children}</div>;
   };
 });
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { getBlogPosts } = require("@/lib/contentful");
-const mockGetBlogPosts = getBlogPosts as jest.MockedFunction<typeof getBlogPosts>;
+const mockGetBlogPosts = getBlogPosts as jest.MockedFunction<
+  typeof getBlogPosts
+>;
 
 // Helper to create mock blog posts
 const createMockPosts = (count: number): BlogPostSummary[] => {
@@ -50,15 +58,15 @@ describe("Masonry Layout Performance Tests", () => {
       mockGetBlogPosts.mockResolvedValue(posts);
 
       const startTime = performance.now();
-      
-      const { container } = render(await PostsPage());
-      
+
+      render(await PostsPage());
+
       const endTime = performance.now();
       const renderTime = endTime - startTime;
 
       // Should render quickly (under 100ms for 10 posts)
       expect(renderTime).toBeLessThan(100);
-      
+
       // Verify posts are rendered
       expect(screen.getByText("Blog Post 1")).toBeInTheDocument();
       expect(screen.getByText("Blog Post 10")).toBeInTheDocument();
@@ -69,15 +77,15 @@ describe("Masonry Layout Performance Tests", () => {
       mockGetBlogPosts.mockResolvedValue(posts);
 
       const startTime = performance.now();
-      
+
       render(await PostsPage());
-      
+
       const endTime = performance.now();
       const renderTime = endTime - startTime;
 
       // Should handle 50 posts reasonably well (under 300ms)
       expect(renderTime).toBeLessThan(300);
-      
+
       // Verify featured post and regular posts
       expect(screen.getByText("Featured")).toBeInTheDocument();
       expect(screen.getByText("Blog Post 1")).toBeInTheDocument();
@@ -89,15 +97,15 @@ describe("Masonry Layout Performance Tests", () => {
       mockGetBlogPosts.mockResolvedValue(posts);
 
       const startTime = performance.now();
-      
+
       const { container } = render(await PostsPage());
-      
+
       const endTime = performance.now();
       const renderTime = endTime - startTime;
 
       // Should not take too long even with 200 posts (under 1 second)
       expect(renderTime).toBeLessThan(1000);
-      
+
       // Verify rendering succeeded without crashing
       expect(container).toBeInTheDocument();
     });
@@ -111,19 +119,21 @@ describe("Masonry Layout Performance Tests", () => {
       const { container } = render(await PostsPage());
 
       // Check masonry grid structure
-      const masonryGrid = container.querySelector('.columns-1.md\\:columns-2.lg\\:columns-3');
+      const masonryGrid = container.querySelector(
+        ".columns-1.md\\:columns-2.lg\\:columns-3",
+      );
       expect(masonryGrid).toBeInTheDocument();
 
       // Count actual rendered articles
-      const articles = container.querySelectorAll('article');
+      const articles = container.querySelectorAll("article");
       expect(articles.length).toBe(30); // All posts should be rendered
 
       // Check featured post structure
-      const featuredPost = container.querySelector('.featured-post-card');
+      const featuredPost = container.querySelector(".featured-post-card");
       expect(featuredPost).toBeInTheDocument();
 
       // Verify CSS classes for performance
-      const regularPosts = container.querySelectorAll('.blog-post-card');
+      const regularPosts = container.querySelectorAll(".blog-post-card");
       expect(regularPosts.length).toBe(29); // 30 - 1 featured post
     });
 
@@ -131,17 +141,19 @@ describe("Masonry Layout Performance Tests", () => {
       mockGetBlogPosts.mockResolvedValue([]);
 
       const startTime = performance.now();
-      
+
       render(await PostsPage());
-      
+
       const endTime = performance.now();
       const renderTime = endTime - startTime;
 
       // Should be very fast with no posts
       expect(renderTime).toBeLessThan(50);
-      
+
       // Should show no posts message
-      expect(screen.getByText("No posts available at the moment.")).toBeInTheDocument();
+      expect(
+        screen.getByText("No posts available at the moment."),
+      ).toBeInTheDocument();
     });
 
     it("should handle single post without masonry grid", async () => {
@@ -151,11 +163,13 @@ describe("Masonry Layout Performance Tests", () => {
       const { container } = render(await PostsPage());
 
       // Should have featured post but no masonry grid
-      const featuredPost = container.querySelector('.featured-post-card');
+      const featuredPost = container.querySelector(".featured-post-card");
       expect(featuredPost).toBeInTheDocument();
 
       // Should not have masonry grid for remaining posts
-      const masonryGrid = container.querySelector('.columns-1.md\\:columns-2.lg\\:columns-3');
+      const masonryGrid = container.querySelector(
+        ".columns-1.md\\:columns-2.lg\\:columns-3",
+      );
       expect(masonryGrid).not.toBeInTheDocument();
     });
   });
@@ -166,9 +180,9 @@ describe("Masonry Layout Performance Tests", () => {
       mockGetBlogPosts.mockResolvedValue(posts);
 
       const startTime = performance.now();
-      
+
       const { container } = render(await PostsPage());
-      
+
       const endTime = performance.now();
       const renderTime = endTime - startTime;
 
@@ -176,11 +190,13 @@ describe("Masonry Layout Performance Tests", () => {
       expect(renderTime).toBeLessThan(200);
 
       // Check for animation classes
-      const animatedElements = container.querySelectorAll('.animate-slideInUp');
+      const animatedElements = container.querySelectorAll(".animate-slideInUp");
       expect(animatedElements.length).toBeGreaterThan(0);
 
       // Check for staggered animation delays
-      const elementsWithDelay = container.querySelectorAll('[style*="animation-delay"]');
+      const elementsWithDelay = container.querySelectorAll(
+        '[style*="animation-delay"]',
+      );
       expect(elementsWithDelay.length).toBeGreaterThan(0);
     });
 
@@ -191,19 +207,22 @@ describe("Masonry Layout Performance Tests", () => {
       const { container } = render(await PostsPage());
 
       // Get all elements with animation delays
-      const animatedElements = Array.from(container.querySelectorAll('[style*="animation-delay"]'));
-      
+      const animatedElements = Array.from(
+        container.querySelectorAll('[style*="animation-delay"]'),
+      );
+
       // Check that delays are reasonable (not too long)
-      animatedElements.forEach((element, index) => {
-        const style = element.getAttribute('style');
+      for (const element of animatedElements) {
+        const style = element.getAttribute("style");
+        // eslint-disable-next-line security/detect-unsafe-regex
         const delayMatch = style?.match(/animation-delay:\s*(\d+(?:\.\d+)?)s/);
-        
+
         if (delayMatch) {
           const delay = parseFloat(delayMatch[1]);
           // Animation delays should be reasonable (under 10 seconds)
           expect(delay).toBeLessThan(10);
         }
-      });
+      }
     });
   });
 
@@ -215,7 +234,7 @@ describe("Masonry Layout Performance Tests", () => {
       const { container } = render(await PostsPage());
 
       // Count total DOM nodes
-      const allNodes = container.querySelectorAll('*');
+      const allNodes = container.querySelectorAll("*");
       const nodeCount = allNodes.length;
 
       // Should not create excessive DOM nodes (rough estimate: < 1100 nodes for 100 posts)
@@ -229,8 +248,8 @@ describe("Masonry Layout Performance Tests", () => {
       const { container } = render(await PostsPage());
 
       // Check that common CSS classes are reused
-      const cardElements = container.querySelectorAll('.blog-post-card');
-      const animatedElements = container.querySelectorAll('.animate-slideInUp');
+      const cardElements = container.querySelectorAll(".blog-post-card");
+      const animatedElements = container.querySelectorAll(".animate-slideInUp");
 
       // Should have many elements with the same classes (indicating reuse)
       expect(cardElements.length).toBeGreaterThan(1);
@@ -243,17 +262,19 @@ describe("Masonry Layout Performance Tests", () => {
       mockGetBlogPosts.mockRejectedValue(new Error("API Error"));
 
       const startTime = performance.now();
-      
+
       render(await PostsPage());
-      
+
       const endTime = performance.now();
       const renderTime = endTime - startTime;
 
       // Error handling should not significantly impact performance
       expect(renderTime).toBeLessThan(100);
-      
+
       // Should show fallback content
-      expect(screen.getByText("No posts available at the moment.")).toBeInTheDocument();
+      expect(
+        screen.getByText("No posts available at the moment."),
+      ).toBeInTheDocument();
     });
 
     it("should handle malformed post data gracefully", async () => {
@@ -267,21 +288,21 @@ describe("Masonry Layout Performance Tests", () => {
         },
         {
           id: "2",
-          title: null as any,
+          title: null as unknown as string,
           slug: "invalid-post",
-          excerpt: undefined as any,
+          excerpt: undefined as unknown as string,
           createdAt: "invalid-date",
         },
       ];
-      
+
       mockGetBlogPosts.mockResolvedValue(malformedPosts);
 
       const startTime = performance.now();
-      
+
       expect(async () => {
         render(await PostsPage());
       }).not.toThrow();
-      
+
       const endTime = performance.now();
       const renderTime = endTime - startTime;
 
@@ -296,24 +317,26 @@ describe("Masonry Layout Performance Tests", () => {
       mockGetBlogPosts.mockResolvedValue(posts);
 
       // Test mobile viewport
-      Object.defineProperty(window, 'innerWidth', {
+      Object.defineProperty(window, "innerWidth", {
         writable: true,
         configurable: true,
         value: 375,
       });
 
       const startTime = performance.now();
-      
+
       const { container } = render(await PostsPage());
-      
+
       const endTime = performance.now();
       const renderTime = endTime - startTime;
 
       // Should render efficiently regardless of viewport size
       expect(renderTime).toBeLessThan(250);
-      
+
       // Should have responsive classes
-      const masonryGrid = container.querySelector('.columns-1.md\\:columns-2.lg\\:columns-3');
+      const masonryGrid = container.querySelector(
+        ".columns-1.md\\:columns-2.lg\\:columns-3",
+      );
       expect(masonryGrid).toBeInTheDocument();
     });
   });
