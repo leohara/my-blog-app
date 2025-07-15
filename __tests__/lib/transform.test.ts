@@ -2,6 +2,7 @@ import {
   transformContentfulEntry,
   transformContentfulEntryLight,
 } from "@/lib/transform";
+
 import type { ContentfulBlogPost } from "@/types/ContentfulTypes";
 import type { Asset } from "contentful";
 
@@ -12,9 +13,12 @@ const mockAsset: Asset<undefined, string> = {
     createdAt: "2023-01-01T00:00:00Z",
     updatedAt: "2023-01-01T00:00:00Z",
     space: { sys: { type: "Link", linkType: "Space", id: "space1" } },
-    environment: { sys: { type: "Link", linkType: "Environment", id: "master" } },
+    environment: {
+      sys: { type: "Link", linkType: "Environment", id: "master" },
+    },
     revision: 1,
     locale: "ja",
+    publishedVersion: 1,
   },
   fields: {
     title: "Test Image",
@@ -31,7 +35,6 @@ const mockAsset: Asset<undefined, string> = {
   metadata: {
     tags: [],
   },
-  toPlainObject: () => ({} as any),
 };
 
 const mockContentfulEntry: ContentfulBlogPost = {
@@ -41,14 +44,18 @@ const mockContentfulEntry: ContentfulBlogPost = {
     createdAt: "2023-12-01T00:00:00Z",
     updatedAt: "2023-12-02T00:00:00Z",
     space: { sys: { type: "Link", linkType: "Space", id: "space1" } },
-    environment: { sys: { type: "Link", linkType: "Environment", id: "master" } },
+    environment: {
+      sys: { type: "Link", linkType: "Environment", id: "master" },
+    },
     contentType: { sys: { type: "Link", linkType: "ContentType", id: "blog" } },
     revision: 1,
     locale: "ja",
+    publishedVersion: 1,
   },
   fields: {
     title: "Test Post",
     slug: "test-post",
+    published: true,
     content: "# Test Content\n\nThis is a test post.",
     excerpt: "Test excerpt",
     tags: ["test", "sample"],
@@ -57,17 +64,6 @@ const mockContentfulEntry: ContentfulBlogPost = {
   metadata: {
     tags: [],
   },
-  toPlainObject: () => ({} as any),
-  update: () => Promise.resolve({} as any),
-  publish: () => Promise.resolve({} as any),
-  unpublish: () => Promise.resolve({} as any),
-  archive: () => Promise.resolve({} as any),
-  unarchive: () => Promise.resolve({} as any),
-  delete: () => Promise.resolve(),
-  isPublished: () => true,
-  isUpdated: () => false,
-  isArchived: () => false,
-  isDraft: () => false,
 };
 
 describe("transform", () => {
@@ -87,7 +83,14 @@ describe("transform", () => {
     it("必須フィールドがない場合、デフォルト値を使用する", () => {
       const entryWithMissingFields: ContentfulBlogPost = {
         ...mockContentfulEntry,
-        fields: {},
+        fields: {
+          title: "",
+          slug: "",
+          published: false,
+          excerpt: "",
+          tags: [],
+          content: "",
+        },
       };
 
       const result = transformContentfulEntryLight(entryWithMissingFields);
@@ -106,7 +109,11 @@ describe("transform", () => {
         ...mockContentfulEntry,
         fields: {
           title: "Partial Post",
-          // slug, excerpt が undefined
+          slug: "",
+          published: false,
+          excerpt: "",
+          tags: [],
+          content: "",
         },
       };
 
@@ -130,6 +137,7 @@ describe("transform", () => {
         id: "1",
         slug: "test-post",
         title: "Test Post",
+        description: "Test excerpt",
         content: "# Test Content\n\nThis is a test post.",
         tags: ["test", "sample"],
         createdAt: "2023-12-01T00:00:00Z",
@@ -167,9 +175,7 @@ describe("transform", () => {
         ...mockContentfulEntry,
         fields: {
           ...mockContentfulEntry.fields,
-          thumbnail: {
-            sys: { type: "Link", linkType: "Asset", id: "asset1" },
-          } as any,
+          thumbnail: undefined,
         },
       };
 
@@ -193,7 +199,7 @@ describe("transform", () => {
             details: {
               size: 12345,
               // image プロパティがない
-            } as any,
+            },
           },
         },
       };
@@ -248,7 +254,7 @@ describe("transform", () => {
         ...mockContentfulEntry,
         fields: {
           ...mockContentfulEntry.fields,
-          tags: undefined,
+          tags: [],
         },
       };
 
@@ -260,7 +266,14 @@ describe("transform", () => {
     it("すべてのフィールドがない場合を処理する", () => {
       const emptyEntry: ContentfulBlogPost = {
         ...mockContentfulEntry,
-        fields: {},
+        fields: {
+          title: "",
+          slug: "",
+          published: false,
+          excerpt: "",
+          tags: [],
+          content: "",
+        },
       };
 
       const result = transformContentfulEntry(emptyEntry);
@@ -269,6 +282,7 @@ describe("transform", () => {
         id: "1",
         slug: "",
         title: "",
+        description: "",
         content: "",
         tags: [],
         createdAt: "2023-12-01T00:00:00Z",
@@ -286,7 +300,9 @@ describe("transform", () => {
       const result = transformContentfulEntry(mockContentfulEntry);
 
       expect(result.thumbnail.url).toMatch(/^https:/);
-      expect(result.thumbnail.url).toBe("https://images.ctfassets.net/test.jpg");
+      expect(result.thumbnail.url).toBe(
+        "https://images.ctfassets.net/test.jpg",
+      );
     });
 
     it("部分的な画像詳細情報を処理する", () => {
@@ -300,8 +316,8 @@ describe("transform", () => {
               size: 12345,
               image: {
                 width: 800,
-                // height がない
-              } as any,
+                height: 0,
+              },
             },
           },
         },
