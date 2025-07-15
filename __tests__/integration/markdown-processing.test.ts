@@ -14,7 +14,9 @@ interface MarkdownResult {
 }
 
 // モック実装
-const mockMarkdownToHtml = async (markdown: string): Promise<MarkdownResult> => {
+const mockMarkdownToHtml = async (
+  markdown: string,
+): Promise<MarkdownResult> => {
   try {
     // 入力検証
     if (typeof markdown !== "string") {
@@ -27,30 +29,44 @@ const mockMarkdownToHtml = async (markdown: string): Promise<MarkdownResult> => 
 
     // コードブロックを先に処理（他の処理に影響されないように）
     const codeBlocks: Array<{ placeholder: string; content: string }> = [];
-    html = html.replace(
-      /```(\w+)?\n([\s\S]*?)```/g,
-      (match, lang, code) => {
+    // eslint-disable-next-line security/detect-unsafe-regex
+    const codeBlockRegex = /```(\w{0,20})?\n/g;
+    let match;
+    let lastIndex = 0;
+    let result = "";
+
+    while ((match = codeBlockRegex.exec(html)) !== null) {
+      const startIndex = match.index;
+      const lang = match[1] || "plaintext";
+      const endIndex = html.indexOf("```", startIndex + match[0].length);
+
+      if (endIndex !== -1) {
+        result += html.slice(lastIndex, startIndex);
+        const code = html.slice(startIndex + match[0].length, endIndex);
         const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
         const content = `<div data-rehype-pretty-code-fragment>
-<pre data-language="${lang || "plaintext"}">
+<pre data-language="${lang}">
 <code class="code-block-wrapper" data-code-content="${encodeURIComponent(code.trim())}">${code.trim()}</code>
 </pre>
 </div>`;
         codeBlocks.push({ placeholder, content });
-        return placeholder;
+        result += placeholder;
+        lastIndex = endIndex + 3;
       }
-    );
+    }
+    result += html.slice(lastIndex);
+    html = result;
 
     // 見出しの処理
-    html = html.replace(/^(#{1,6})\s+(.+)$/gm, (match, hashes, content) => {
+    html = html.replace(/^(#{1,6})\s+(.+)$/gm, (_match, hashes, content) => {
       const level = hashes.length;
       const text = content.trim();
       const id = text
         .toLowerCase()
-        .replace(/[^\w\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf\s-]/g, "")
+        .replace(/[^\s\w\u3040-\u30ff\u4e00-\u9faf\-]/g, "")
         .replace(/\s+/g, "-")
         .replace(/&/g, "");
-      
+
       headings.push({ id, level, text });
       return `<h${level} id="${id}">${text}</h${level}>`;
     });
@@ -61,7 +77,7 @@ const mockMarkdownToHtml = async (markdown: string): Promise<MarkdownResult> => 
     // 段落の処理
     html = html
       .split("\n\n")
-      .map(paragraph => {
+      .map((paragraph) => {
         if (!paragraph.trim()) return "";
         if (paragraph.match(/^<h[1-6]/)) return paragraph;
         if (paragraph.match(/^__CODE_BLOCK_\d+__$/)) return paragraph;
@@ -71,18 +87,18 @@ const mockMarkdownToHtml = async (markdown: string): Promise<MarkdownResult> => 
       .join("\n");
 
     // コードブロックを復元
-    codeBlocks.forEach(({ placeholder, content }) => {
+    for (const { placeholder, content } of codeBlocks) {
       html = html.replace(placeholder, content);
-    });
+    }
 
     // リンクカードマーカー
     html = html.replace(
       /\$\$LINKCARD:([^$]+)\$\$/g,
-      '<div data-link-card="$1"></div>'
+      '<div data-link-card="$1"></div>',
     );
 
     return { html, headings };
-  } catch (error) {
+  } catch {
     // フォールバック処理
     const fallbackText = String(markdown || "");
     const fallbackHtml = fallbackText
@@ -175,7 +191,7 @@ console.log(greeting);
 \`\`\``;
       const { html } = await mockMarkdownToHtml(markdown);
 
-      expect(html).toContain('data-rehype-pretty-code-fragment');
+      expect(html).toContain("data-rehype-pretty-code-fragment");
       expect(html).toContain('data-language="javascript"');
       expect(html).toContain('const greeting = "Hello"');
     });
@@ -210,31 +226,35 @@ $$LINKCARD:https://github.com$$`;
 
   describe("エラーハンドリング", () => {
     it("should handle non-string input", async () => {
-      const result = await mockMarkdownToHtml(123 as any);
-      
+      const result = await mockMarkdownToHtml(123 as unknown as string);
+
       expect(result.html).toContain("markdown-fallback");
       expect(result.headings).toEqual([]);
     });
 
     it("should handle null input", async () => {
-      const result = await mockMarkdownToHtml(null as any);
-      
+      const result = await mockMarkdownToHtml(null as unknown as string);
+
       expect(result.html).toContain("markdown-fallback");
       expect(result.headings).toEqual([]);
     });
 
     it("should handle empty string", async () => {
       const result = await mockMarkdownToHtml("");
-      
+
       expect(result.html).toBe("");
       expect(result.headings).toEqual([]);
     });
 
     it("should escape HTML in fallback mode", async () => {
       // フォールバックモードをトリガーするため、非文字列を渡す
-      const dangerousInput = { toString: () => '<script>alert("xss")</script>' };
-      const result = await mockMarkdownToHtml(dangerousInput as any);
-      
+      const dangerousInput = {
+        toString: () => '<script>alert("xss")</script>',
+      };
+      const result = await mockMarkdownToHtml(
+        dangerousInput as unknown as string,
+      );
+
       expect(result.html).toContain("&lt;script&gt;");
       expect(result.html).not.toContain("<script>");
     });
@@ -244,7 +264,7 @@ $$LINKCARD:https://github.com$$`;
     it("should handle very long content", async () => {
       const longContent = "# Title\n\n" + "Long paragraph. ".repeat(1000);
       const { html, headings } = await mockMarkdownToHtml(longContent);
-      
+
       expect(html).toBeDefined();
       expect(html.length).toBeGreaterThan(1000);
       expect(headings).toHaveLength(1);
@@ -254,9 +274,9 @@ $$LINKCARD:https://github.com$$`;
       const markdown = `# React & Vue.js
 ## "Quotes" and 'Apostrophes'
 ### 100% Coverage!`;
-      
-      const { html, headings } = await mockMarkdownToHtml(markdown);
-      
+
+      const { headings } = await mockMarkdownToHtml(markdown);
+
       // モック実装では単純に特殊文字を削除するので、実際の出力と異なる
       expect(headings[0].id).toBe("react-vuejs");
       expect(headings[1].id).toBe("quotes-and-apostrophes");
@@ -278,7 +298,7 @@ def hello():
 Final paragraph.`;
 
       const { html, headings } = await mockMarkdownToHtml(markdown);
-      
+
       expect(html).toContain("<h1");
       expect(html).toContain("<h2");
       expect(html).toContain("<code>inline code</code>");
@@ -294,9 +314,9 @@ Final paragraph.`;
       const markdown = `# Test
 ## Test
 ### Different Test`;
-      
+
       const { headings } = await mockMarkdownToHtml(markdown);
-      
+
       expect(headings[0].id).toBe("test");
       expect(headings[1].id).toBe("test"); // 実際の実装では "test-1" になる
       expect(headings[2].id).toBe("different-test");
@@ -305,7 +325,7 @@ Final paragraph.`;
     it("should handle emojis in headings", async () => {
       const markdown = "# 🎉 Celebration Time! 🎊";
       const { html, headings } = await mockMarkdownToHtml(markdown);
-      
+
       expect(html).toContain("🎉");
       expect(html).toContain("🎊");
       expect(headings[0].text).toBe("🎉 Celebration Time! 🎊");
@@ -318,7 +338,7 @@ export function createMockMarkdownProcessor() {
   return {
     process: mockMarkdownToHtml,
     // 将来の拡張用
-    configure: (options: any) => {
+    configure: (_options: Record<string, unknown>) => {
       // 設定を適用
     },
   };

@@ -13,7 +13,7 @@ describe("markdown.ts E2E Tests", () => {
         html: "string",
         headings: [{ id: "string", level: "number", text: "string" }],
       };
-      
+
       // この情報はドキュメント用
       expect(expectedInterface).toBeDefined();
     });
@@ -22,10 +22,14 @@ describe("markdown.ts E2E Tests", () => {
   describe("関数の仕様", () => {
     it("should validate input types", () => {
       const validInputs = ["# Test", "", "日本語テキスト"];
-      const invalidInputs = [null, undefined, 123, {}, []];
-      
-      expect(validInputs.every(input => typeof input === "string")).toBe(true);
-      expect(invalidInputs.every(input => typeof input !== "string")).toBe(true);
+      const invalidInputs: unknown[] = [null, undefined, 123, {}, []];
+
+      expect(validInputs.every((input) => typeof input === "string")).toBe(
+        true,
+      );
+      expect(invalidInputs.every((input) => typeof input !== "string")).toBe(
+        true,
+      );
     });
 
     it("should handle theme configuration", () => {
@@ -34,7 +38,7 @@ describe("markdown.ts E2E Tests", () => {
         theme: "one-dark-pro",
         keepBackground: true,
       };
-      
+
       expect(expectedThemeConfig.theme).toBe("one-dark-pro");
       expect(expectedThemeConfig.keepBackground).toBe(true);
     });
@@ -50,7 +54,7 @@ describe("markdown.ts E2E Tests", () => {
         '"': "&quot;",
         "'": "&#39;",
       };
-      
+
       expect(fallbackStructure).toContain("markdown-fallback");
       expect(Object.values(escapedChars)).toContain("&amp;");
     });
@@ -62,10 +66,10 @@ describe("markdown.ts E2E Tests", () => {
         "[markdownToHtml] Error processing highlighted line:",
         "[markdownToHtml] Error processing link card markers:",
       ];
-      
-      errorMessages.forEach(msg => {
+
+      for (const msg of errorMessages) {
         expect(msg).toContain("[markdownToHtml]");
-      });
+      }
     });
   });
 
@@ -78,7 +82,7 @@ describe("markdown.ts E2E Tests", () => {
         onVisitLine: "function",
         onVisitHighlightedLine: "function",
       };
-      
+
       expect(rehypePrettyCodeOptions.defaultLang).toBe("plaintext");
     });
 
@@ -87,7 +91,7 @@ describe("markdown.ts E2E Tests", () => {
         wrapper: "code-block-wrapper",
         dataAttribute: "data-code-content",
       };
-      
+
       expect(expectedCodeBlockStructure.wrapper).toBe("code-block-wrapper");
     });
   });
@@ -96,7 +100,7 @@ describe("markdown.ts E2E Tests", () => {
     it("should transform link card markers", () => {
       const markerPattern = /\$\$LINKCARD:([^$]+)\$\$/g;
       const replacement = '<div data-link-card="$1"></div>';
-      
+
       expect(markerPattern.test("$$LINKCARD:https://example.com$$")).toBe(true);
       expect(replacement).toContain("data-link-card");
     });
@@ -109,7 +113,7 @@ describe("markdown.ts E2E Tests", () => {
         level: "number (1-6)",
         text: "string",
       };
-      
+
       expect(expectedHeadingStructure.level).toContain("1-6");
     });
 
@@ -120,7 +124,7 @@ describe("markdown.ts E2E Tests", () => {
         "スペースをハイフンに変換",
         "重複時は番号を付加",
       ];
-      
+
       expect(idGenerationRules).toContain("重複時は番号を付加");
     });
   });
@@ -132,9 +136,9 @@ describe("markdown.ts E2E Tests", () => {
         largeDocument: 1000, // ms
         veryLargeDocument: 5000, // ms
       };
-      
+
       expect(performanceRequirements.smallDocument).toBeLessThan(
-        performanceRequirements.largeDocument
+        performanceRequirements.largeDocument,
       );
     });
   });
@@ -147,10 +151,10 @@ describe("markdown.ts E2E Tests", () => {
         "onerror=",
         "javascript:",
       ];
-      
-      dangerousPatterns.forEach(pattern => {
+
+      for (const pattern of dangerousPatterns) {
         expect(pattern).toBeTruthy();
-      });
+      }
     });
   });
 
@@ -161,7 +165,7 @@ describe("markdown.ts E2E Tests", () => {
         katakana: /[\u30a0-\u30ff]/,
         kanji: /[\u4e00-\u9faf]/,
       };
-      
+
       expect("あいうえお").toMatch(japanesePatterns.hiragana);
       expect("アイウエオ").toMatch(japanesePatterns.katakana);
       expect("漢字").toMatch(japanesePatterns.kanji);
@@ -175,7 +179,7 @@ describe("markdown.ts E2E Tests", () => {
         addsLineClass: true,
         handlesErrors: true,
       };
-      
+
       expect(onVisitLineRequirements.handlesEmptyChildren).toBe(true);
     });
 
@@ -184,8 +188,10 @@ describe("markdown.ts E2E Tests", () => {
         addsHighlightedClass: true,
         handlesErrors: true,
       };
-      
-      expect(onVisitHighlightedLineRequirements.addsHighlightedClass).toBe(true);
+
+      expect(onVisitHighlightedLineRequirements.addsHighlightedClass).toBe(
+        true,
+      );
     });
   });
 
@@ -202,7 +208,7 @@ describe("markdown.ts E2E Tests", () => {
           processedTree: "AST",
         },
       };
-      
+
       expect(dataStructure.output.html).toBe("string");
       expect(dataStructure.output.headings).toBe("Array<Heading>");
     });
@@ -219,10 +225,12 @@ describe("markdown.ts E2E Tests", () => {
         "rehypeHeadingExtractor",
         "rehypeStringify",
       ];
-      
-      const headingExtractorIndex = pluginOrder.indexOf("rehypeHeadingExtractor");
+
+      const headingExtractorIndex = pluginOrder.indexOf(
+        "rehypeHeadingExtractor",
+      );
       const stringifyIndex = pluginOrder.indexOf("rehypeStringify");
-      
+
       expect(headingExtractorIndex).toBeLessThan(stringifyIndex);
     });
   });
