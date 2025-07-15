@@ -1,6 +1,7 @@
 import { visit } from "unist-util-visit";
-import type { Plugin } from "unified";
+
 import type { Root, Paragraph, Link } from "mdast";
+import type { Plugin } from "unified";
 
 export const remarkLinkCard: Plugin<[], Root> = () => {
   return (tree) => {
@@ -18,6 +19,7 @@ export const remarkLinkCard: Plugin<[], Root> = () => {
         ) {
           // マーカーに置換
           if (parent && typeof index === "number") {
+            // eslint-disable-next-line security/detect-object-injection
             parent.children[index] = {
               type: "paragraph",
               children: [
