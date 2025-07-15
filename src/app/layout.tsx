@@ -1,6 +1,7 @@
 import { Quicksand, Nunito } from "next/font/google";
 
 import { Header } from "@/components/Header/Header";
+import { WebVitals } from "@/components/WebVitals";
 
 import type { Metadata } from "next";
 
@@ -41,6 +42,7 @@ export default function RootLayout({
           Skip to main content
         </a>
         <Header />
+        <WebVitals />
         <main id="main-content">
           {children}
         </main>
