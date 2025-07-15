@@ -1,5 +1,6 @@
-import React from "react";
 import { render } from "@testing-library/react";
+import React from "react";
+
 import { CodeBlockEnhancer } from "@/components/CodeBlockEnhancer";
 
 // Simple test to verify the component renders without errors
@@ -69,7 +70,7 @@ describe("CodeBlockEnhancer - Simple Tests", () => {
 
       // Execute callbacks and verify they don't throw
       expect(() => {
-        callbacks.forEach((cb) => cb());
+        for (const cb of callbacks) cb();
       }).not.toThrow();
 
       // Restore

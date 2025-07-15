@@ -1,6 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
+
 import LinkCard from "@/components/LinkCard";
 import { ogpCache } from "@/lib/ogp-cache";
+
 import type { OGPData } from "@/types/ogp";
 
 // Mock fetch
