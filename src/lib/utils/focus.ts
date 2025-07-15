@@ -8,9 +8,9 @@
  */
 export function trapFocus(element: HTMLElement) {
   const focusableElements = element.querySelectorAll<HTMLElement>(
-    'a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select, [tabindex]:not([tabindex="-1"])'
+    'a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select, [tabindex]:not([tabindex="-1"])',
   );
-  
+
   const firstFocusableElement = focusableElements[0];
   const lastFocusableElement = focusableElements[focusableElements.length - 1];
 
@@ -69,13 +69,15 @@ export function getFocusedElement(): HTMLElement | null {
 export function focusNext() {
   const focusableElements = Array.from(
     document.querySelectorAll<HTMLElement>(
-      'a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select, [tabindex]:not([tabindex="-1"])'
-    )
+      'a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select, [tabindex]:not([tabindex="-1"])',
+    ),
   );
 
-  const currentIndex = focusableElements.indexOf(document.activeElement as HTMLElement);
+  const currentIndex = focusableElements.indexOf(
+    document.activeElement as HTMLElement,
+  );
   const nextIndex = (currentIndex + 1) % focusableElements.length;
-  
+
   const nextElement = focusableElements.at(nextIndex);
   nextElement?.focus();
 }
@@ -86,13 +88,16 @@ export function focusNext() {
 export function focusPrevious() {
   const focusableElements = Array.from(
     document.querySelectorAll<HTMLElement>(
-      'a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select, [tabindex]:not([tabindex="-1"])'
-    )
+      'a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select, [tabindex]:not([tabindex="-1"])',
+    ),
   );
 
-  const currentIndex = focusableElements.indexOf(document.activeElement as HTMLElement);
-  const previousIndex = currentIndex <= 0 ? focusableElements.length - 1 : currentIndex - 1;
-  
+  const currentIndex = focusableElements.indexOf(
+    document.activeElement as HTMLElement,
+  );
+  const previousIndex =
+    currentIndex <= 0 ? focusableElements.length - 1 : currentIndex - 1;
+
   const previousElement = focusableElements.at(previousIndex);
   previousElement?.focus();
 }

@@ -81,14 +81,16 @@ export function Header() {
 
   // Memoize complex class names for better performance
   const headerClassName = useMemo(() => {
-    const baseClasses = "fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-700";
-    const visibilityClasses = isInitialMount 
-      ? "translate-y-0" 
-      : isVisible 
-        ? "translate-y-0" 
+    const baseClasses =
+      "fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-700";
+    const visibilityClasses = isInitialMount
+      ? "translate-y-0"
+      : isVisible
+        ? "translate-y-0"
         : "-translate-y-[calc(100%+1rem)]";
-    const animationClasses = animationStage === "expanded" ? CSS_CLASSES.BREATHE : "";
-    
+    const animationClasses =
+      animationStage === "expanded" ? CSS_CLASSES.BREATHE : "";
+
     return `${baseClasses} ${visibilityClasses} ${animationClasses}`;
   }, [isInitialMount, isVisible, animationStage]);
 
@@ -109,7 +111,7 @@ export function Header() {
         stageClass = CSS_CLASSES.EXPANDED;
         break;
     }
-    
+
     return `${baseClasses} ${stageClass}`;
   }, [animationStage]);
 
@@ -120,10 +122,7 @@ export function Header() {
 
   return (
     <>
-      <header
-        role="banner"
-        className={headerClassName}
-      >
+      <header role="banner" className={headerClassName}>
         <div className="relative">
           {/* Animation container */}
           <div className={animationContainerClassName}>

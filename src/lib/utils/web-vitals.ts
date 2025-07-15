@@ -30,7 +30,7 @@ function logMetric(metric: Metric) {
       `%c[${metric.name}] %c${metric.value.toFixed(2)}ms %c(Δ ${metric.delta.toFixed(2)}ms)`,
       `color: ${color}; font-weight: bold;`,
       `color: ${color};`,
-      "color: #666;"
+      "color: #666;",
     );
   }
 }
@@ -80,7 +80,10 @@ export async function initWebVitals() {
     onTTFB(reportWebVitals);
 
     if (process.env.NODE_ENV === "development") {
-      console.log("%c✅ Web Vitals tracking initialized", "color: #4CAF50; font-weight: bold;");
+      console.log(
+        "%c✅ Web Vitals tracking initialized",
+        "color: #4CAF50; font-weight: bold;",
+      );
     }
   } catch (error) {
     console.error("Failed to initialize Web Vitals:", error);
@@ -93,8 +96,10 @@ export async function initWebVitals() {
 export function getCurrentMetrics() {
   if (typeof window === "undefined" || !window.performance) return null;
 
-  const navigation = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming;
-  
+  const navigation = performance.getEntriesByType(
+    "navigation",
+  )[0] as PerformanceNavigationTiming;
+
   return {
     // Navigation timing
     dns: navigation.domainLookupEnd - navigation.domainLookupStart,
@@ -104,12 +109,37 @@ export function getCurrentMetrics() {
     domInteractive: navigation.domInteractive - navigation.fetchStart,
     domComplete: navigation.domComplete - navigation.fetchStart,
     loadComplete: navigation.loadEventEnd - navigation.fetchStart,
-    
+
     // Memory usage (if available)
-    memory: "memory" in performance && typeof (performance as Record<string, unknown>).memory === "object" ? {
-      usedJSHeapSize: Math.round(((performance as Record<string, unknown>).memory as Record<string, number>).usedJSHeapSize / 1048576),
-      totalJSHeapSize: Math.round(((performance as Record<string, unknown>).memory as Record<string, number>).totalJSHeapSize / 1048576),
-      limit: Math.round(((performance as Record<string, unknown>).memory as Record<string, number>).jsHeapSizeLimit / 1048576),
-    } : null,
+    memory:
+      "memory" in performance &&
+      typeof (performance as Record<string, unknown>).memory === "object"
+        ? {
+            usedJSHeapSize: Math.round(
+              (
+                (performance as Record<string, unknown>).memory as Record<
+                  string,
+                  number
+                >
+              ).usedJSHeapSize / 1048576,
+            ),
+            totalJSHeapSize: Math.round(
+              (
+                (performance as Record<string, unknown>).memory as Record<
+                  string,
+                  number
+                >
+              ).totalJSHeapSize / 1048576,
+            ),
+            limit: Math.round(
+              (
+                (performance as Record<string, unknown>).memory as Record<
+                  string,
+                  number
+                >
+              ).jsHeapSizeLimit / 1048576,
+            ),
+          }
+        : null,
   };
 }

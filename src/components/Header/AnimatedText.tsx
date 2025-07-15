@@ -18,7 +18,7 @@ function AnimatedTextComponent({ text, isHovered }: AnimatedTextProps) {
   // Performance warning for long text in development
   if (process.env.NODE_ENV === "development" && text.length > 20) {
     console.warn(
-      `AnimatedText: Text with ${text.length} characters may impact performance. Consider using a simpler animation for longer text.`
+      `AnimatedText: Text with ${text.length} characters may impact performance. Consider using a simpler animation for longer text.`,
     );
   }
 

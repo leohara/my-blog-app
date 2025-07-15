@@ -43,9 +43,7 @@ export default function RootLayout({
         </a>
         <Header />
         <WebVitals />
-        <main id="main-content">
-          {children}
-        </main>
+        <main id="main-content">{children}</main>
       </body>
     </html>
   );
