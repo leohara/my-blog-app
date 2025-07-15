@@ -50,7 +50,9 @@ console.warn = (...args) => {
       return;
     }
     // CopyButtonの空コンテンツwarningは無視
-    if (args[0].includes("[CopyButton] Attempting to copy empty code content")) {
+    if (
+      args[0].includes("[CopyButton] Attempting to copy empty code content")
+    ) {
       return;
     }
   }
