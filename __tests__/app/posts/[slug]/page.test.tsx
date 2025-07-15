@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+
 import PostPage, { generateMetadata } from "@/app/posts/[slug]/page";
 import { getBlogPostBySlug, getBlogPosts } from "@/lib/contentful";
 import { markdownToHtml } from "@/lib/markdown";
@@ -20,7 +21,15 @@ jest.mock("@/lib/markdown", () => ({
 }));
 
 jest.mock("@/components/Sidebar", () => ({
-  Sidebar: ({ posts, currentSlug, headings }: any) => (
+  Sidebar: ({
+    posts,
+    currentSlug,
+    headings,
+  }: {
+    posts: Array<{ id: string; slug: string; title: string }>;
+    currentSlug: string;
+    headings?: Array<{ id: string; level: number; text: string }>;
+  }) => (
     <div data-testid="sidebar">
       <div>Posts: {posts.length}</div>
       <div>Current: {currentSlug}</div>
@@ -51,8 +60,12 @@ const mockPost = {
     updatedAt: "2023-12-02T00:00:00Z",
     revision: 1,
     space: { sys: { id: "space1", type: "Link", linkType: "Space" } },
-    contentType: { sys: { id: "blogPost", type: "Link", linkType: "ContentType" } },
-    environment: { sys: { id: "master", type: "Link", linkType: "Environment" } },
+    contentType: {
+      sys: { id: "blogPost", type: "Link", linkType: "ContentType" },
+    },
+    environment: {
+      sys: { id: "master", type: "Link", linkType: "Environment" },
+    },
     locale: "ja",
     type: "Entry",
   },
@@ -68,9 +81,7 @@ const mockPosts = [
   },
 ];
 
-const mockHeadings = [
-  { id: "test-content", level: 1, text: "Test Content" },
-];
+const mockHeadings = [{ id: "test-content", level: 1, text: "Test Content" }];
 
 describe("PostPage", () => {
   beforeEach(() => {
@@ -86,10 +97,10 @@ describe("PostPage", () => {
   describe("データフェッチ", () => {
     it("正しいslugで記事を取得する", async () => {
       const params = Promise.resolve({ slug: "test-post" });
-      
+
       try {
         await PostPage({ params });
-      } catch (e) {
+      } catch {
         // Server Components は直接実行できないため、呼び出しの確認のみ
       }
 
@@ -98,10 +109,10 @@ describe("PostPage", () => {
 
     it("並列でデータフェッチを行う", async () => {
       const params = Promise.resolve({ slug: "test-post" });
-      
+
       try {
         await PostPage({ params });
-      } catch (e) {
+      } catch {
         // Server Components は直接実行できないため、呼び出しの確認のみ
       }
 
@@ -113,10 +124,10 @@ describe("PostPage", () => {
 
     it("マークダウンを正しく処理する", async () => {
       const params = Promise.resolve({ slug: "test-post" });
-      
+
       try {
         await PostPage({ params });
-      } catch (e) {
+      } catch {
         // Server Components は直接実行できないため、呼び出しの確認のみ
       }
 
@@ -127,21 +138,21 @@ describe("PostPage", () => {
   describe("エラーハンドリング", () => {
     it("記事が見つからない場合、notFoundを呼ぶ", async () => {
       (getBlogPostBySlug as jest.Mock).mockResolvedValue(null);
-      
+
       const params = Promise.resolve({ slug: "non-existent" });
-      
+
       await expect(PostPage({ params })).rejects.toThrow("NEXT_NOT_FOUND");
       expect(notFound).toHaveBeenCalled();
     });
 
     it("記事が見つからない場合、他の処理を実行しない", async () => {
       (getBlogPostBySlug as jest.Mock).mockResolvedValue(null);
-      
+
       const params = Promise.resolve({ slug: "non-existent" });
-      
+
       try {
         await PostPage({ params });
-      } catch (e) {
+      } catch {
         // expected
       }
 
@@ -154,12 +165,12 @@ describe("PostPage", () => {
       // このテストは、実際のコンポーネントの構造を確認するものです
       // Server Componentsの制限により、実際のレンダリングはテストできませんが、
       // 関数の呼び出しとデータの流れは確認できます
-      
+
       const params = Promise.resolve({ slug: "test-post" });
-      
+
       try {
         await PostPage({ params });
-      } catch (e) {
+      } catch {
         // Server Components は直接実行できないため
       }
 
@@ -178,7 +189,7 @@ describe("generateMetadata", () => {
 
   it("記事のメタデータを生成する", async () => {
     (getBlogPostBySlug as jest.Mock).mockResolvedValue(mockPost);
-    
+
     const params = Promise.resolve({ slug: "test-post" });
     const metadata = await generateMetadata({ params });
 
@@ -202,7 +213,7 @@ describe("generateMetadata", () => {
 
   it("記事が見つからない場合のメタデータを生成する", async () => {
     (getBlogPostBySlug as jest.Mock).mockResolvedValue(null);
-    
+
     const params = Promise.resolve({ slug: "non-existent" });
     const metadata = await generateMetadata({ params });
 
@@ -213,7 +224,7 @@ describe("generateMetadata", () => {
 
   it("正しいslugでデータを取得する", async () => {
     (getBlogPostBySlug as jest.Mock).mockResolvedValue(mockPost);
-    
+
     const params = Promise.resolve({ slug: "specific-slug" });
     await generateMetadata({ params });
 
@@ -226,7 +237,7 @@ describe("generateMetadata", () => {
       description: undefined,
     };
     (getBlogPostBySlug as jest.Mock).mockResolvedValue(postWithoutDescription);
-    
+
     const params = Promise.resolve({ slug: "test-post" });
     const metadata = await generateMetadata({ params });
 
@@ -284,7 +295,7 @@ describe("PostPage Component Specification", () => {
       month: "long",
       day: "numeric",
     });
-    
+
     expect(formatted).toBe("2023年12月1日");
   });
 
