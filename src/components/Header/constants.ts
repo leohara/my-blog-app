@@ -53,8 +53,8 @@ export const CSS_CLASSES = {
   // State classes
   HIDDEN: "w-0 h-0 opacity-0",
   CIRCLE: "w-12 h-12 opacity-100 duration-300",
-  EXPANDING: "w-[480px] h-16 opacity-100 duration-500",
-  EXPANDED: "w-[480px] h-16 opacity-100",
+  EXPANDING: "w-[320px] md:w-[480px] h-16 opacity-100 duration-500",
+  EXPANDED: "w-[320px] md:w-[480px] h-16 opacity-100",
 } as const;
 
 // Navigation items configuration
