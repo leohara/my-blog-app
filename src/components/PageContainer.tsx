@@ -18,7 +18,7 @@ interface PageContainerProps {
  */
 export default function PageContainer({ children, className = "" }: PageContainerProps) {
   return (
-    <div className={`min-h-screen max-w-4xl mx-auto p-8 pt-24 ${className}`}>
+    <div className={`min-h-screen max-w-4xl mx-auto p-8 pt-28 ${className}`}>
       {children}
     </div>
   );
