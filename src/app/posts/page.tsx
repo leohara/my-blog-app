@@ -4,7 +4,7 @@ import type { BlogPostSummary } from "@/types/blogPost";
 
 export default async function PostsPage() {
   let posts: BlogPostSummary[] = [];
-  
+
   try {
     posts = await getBlogPosts();
   } catch (error) {

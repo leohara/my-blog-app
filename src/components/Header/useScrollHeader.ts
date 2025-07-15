@@ -18,11 +18,11 @@ export function useScrollHeader() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       const scrollDiff = Math.abs(currentScrollY - lastScrollY.current);
-      
+
       // 10px以上スクロールした場合のみ反応（判定を緩く）
       if (scrollDiff > 10) {
         lastScrollY.current = currentScrollY;
-        
+
         // スクロール中は常に隠す
         isScrollingRef.current = true;
         setIsVisible(false);
@@ -39,13 +39,13 @@ export function useScrollHeader() {
         }, 2000);
       }
     };
-    
+
     const handleMouseMove = (e: MouseEvent) => {
       // 画面上部128pxの領域でマウスが動いたら表示
       if (e.clientY < 128 && !isVisibleRef.current) {
         setIsVisible(true);
-        isScrollingRef.current = false;  // スクロール状態をリセット
-        
+        isScrollingRef.current = false; // スクロール状態をリセット
+
         // タイマーもクリア
         if (scrollTimeoutRef.current) {
           clearTimeout(scrollTimeoutRef.current);
