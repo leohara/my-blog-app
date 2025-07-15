@@ -1,6 +1,8 @@
+import PageContainer from "@/components/PageContainer";
+
 export default function AboutPage() {
   return (
-    <div className="max-w-4xl mx-auto p-8 pt-24">
+    <PageContainer>
       <h1 className="text-3xl font-bold mb-8">About</h1>
       <div className="prose prose-lg">
         <p className="text-gray-600 mb-4">
@@ -15,6 +17,6 @@ export default function AboutPage() {
           newsletter.
         </p>
       </div>
-    </div>
+    </PageContainer>
   );
 }

@@ -44,6 +44,7 @@ describe("CopyButton", () => {
 
   describe("Copy functionality", () => {
     it("should copy code to clipboard when clicked", async () => {
+      // eslint-disable-next-line unicorn/no-useless-undefined
       mockWriteText.mockResolvedValueOnce(undefined);
 
       render(<CopyButton code={testCode} />);
@@ -56,6 +57,7 @@ describe("CopyButton", () => {
     });
 
     it("should show check icon after successful copy", async () => {
+      // eslint-disable-next-line unicorn/no-useless-undefined
       mockWriteText.mockResolvedValueOnce(undefined);
 
       render(<CopyButton code={testCode} />);
@@ -75,6 +77,7 @@ describe("CopyButton", () => {
 
     it("should revert to copy icon after 2 seconds", async () => {
       jest.useFakeTimers();
+      // eslint-disable-next-line unicorn/no-useless-undefined
       mockWriteText.mockResolvedValueOnce(undefined);
 
       render(<CopyButton code={testCode} />);
@@ -124,6 +127,7 @@ describe("CopyButton", () => {
 
   describe("Code variations", () => {
     it("should handle empty code", async () => {
+      // eslint-disable-next-line unicorn/no-useless-undefined
       mockWriteText.mockResolvedValueOnce(undefined);
 
       render(<CopyButton code="" />);
@@ -139,6 +143,7 @@ describe("CopyButton", () => {
   console.log("Hello, World!");
   return true;
 }`;
+      // eslint-disable-next-line unicorn/no-useless-undefined
       mockWriteText.mockResolvedValueOnce(undefined);
 
       render(<CopyButton code={multiLineCode} />);
@@ -151,6 +156,7 @@ describe("CopyButton", () => {
 
     it("should handle code with special characters", async () => {
       const specialCode = 'const regex = /[a-z]+/gi; // Test & "quotes"';
+      // eslint-disable-next-line unicorn/no-useless-undefined
       mockWriteText.mockResolvedValueOnce(undefined);
 
       render(<CopyButton code={specialCode} />);

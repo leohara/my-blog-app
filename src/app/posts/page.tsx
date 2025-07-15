@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import PageContainer from "@/components/PageContainer";
 import { getBlogPosts } from "@/lib/contentful";
 
 import type { BlogPostSummary } from "@/types/blogPost";
@@ -14,7 +15,7 @@ export default async function PostsPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-8 pt-24">
+    <PageContainer>
       <h1 className="text-3xl font-bold mb-8">Posts</h1>
       <div className="space-y-4">
         {posts.length === 0 ? (
@@ -35,6 +36,6 @@ export default async function PostsPage() {
           ))
         )}
       </div>
-    </div>
+    </PageContainer>
   );
 }

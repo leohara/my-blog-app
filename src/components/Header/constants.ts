@@ -67,6 +67,21 @@ export const NAV_ITEMS = [
 // Header display pages configuration
 export const HEADER_PAGES = ["/", "/posts", "/about"] as const;
 
+// Header spacing constants (in pixels)
+export const HEADER_SPACING = {
+  // Top offset from viewport (top-4 in Tailwind = 4 * 4px)
+  TOP_OFFSET: 16,
+  
+  // Content padding top (pt-24 in Tailwind = 24 * 4px)
+  CONTENT_PADDING_TOP: 96,
+  
+  // Total space occupied by header (TOP_OFFSET + HEIGHT)
+  TOTAL_HEADER_SPACE: 80,
+  
+  // Gap between header bottom and content start
+  CONTENT_GAP: 16,
+} as const;
+
 // Export all constants as a single object for convenience
 export const HEADER_CONSTANTS = {
   ANIMATION_TIMING,
@@ -76,4 +91,5 @@ export const HEADER_CONSTANTS = {
   CSS_CLASSES,
   NAV_ITEMS,
   HEADER_PAGES,
+  HEADER_SPACING,
 } as const;

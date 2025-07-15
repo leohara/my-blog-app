@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { CodeBlockEnhancer } from "@/components/CodeBlockEnhancer";
 import LinkCardReplacer from "@/components/LinkCardReplacer";
+import PageContainer from "@/components/PageContainer";
 import { getBlogPostBySlug } from "@/lib/contentful";
 import { markdownToHtml } from "@/lib/markdown";
 
@@ -23,7 +24,7 @@ export default async function PostPage({ params }: Props) {
   const contentHtml = await markdownToHtml(post.content);
 
   return (
-    <div className="max-w-4xl mx-auto p-8 pt-24">
+    <PageContainer>
       <Link
         href="/"
         className="text-blue-600 hover:underline mb-4 inline-block"
@@ -55,6 +56,6 @@ export default async function PostPage({ params }: Props) {
       </article>
       <LinkCardReplacer />
       <CodeBlockEnhancer />
-    </div>
+    </PageContainer>
   );
 }

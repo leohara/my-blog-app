@@ -1,6 +1,8 @@
+import PageContainer from "@/components/PageContainer";
+
 export default function Home() {
   return (
-    <div className="max-w-4xl mx-auto p-8 pt-24">
+    <PageContainer>
       <h1 className="text-4xl font-bold mb-6">Welcome to My Blog</h1>
       <p className="text-xl text-gray-600 mb-8">
         A place to share thoughts, ideas, and experiences.
@@ -13,6 +15,6 @@ export default function Home() {
           </p>
         </section>
       </div>
-    </div>
+    </PageContainer>
   );
 }
