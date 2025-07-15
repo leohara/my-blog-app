@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useScrollHeader } from "./useScrollHeader";
@@ -108,14 +109,18 @@ export function Header() {
                 onMouseLeave={() => setHoveredItem(null)}
               >
                 <div className={`
-                  bg-gradient-to-br from-pink-200 to-purple-200 rounded-2xl flex items-center justify-center transition-all duration-300
+                  relative overflow-hidden rounded-2xl transition-all duration-300
                   ${animationStage === 'circle' ? 'w-8 h-8' : 'w-10 h-10'}
                   ${hoveredItem === 'logo' ? 'shadow-lg shadow-pink-200/50' : ''}
                 `}>
-                  <span className={`
-                    text-[#3E2723] font-bold transition-all duration-300
-                    ${animationStage === 'circle' ? 'text-base' : 'text-xl'}
-                  `}>B</span>
+                  <Image
+                    src="/icon.png"
+                    alt="Logo"
+                    width={40}
+                    height={40}
+                    className="w-full h-full object-cover"
+                    priority
+                  />
                 </div>
               </Link>
 
