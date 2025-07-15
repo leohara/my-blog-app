@@ -58,10 +58,6 @@ export function Sidebar({ posts, currentSlug, headings }: SidebarProps) {
   // 見出しがある場合は目次を表示、ない場合は記事リストを表示
   const showTableOfContents = headings && headings.length > 0;
 
-  // デバッグ用ログ
-  console.log("[Sidebar] headings:", headings?.length || 0);
-  console.log("[Sidebar] showTableOfContents:", showTableOfContents);
-
   return (
     <aside className="hidden lg:block w-[200px] flex-shrink-0">
       <div className="sticky top-0 h-screen overflow-y-auto py-12 px-6">
