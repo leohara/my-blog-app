@@ -17,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "npm"
 
       - name: Install dependencies
@@ -33,8 +33,7 @@ jobs:
 
       - name: Run Lighthouse CI
         run: |
-          npm install -g @lhci/cli@0.12.x
-          lhci autorun
+          npx lhci autorun --config=./lighthouse.config.js
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
@@ -57,11 +56,23 @@ jobs:
             const lhciDir = '.lighthouseci';
             if (fs.existsSync(lhciDir)) {
               const files = fs.readdirSync(lhciDir);
-              const manifestFile = files.find(f => f.startsWith('manifest') && f.endsWith('.json'));
+              const jsonFiles = files.filter(f => f.startsWith('lhr-') && f.endsWith('.json'));
               
-              if (manifestFile) {
-                const manifestPath = path.join(lhciDir, manifestFile);
-                const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+              if (jsonFiles.length > 0) {
+                let results = [];
+                
+                // Read each lighthouse result file
+                for (const file of jsonFiles) {
+                  const filePath = path.join(lhciDir, file);
+                  const result = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+                  results.push({
+                    url: result.finalUrl,
+                    performance: Math.round(result.categories.performance.score * 100),
+                    accessibility: Math.round(result.categories.accessibility.score * 100),
+                    bestPractices: Math.round(result.categories['best-practices'].score * 100),
+                    seo: Math.round(result.categories.seo.score * 100)
+                  });
+                }
                 
                 // Create comment with results
                 const comment = `## 🚦 Lighthouse CI Results
@@ -70,12 +81,11 @@ jobs:
                 
                 | URL | Performance | Accessibility | Best Practices | SEO |
                 |-----|-------------|---------------|----------------|-----|
-                ${manifest.map(result => {
-                  const scores = result.summary;
-                  return `| ${result.url} | ${Math.round(scores.performance * 100)} | ${Math.round(scores.accessibility * 100)} | ${Math.round(scores['best-practices'] * 100)} | ${Math.round(scores.seo * 100)} |`;
+                ${results.map(result => {
+                  return `| ${result.url} | ${result.performance}% | ${result.accessibility}% | ${result.bestPractices}% | ${result.seo}% |`;
                 }).join('\n')}
                 
-                [View full report](${manifest[0].url})`;
+                📊 Results based on Lighthouse CI analysis`;
                 
                 github.rest.issues.createComment({
                   issue_number: context.issue.number,
