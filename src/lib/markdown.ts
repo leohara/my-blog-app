@@ -5,7 +5,16 @@ import remarkGfm from "remark-gfm";
 import remarkRehype from "remark-rehype";
 
 import { rehypeCodeCopy } from "./rehype-code-copy";
+import { rehypeHeadingExtractor } from "./rehype-heading-extractor";
 import { remarkLinkCard } from "./remark-link-card";
+
+import type { Heading } from "@/types/heading";
+
+// markdownToHtml関数の戻り値の型定義
+export interface MarkdownResult {
+  html: string;
+  headings: Heading[];
+}
 
 // テーマ設定の型定義（rehype-pretty-code の型に合わせて調整）
 interface ThemeConfig {
@@ -54,9 +63,11 @@ function getThemeConfig(): ThemeConfig {
 /**
  * マークダウンテキストをHTMLに変換する
  * @param markdown - マークダウン形式のテキスト
- * @returns HTML文字列
+ * @returns HTML文字列と見出し情報を含むオブジェクト
  */
-export async function markdownToHtml(markdown: string): Promise<string> {
+export async function markdownToHtml(
+  markdown: string,
+): Promise<MarkdownResult> {
   try {
     console.log(
       "[markdownToHtml] Processing markdown with length:",
@@ -128,6 +139,7 @@ export async function markdownToHtml(markdown: string): Promise<string> {
         },
       } as any) // eslint-disable-line @typescript-eslint/no-explicit-any -- シンタックスハイライト
       .use(rehypeCodeCopy) // コードコピー機能を追加
+      .use(rehypeHeadingExtractor) // 見出し抽出プラグインを最後近くに配置
       .use(rehypeStringify) // HTMLへの変換
       .process(markdown);
 
@@ -146,13 +158,24 @@ export async function markdownToHtml(markdown: string): Promise<string> {
       // マーカー変換に失敗してもHTMLは返す
     }
 
+    // 見出し情報を取得（複数の取得方法を試行）
+    const headingsFromResultData =
+      ((result.data as Record<string, unknown>)?.headings as Heading[]) || [];
+    const headingsFromFileData =
+      ((result.data as Record<string, unknown>)?.headings as Heading[]) || [];
+    const headings: Heading[] =
+      headingsFromResultData.length > 0
+        ? headingsFromResultData
+        : headingsFromFileData;
+
     console.log("[markdownToHtml] Final HTML length:", html.length);
     console.log(
       "[markdownToHtml] Contains code-block-wrapper:",
       html.includes("code-block-wrapper"),
     );
+    console.log("[markdownToHtml] Extracted headings:", headings.length);
 
-    return html;
+    return { html, headings };
   } catch (error) {
     console.error("[markdownToHtml] Processing failed:", error);
 
@@ -166,6 +189,9 @@ export async function markdownToHtml(markdown: string): Promise<string> {
       .replace(/\n/g, "<br>");
 
     console.log("[markdownToHtml] Returning fallback HTML");
-    return `<div class="markdown-fallback"><pre>${fallbackHtml}</pre></div>`;
+    return {
+      html: `<div class="markdown-fallback"><pre>${fallbackHtml}</pre></div>`,
+      headings: [],
+    };
   }
 }
