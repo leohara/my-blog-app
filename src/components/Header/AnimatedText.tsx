@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, memo } from "react";
 
 import { HEADER_CONSTANTS } from "./constants";
 
@@ -11,9 +11,16 @@ interface AnimatedTextProps {
   isHovered: boolean;
 }
 
-export function AnimatedText({ text, isHovered }: AnimatedTextProps) {
+function AnimatedTextComponent({ text, isHovered }: AnimatedTextProps) {
   // Memoize character splitting to avoid recalculation on every render
   const characters = useMemo(() => text.split(""), [text]);
+
+  // Performance warning for long text in development
+  if (process.env.NODE_ENV === "development" && text.length > 20) {
+    console.warn(
+      `AnimatedText: Text with ${text.length} characters may impact performance. Consider using a simpler animation for longer text.`
+    );
+  }
 
   return (
     <span className="relative inline-block">
@@ -36,3 +43,6 @@ export function AnimatedText({ text, isHovered }: AnimatedTextProps) {
     </span>
   );
 }
+
+// Memoize component to prevent unnecessary re-renders
+export const AnimatedText = memo(AnimatedTextComponent);
