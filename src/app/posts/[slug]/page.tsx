@@ -24,9 +24,6 @@ export default async function PostPage({ params }: Props) {
   // マークダウンをHTMLに変換
   const { html: contentHtml, headings } = await markdownToHtml(post.content);
 
-  console.log("[PostPage] Post title:", post.title);
-  console.log("[PostPage] Headings received:", headings.length);
-
   return (
     <div className="min-h-screen pt-20">
       <div className="mx-auto max-w-7xl">
