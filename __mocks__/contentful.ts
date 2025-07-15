@@ -8,6 +8,13 @@ export const createClient = jest.fn(() => ({
   getEntries: mockGetEntries,
 }));
 
-export default {
+// named export for contentful module
+export const contentful = {
   createClient,
 };
+
+const contentfulExport = {
+  createClient,
+};
+
+export default contentfulExport;
