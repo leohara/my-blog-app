@@ -65,7 +65,7 @@ export function Sidebar({ posts, currentSlug, headings }: SidebarProps) {
   const showTableOfContents = headings && headings.length > 0;
 
   return (
-    <aside className="hidden lg:block w-[200px] flex-shrink-0">
+    <aside className="!hidden lg:!block w-[200px] flex-shrink-0">
       <div className="sticky top-0 h-screen overflow-y-auto py-12 px-6">
         <nav className="space-y-8">
           <div>
