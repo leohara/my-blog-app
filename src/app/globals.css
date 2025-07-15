@@ -10,19 +10,20 @@
   --color-foreground: var(--foreground);
   --font-quicksand: var(--font-quicksand);
   --font-nunito: var(--font-nunito);
+  --font-lora: var(--font-lora);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #000000;
+    --foreground: #ffffff;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 /* Header Animation Styles */
@@ -136,28 +137,37 @@ body {
 
 /* マークダウンコンテンツのスタイリング */
 .prose-content {
-  line-height: 1.8;
+  font-family: var(--font-lora), Georgia, "Times New Roman", serif;
+  font-size: 1.125rem;
+  line-height: 1.9;
+  color: #1a1a1a;
 }
 
 .prose-content h1 {
-  font-size: 2.25rem;
-  font-weight: 800;
-  margin-top: 2rem;
-  margin-bottom: 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.3;
 }
 
 .prose-content h2 {
-  font-size: 1.875rem;
-  font-weight: 700;
-  margin-top: 1.75rem;
-  margin-bottom: 0.75rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.4;
 }
 
 .prose-content h3 {
-  font-size: 1.5rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1.25rem;
   font-weight: 600;
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
 }
 
 .prose-content h4 {
@@ -169,7 +179,7 @@ body {
 
 .prose-content p {
   margin-top: 0;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.75rem;
 }
 
 .prose-content ul,
@@ -297,22 +307,25 @@ body {
 }
 
 .prose-content blockquote {
-  border-left: 4px solid #e5e7eb;
-  padding-left: 1rem;
+  border-left: 3px solid #000;
+  padding-left: 1.5rem;
   margin-left: 0;
   margin-right: 0;
-  margin-bottom: 1.25rem;
-  color: #6b7280;
+  margin-bottom: 1.75rem;
+  margin-top: 1.75rem;
+  color: #1a1a1a;
   font-style: italic;
 }
 
 .prose-content a {
-  color: #2563eb;
-  text-decoration: underline;
+  color: #0066cc;
+  text-decoration: none;
+  border-bottom: 1px solid #0066cc;
 }
 
 .prose-content a:hover {
-  color: #1d4ed8;
+  color: #0052a3;
+  border-bottom-color: #0052a3;
 }
 
 .prose-content img {
@@ -350,13 +363,17 @@ body {
 
 /* ダークモード対応 */
 @media (prefers-color-scheme: dark) {
+  .prose-content {
+    color: #ffffff;
+  }
+  
   .prose-content code {
     background-color: rgba(255, 255, 255, 0.1);
   }
   
   /* Dark mode syntax highlighting */
   .prose-content [data-rehype-pretty-code-figure] pre {
-    background-color: #282c34 !important;
+    background-color: #1a1a1a !important;
   }
   
   .prose-content [data-rehype-pretty-code-figure] [data-highlighted-line] {
@@ -365,33 +382,35 @@ body {
   }
   
   .prose-content [data-line-numbers] [data-line]::before {
-    color: #4b5563;
+    color: #666666;
   }
   
   .prose-content blockquote {
-    border-left-color: #4b5563;
-    color: #9ca3af;
+    border-left-color: #ffffff;
+    color: #ffffff;
   }
   
   .prose-content a {
-    color: #60a5fa;
+    color: #ffffff;
+    border-bottom-color: #ffffff;
   }
   
   .prose-content a:hover {
-    color: #93bbfc;
+    color: #cccccc;
+    border-bottom-color: #cccccc;
   }
   
   .prose-content hr {
-    border-top-color: #374151;
+    border-top-color: #333333;
   }
   
   .prose-content th,
   .prose-content td {
-    border-color: #374151;
+    border-color: #333333;
   }
   
   .prose-content th {
-    background-color: #1f2937;
+    background-color: #1a1a1a;
   }
 }
 
@@ -566,8 +585,8 @@ body {
 /* Dark mode support for link cards */
 @media (prefers-color-scheme: dark) {
   .link-card {
-    border-color: #374151;
-    background-color: #1f2937;
+    border-color: #333333;
+    background-color: #000000;
   }
 
   .link-card:hover {
@@ -575,14 +594,14 @@ body {
   }
 
   .link-card-description {
-    color: #9ca3af;
+    color: #cccccc;
   }
 
   .link-card-url {
-    color: #6b7280;
+    color: #999999;
   }
 
   .link-card-image-fallback {
-    background-color: #374151;
+    background-color: #1a1a1a;
   }
 }
