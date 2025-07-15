@@ -1,8 +1,9 @@
 /**
  * @jest-environment node
  */
-import { GET } from "@/app/api/ogp/route";
 import { NextRequest } from "next/server";
+
+import { GET } from "@/app/api/ogp/route";
 
 // Mock fetch globally
 global.fetch = jest.fn();
@@ -65,7 +66,7 @@ describe("/api/ogp", () => {
       "https://0.0.0.0/test",
     ];
 
-    blockedUrls.forEach((url) => {
+    for (const url of blockedUrls) {
       it(`should block ${url}`, async () => {
         const request = new NextRequest(
           `http://localhost:3000/api/ogp?url=${encodeURIComponent(url)}`,
@@ -76,7 +77,7 @@ describe("/api/ogp", () => {
         expect(response.status).toBe(400);
         expect(data.error).toBe("Invalid URL");
       });
-    });
+    }
 
     it("should block IPv6 localhost", async () => {
       const request = new NextRequest(

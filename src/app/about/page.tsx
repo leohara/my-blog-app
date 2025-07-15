@@ -1,0 +1,22 @@
+import PageContainer from "@/components/PageContainer";
+
+export default function AboutPage() {
+  return (
+    <PageContainer>
+      <h1 className="text-3xl font-bold mb-8">About</h1>
+      <div className="prose prose-lg">
+        <p className="text-gray-600 mb-4">
+          Welcome to my personal blog where I share my thoughts and experiences.
+        </p>
+        <p className="text-gray-600 mb-4">
+          This blog covers various topics including technology, life
+          experiences, and creative projects.
+        </p>
+        <p className="text-gray-600">
+          Feel free to explore the articles and connect with me through the
+          newsletter.
+        </p>
+      </div>
+    </PageContainer>
+  );
+}

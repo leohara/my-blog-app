@@ -1,10 +1,11 @@
+import rehypePrettyCode from "rehype-pretty-code";
+import rehypeStringify from "rehype-stringify";
 import { remark } from "remark";
 import remarkGfm from "remark-gfm";
 import remarkRehype from "remark-rehype";
-import rehypePrettyCode from "rehype-pretty-code";
-import rehypeStringify from "rehype-stringify";
-import { remarkLinkCard } from "./remark-link-card";
+
 import { rehypeCodeCopy } from "./rehype-code-copy";
+import { remarkLinkCard } from "./remark-link-card";
 
 // テーマ設定の型定義（rehype-pretty-code の型に合わせて調整）
 interface ThemeConfig {
@@ -19,8 +20,8 @@ const DEFAULT_THEME_CONFIG: ThemeConfig = {
 };
 
 // 将来的なダイナミックテーマ切り替えの準備 (現在は未使用だが将来の実装用)
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const THEME_CONFIGS = {
+
+const _THEME_CONFIGS = {
   dark: {
     theme: "one-dark-pro",
     keepBackground: true,

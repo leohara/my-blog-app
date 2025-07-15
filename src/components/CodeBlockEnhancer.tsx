@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { createRoot, Root } from "react-dom/client";
+
 import { CopyButton } from "./CopyButton";
 
 export function CodeBlockEnhancer() {
@@ -21,16 +22,16 @@ export function CodeBlockEnhancer() {
         // Debounce the processing with 100ms delay as suggested in review
         timeoutId = setTimeout(() => {
           try {
-            entries.forEach((entry) => {
+            for (const entry of entries) {
               if (entry.isIntersecting) {
                 const target = entry.target as HTMLElement;
-                if (!target) return;
+                if (!target) continue;
 
                 const codeBlocks = target.querySelectorAll(
                   ".code-block-wrapper",
                 );
 
-                codeBlocks.forEach((block) => {
+                for (const block of codeBlocks) {
                   if (
                     block instanceof HTMLElement &&
                     !processedBlocks.current.has(block)
@@ -45,7 +46,7 @@ export function CodeBlockEnhancer() {
                           "[CodeBlockEnhancer] Invalid code content for block:",
                           block,
                         );
-                        return;
+                        continue;
                       }
 
                       // Create a container for the copy button
@@ -86,9 +87,9 @@ export function CodeBlockEnhancer() {
                       processedBlocks.current.delete(block);
                     }
                   }
-                });
+                }
               }
-            });
+            }
           } catch (processingError) {
             console.error(
               "[CodeBlockEnhancer] Error during entries processing:",
@@ -124,7 +125,7 @@ export function CodeBlockEnhancer() {
         // Use queueMicrotask to unmount roots asynchronously
         // This prevents race conditions with React's rendering
         queueMicrotask(() => {
-          currentRoots.forEach((root, block) => {
+          for (const [block, root] of currentRoots.entries()) {
             try {
               root.unmount();
             } catch (unmountError) {
@@ -134,7 +135,7 @@ export function CodeBlockEnhancer() {
                 unmountError,
               );
             }
-          });
+          }
           currentRoots.clear();
         });
       } catch (cleanupError) {

@@ -7,8 +7,8 @@ interface CopyButtonProps {
 }
 
 // TypeScript type guard for validating props (currently unused but prepared for future use)
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function validateCopyButtonProps(props: unknown): props is CopyButtonProps {
+
+function _validateCopyButtonProps(props: unknown): props is CopyButtonProps {
   return (
     props !== null &&
     typeof props === "object" &&

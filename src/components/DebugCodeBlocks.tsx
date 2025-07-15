@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
+
 import { CopyButton } from "./CopyButton";
 
 export function DebugCodeBlocks() {
@@ -25,7 +26,7 @@ export function DebugCodeBlocks() {
     );
 
     // Check each code block
-    codeBlocks.forEach((block, index) => {
+    for (const [index, block] of codeBlocks.entries()) {
       const hasDataContent = !!(block as HTMLElement).dataset.codeContent;
       const dataContentLength =
         (block as HTMLElement).dataset.codeContent?.length || 0;
@@ -35,7 +36,7 @@ export function DebugCodeBlocks() {
       logs.push(
         `Block ${index + 1}: data-content=${hasDataContent} (${dataContentLength} chars), has-figure=${hasFigure}, has-button=${hasCopyButton}`,
       );
-    });
+    }
 
     // Check if any unwrapped figures exist
     const unwrappedFigures = Array.from(figures).filter(
@@ -52,7 +53,7 @@ export function DebugCodeBlocks() {
 
     const codeBlocks = document.querySelectorAll(".code-block-wrapper");
 
-    codeBlocks.forEach((block, index) => {
+    for (const [index, block] of codeBlocks.entries()) {
       const htmlBlock = block as HTMLElement;
       const figure = htmlBlock.querySelector("figure");
       const existingButton = htmlBlock.querySelector(".copy-button-container");
@@ -69,7 +70,7 @@ export function DebugCodeBlocks() {
         buttonsAdded++;
         logs.push(`Added button to block ${index + 1}`);
       }
-    });
+    }
 
     logs.push(`Total buttons added: ${buttonsAdded}`);
     setDebugInfo((prev) => [...prev, ...logs]);

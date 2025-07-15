@@ -1,6 +1,7 @@
-import type { Root, Element } from "hast";
-import { visit } from "unist-util-visit";
 import { toString } from "hast-util-to-string";
+import { visit } from "unist-util-visit";
+
+import type { Root, Element } from "hast";
 
 /**
  * Rehype plugin to add copy functionality to code blocks
@@ -53,6 +54,7 @@ export function rehypeCodeCopy() {
 
             // Replace the original node with the wrapped version
             if (parent && typeof index === "number") {
+              // eslint-disable-next-line security/detect-object-injection
               parent.children[index] = wrapper;
             }
           }

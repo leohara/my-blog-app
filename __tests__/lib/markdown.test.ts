@@ -10,7 +10,8 @@ jest.mock("@/lib/markdown", () => ({
 
     // Handle code blocks
     if (html.includes("```")) {
-      const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
+      // eslint-disable-next-line security/detect-unsafe-regex
+      const codeBlockRegex = /```(\w+)?\n([\S\s]*?)```/g;
       html = html.replace(codeBlockRegex, (match, lang, code) => {
         const trimmedCode = code.trim();
         return `<div class="code-block-wrapper" data-code-content="${trimmedCode.replace(/"/g, "&quot;")}"><figure data-rehype-pretty-code-fragment><pre data-language="${lang || ""}" data-theme="default"><code class="language-${lang || ""}">${trimmedCode}</code></pre></figure></div>`;

@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { OGPData } from "@/types/ogp";
+
 import { decodeHtmlEntities } from "@/lib/html-entities";
 import { OGP_FETCH_TIMEOUT } from "@/lib/link-card-constants";
+
+import type { OGPData } from "@/types/ogp";
 
 // URLの安全性をチェック
 function isValidUrl(urlString: string): boolean {

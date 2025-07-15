@@ -1,4 +1,5 @@
 import { ogpCache } from "@/lib/ogp-cache";
+
 import type { OGPData } from "@/types/ogp";
 
 describe("OGPCacheManager", () => {

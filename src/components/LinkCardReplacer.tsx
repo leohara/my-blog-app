@@ -2,8 +2,10 @@
 
 import { useEffect, useRef, useCallback } from "react";
 import { createRoot, Root } from "react-dom/client";
-import LinkCard from "./LinkCard";
+
 import { INTERSECTION_ROOT_MARGIN } from "@/lib/link-card-constants";
+
+import LinkCard from "./LinkCard";
 
 export default function LinkCardReplacer() {
   const rootsRef = useRef<Map<Element, Root>>(new Map());
@@ -33,13 +35,13 @@ export default function LinkCardReplacer() {
     // IntersectionObserverを使用して、ビューポートに入った要素のみを処理
     observerRef.current = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
+        for (const entry of entries) {
           if (entry.isIntersecting) {
             mountLinkCard(entry.target);
             // 一度処理したら監視を解除
             observerRef.current?.unobserve(entry.target);
           }
-        });
+        }
       },
       {
         rootMargin: INTERSECTION_ROOT_MARGIN, // ビューポートの100px手前から読み込み開始
@@ -49,9 +51,9 @@ export default function LinkCardReplacer() {
     // DOMが準備されたら要素を探して監視開始
     const timeoutId = setTimeout(() => {
       const linkCardElements = document.querySelectorAll("[data-link-card]");
-      linkCardElements.forEach((element) => {
+      for (const element of linkCardElements) {
         observerRef.current?.observe(element);
-      });
+      }
     }, 0);
 
     // クリーンアップ関数
@@ -63,14 +65,14 @@ export default function LinkCardReplacer() {
 
       // 非同期でunmountを実行してReactのレンダリングと競合しないようにする
       queueMicrotask(() => {
-        rootsMap.forEach((root) => {
+        for (const [, root] of rootsMap) {
           try {
             root.unmount();
           } catch (error) {
             // unmountエラーを無視
             console.warn("Failed to unmount root:", error);
           }
-        });
+        }
         rootsMap.clear();
       });
     };
