@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 import { AnimatedText } from "./AnimatedText";
 import { HEADER_CONSTANTS } from "./constants";
@@ -22,15 +22,15 @@ export function Header() {
   >("hidden");
   const [isInitialMount, setIsInitialMount] = useState(true);
 
-  // 現在のページがヘッダー表示対象かチェック
+  // Check if current page should display header
   const shouldShowHeader =
     HEADER_PAGES.includes(pathname as (typeof HEADER_PAGES)[number]) ||
     pathname.startsWith("/posts/");
 
-  // ページ遷移時またはマウント時のアニメーション
+  // Animation on page transition or mount
   useEffect(() => {
     if (shouldShowHeader) {
-      // アニメーションの段階的実行
+      // Execute animation in stages
       setAnimationStage("hidden");
 
       const timer1 = setTimeout(() => {
@@ -43,7 +43,7 @@ export function Header() {
 
       const timer3 = setTimeout(() => {
         setAnimationStage("expanded");
-        // 初回マウントフラグをオフにする
+        // Turn off initial mount flag
         setIsInitialMount(false);
       }, ANIMATION_TIMING.STAGE_EXPANDED_DELAY);
 
@@ -79,7 +79,41 @@ export function Header() {
     };
   }, [isMobileMenuOpen]);
 
-  // ヘッダーを表示しないページでは何も返さない
+  // Memoize complex class names for better performance
+  const headerClassName = useMemo(() => {
+    const baseClasses = "fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-700";
+    const visibilityClasses = isInitialMount 
+      ? "translate-y-0" 
+      : isVisible 
+        ? "translate-y-0" 
+        : "-translate-y-[calc(100%+1rem)]";
+    const animationClasses = animationStage === "expanded" ? CSS_CLASSES.BREATHE : "";
+    
+    return `${baseClasses} ${visibilityClasses} ${animationClasses}`;
+  }, [isInitialMount, isVisible, animationStage]);
+
+  const animationContainerClassName = useMemo(() => {
+    const baseClasses = "relative transition-all ease-out";
+    let stageClass = "";
+    switch (animationStage) {
+      case "hidden":
+        stageClass = CSS_CLASSES.HIDDEN;
+        break;
+      case "circle":
+        stageClass = CSS_CLASSES.CIRCLE;
+        break;
+      case "expanding":
+        stageClass = CSS_CLASSES.EXPANDING;
+        break;
+      case "expanded":
+        stageClass = CSS_CLASSES.EXPANDED;
+        break;
+    }
+    
+    return `${baseClasses} ${stageClass}`;
+  }, [animationStage]);
+
+  // Return nothing for pages that shouldn't display header
   if (!shouldShowHeader) {
     return null;
   }
@@ -88,25 +122,11 @@ export function Header() {
     <>
       <header
         role="banner"
-        className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-700 ${
-          isInitialMount
-            ? "translate-y-0"
-            : isVisible
-              ? "translate-y-0"
-              : "-translate-y-[calc(100%+1rem)]"
-        } ${animationStage === "expanded" ? CSS_CLASSES.BREATHE : ""}`}
+        className={headerClassName}
       >
         <div className="relative">
-          {/* アニメーションコンテナ */}
-          <div
-            className={`
-              relative transition-all ease-out
-              ${animationStage === "hidden" ? CSS_CLASSES.HIDDEN : ""}
-              ${animationStage === "circle" ? CSS_CLASSES.CIRCLE : ""}
-              ${animationStage === "expanding" ? CSS_CLASSES.EXPANDING : ""}
-              ${animationStage === "expanded" ? CSS_CLASSES.EXPANDED : ""}
-            `}
-          >
+          {/* Animation container */}
+          <div className={animationContainerClassName}>
             {/* Background with soft cream color */}
             <div
               className={`
@@ -260,6 +280,7 @@ export function Header() {
                     isMobileMenuOpen ? "Close mobile menu" : "Open mobile menu"
                   }
                   aria-expanded={isMobileMenuOpen}
+                  aria-controls="mobile-menu"
                   className={`
                     md:hidden px-3 py-1.5 text-[#3E2723] text-sm font-medium font-nunito
                     transition-all duration-500 ease-out rounded-full
@@ -292,6 +313,7 @@ export function Header() {
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div
+          id="mobile-menu"
           className="fixed inset-0 bg-[#FAF9F6]/95 backdrop-blur-xl z-40 md:hidden"
           role="dialog"
           aria-modal="true"

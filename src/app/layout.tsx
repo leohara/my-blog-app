@@ -33,8 +33,17 @@ export default function RootLayout({
       <body
         className={`${quicksand.variable} ${nunito.variable} antialiased bg-[#FAF9F6]`}
       >
+        {/* Skip navigation link for accessibility */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[60] focus:px-4 focus:py-2 focus:bg-white focus:text-black focus:rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+        >
+          Skip to main content
+        </a>
         <Header />
-        {children}
+        <main id="main-content">
+          {children}
+        </main>
       </body>
     </html>
   );
