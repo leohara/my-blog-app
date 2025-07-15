@@ -5,7 +5,16 @@ import remarkGfm from "remark-gfm";
 import remarkRehype from "remark-rehype";
 
 import { rehypeCodeCopy } from "./rehype-code-copy";
+import { rehypeHeadingExtractor } from "./rehype-heading-extractor";
 import { remarkLinkCard } from "./remark-link-card";
+
+import type { Heading } from "@/types/heading";
+
+// markdownToHtml関数の戻り値の型定義
+export interface MarkdownResult {
+  html: string;
+  headings: Heading[];
+}
 
 // テーマ設定の型定義（rehype-pretty-code の型に合わせて調整）
 interface ThemeConfig {
@@ -54,15 +63,12 @@ function getThemeConfig(): ThemeConfig {
 /**
  * マークダウンテキストをHTMLに変換する
  * @param markdown - マークダウン形式のテキスト
- * @returns HTML文字列
+ * @returns HTML文字列と見出し情報を含むオブジェクト
  */
-export async function markdownToHtml(markdown: string): Promise<string> {
+export async function markdownToHtml(
+  markdown: string,
+): Promise<MarkdownResult> {
   try {
-    console.log(
-      "[markdownToHtml] Processing markdown with length:",
-      markdown.length,
-    );
-
     // 入力検証
     if (typeof markdown !== "string") {
       throw new Error("Input must be a string");
@@ -94,7 +100,8 @@ export async function markdownToHtml(markdown: string): Promise<string> {
               nodeElement.children = [{ type: "text", value: " " }];
             }
             nodeElement.properties =
-              nodeElement.properties || ({ className: [] } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+              nodeElement.properties ||
+              ({ className: [] } as { className: string[] });
             nodeElement.properties.className =
               nodeElement.properties.className || [];
             if (!Array.isArray(nodeElement.properties.className)) {
@@ -112,7 +119,8 @@ export async function markdownToHtml(markdown: string): Promise<string> {
               properties: { className: string[] };
             };
             nodeElement.properties =
-              nodeElement.properties || ({ className: [] } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+              nodeElement.properties ||
+              ({ className: [] } as { className: string[] });
             nodeElement.properties.className =
               nodeElement.properties.className || [];
             if (!Array.isArray(nodeElement.properties.className)) {
@@ -126,8 +134,9 @@ export async function markdownToHtml(markdown: string): Promise<string> {
             );
           }
         },
-      } as any) // eslint-disable-line @typescript-eslint/no-explicit-any -- シンタックスハイライト
+      } as Record<string, unknown>) // rehype-pretty-code 設定オブジェクト
       .use(rehypeCodeCopy) // コードコピー機能を追加
+      .use(rehypeHeadingExtractor) // 見出し抽出プラグインを最後近くに配置
       .use(rehypeStringify) // HTMLへの変換
       .process(markdown);
 
@@ -146,13 +155,11 @@ export async function markdownToHtml(markdown: string): Promise<string> {
       // マーカー変換に失敗してもHTMLは返す
     }
 
-    console.log("[markdownToHtml] Final HTML length:", html.length);
-    console.log(
-      "[markdownToHtml] Contains code-block-wrapper:",
-      html.includes("code-block-wrapper"),
-    );
+    // 見出し情報を取得
+    const headings: Heading[] =
+      ((result.data as Record<string, unknown>)?.headings as Heading[]) || [];
 
-    return html;
+    return { html, headings };
   } catch (error) {
     console.error("[markdownToHtml] Processing failed:", error);
 
@@ -165,7 +172,9 @@ export async function markdownToHtml(markdown: string): Promise<string> {
       .replace(/'/g, "&#39;")
       .replace(/\n/g, "<br>");
 
-    console.log("[markdownToHtml] Returning fallback HTML");
-    return `<div class="markdown-fallback"><pre>${fallbackHtml}</pre></div>`;
+    return {
+      html: `<div class="markdown-fallback"><pre>${fallbackHtml}</pre></div>`,
+      headings: [],
+    };
   }
 }

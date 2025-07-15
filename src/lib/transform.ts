@@ -42,6 +42,7 @@ export function transformContentfulEntry(entry: ContentfulBlogPost): BlogPost {
     id: entry.sys.id,
     slug: entry.fields.slug || "",
     title: entry.fields.title || "",
+    description: entry.fields.excerpt || "",
     content: entry.fields.content || "",
     tags: entry.fields.tags || [],
     createdAt: entry.sys.createdAt,

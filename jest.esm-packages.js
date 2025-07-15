@@ -18,7 +18,8 @@ const esmPackages = [
   "remark", // Used in markdown.ts
   "remark-gfm", // Used in markdown.ts
   "remark-rehype", // Used in markdown.ts
-  "rehype-pretty-code", // Used in markdown.ts
+  "rehype-pretty-code", // Used in markdown.ts (ESM)
+  "rehype-pretty-code/.*", // All rehype-pretty-code submodules
   "rehype-stringify", // Used in markdown.ts
 
   // === AST Utilities ===
@@ -26,6 +27,8 @@ const esmPackages = [
 
   // === Syntax Highlighting ===
   "shiki", // Used by rehype-pretty-code
+  "shiki-.*", // All shiki related packages
+  "@shikijs/.*", // Shiki scoped packages
 
   // === Dependencies of above packages ===
   "mdast-.*", // Markdown AST (used by remark)
