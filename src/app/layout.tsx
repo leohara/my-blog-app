@@ -5,7 +5,7 @@ import { WebVitals } from "@/components/WebVitals";
 
 import type { Metadata } from "next";
 
-import "./globals.css";
+import "@/styles/globals.css";
 
 const quicksand = Quicksand({
   variable: "--font-quicksand",

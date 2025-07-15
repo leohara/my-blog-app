@@ -1,0 +1,140 @@
+/**
+ * Animations and Keyframes
+ * All animation definitions and keyframe declarations
+ */
+
+/* Core Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes wave-motion {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes wave-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes soft-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(255, 182, 193, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(255, 182, 193, 0.5);
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+/* Header Animation Keyframes */
+@keyframes logo-expand {
+  0% {
+    transform: translateX(-50%) translateY(-50%) scale(0.7);
+  }
+  100% {
+    transform: translateX(-120px) translateY(-50%) rotate(-360deg) scale(1);
+  }
+}
+
+@keyframes logo-expand-desktop {
+  0% {
+    transform: translateX(-50%) translateY(-50%) scale(0.7);
+  }
+  100% {
+    transform: translateX(-210px) translateY(-50%) rotate(-360deg) scale(1);
+  }
+}
+
+/* Utility Animation Classes */
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slideInUp {
+  animation: slideInUp 0.8s ease-out;
+}
+
+.animate-wave-motion {
+  animation: wave-motion 2s ease-in-out infinite;
+}
+
+.animate-soft-glow {
+  animation: soft-glow 2s ease-in-out infinite;
+}
+
+.animate-breathe {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+/* Animation Delays */
+.animate-delay-100 {
+  animation-delay: 0.1s;
+}
+
+.animate-delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animate-delay-300 {
+  animation-delay: 0.3s;
+}
+
+.animate-delay-500 {
+  animation-delay: 0.5s;
+}
+
+/* Performance Optimized Animations */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+.will-change-auto {
+  will-change: auto;
+}

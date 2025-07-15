@@ -175,7 +175,9 @@ describe("Header Component", () => {
       await waitFor(() => {
         const header = screen.getByRole("banner");
         expect(
-          header.querySelector(".w-\\[480px\\].h-16.opacity-100"),
+          header.querySelector(
+            ".w-\\[320px\\].md\\:w-\\[480px\\].h-16.opacity-100",
+          ),
         ).toBeInTheDocument();
       });
 
@@ -184,7 +186,9 @@ describe("Header Component", () => {
       await waitFor(() => {
         const header = screen.getByRole("banner");
         expect(
-          header.querySelector(".w-\\[480px\\].h-16.opacity-100"),
+          header.querySelector(
+            ".w-\\[320px\\].md\\:w-\\[480px\\].h-16.opacity-100",
+          ),
         ).toBeInTheDocument();
       });
     });

@@ -1,0 +1,113 @@
+name: Lighthouse CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup environment
+        run: |
+          # Create .env.local with required environment variables
+          echo "CONTENTFUL_SPACE_ID=${{ secrets.CONTENTFUL_SPACE_ID }}" >> .env.local
+          echo "CONTENTFUL_ACCESS_TOKEN=${{ secrets.CONTENTFUL_ACCESS_TOKEN }}" >> .env.local
+          echo "CONTENTFUL_ENVIRONMENT=${{ secrets.CONTENTFUL_ENVIRONMENT }}" >> .env.local
+
+      - name: Run Lighthouse CI
+        run: |
+          npx lhci autorun --config=./lighthouse.config.js
+          echo "✅ Lighthouse CI completed successfully"
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Upload Lighthouse results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-results
+          path: .lighthouseci/
+
+      - name: Comment PR with Lighthouse results
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            // Read Lighthouse results
+            const lhciDir = '.lighthouseci';
+            if (fs.existsSync(lhciDir)) {
+              const files = fs.readdirSync(lhciDir);
+              const jsonFiles = files.filter(f => f.startsWith('lhr-') && f.endsWith('.json'));
+              
+              if (jsonFiles.length > 0) {
+                let results = [];
+                
+                // Read each lighthouse result file
+                for (const file of jsonFiles) {
+                  const filePath = path.join(lhciDir, file);
+                  const result = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+                  results.push({
+                    url: result.finalUrl,
+                    performance: Math.round(result.categories.performance.score * 100),
+                    accessibility: Math.round(result.categories.accessibility.score * 100),
+                    bestPractices: Math.round(result.categories['best-practices'].score * 100),
+                    seo: Math.round(result.categories.seo.score * 100)
+                  });
+                }
+                
+                // Create comment with results
+                const comment = `## 🚦 Lighthouse CI Results
+                
+                Performance, Accessibility, Best Practices, and SEO scores:
+                
+                | URL | Performance | Accessibility | Best Practices | SEO |
+                |-----|-------------|---------------|----------------|-----|
+                ${results.map(result => {
+                  return `| ${result.url} | ${result.performance}% | ${result.accessibility}% | ${result.bestPractices}% | ${result.seo}% |`;
+                }).join('\n')}
+                
+                📊 Results based on Lighthouse CI analysis`;
+                
+                try {
+                  await github.rest.issues.createComment({
+                    issue_number: context.issue.number,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    body: comment
+                  });
+                  console.log('Successfully posted Lighthouse results comment');
+                } catch (error) {
+                  console.log('Failed to post comment:', error.message);
+                  console.log('Lighthouse results are still available as artifacts');
+                }
+              } else {
+                console.log('No Lighthouse results found to comment on PR');
+              }
+            } else {
+              console.log('Lighthouse results directory not found');
+            }

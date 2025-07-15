@@ -21,7 +21,9 @@ export default function PageContainer({
   className = "",
 }: PageContainerProps) {
   return (
-    <div className={`min-h-screen max-w-4xl mx-auto p-8 pt-28 ${className}`}>
+    <div
+      className={`min-h-screen max-w-4xl mx-auto p-4 md:p-6 lg:p-8 pt-24 md:pt-28 overflow-y-auto ${className}`}
+    >
       {children}
     </div>
   );
