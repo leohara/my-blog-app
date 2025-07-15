@@ -100,7 +100,8 @@ export async function markdownToHtml(
               nodeElement.children = [{ type: "text", value: " " }];
             }
             nodeElement.properties =
-              nodeElement.properties || ({ className: [] } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+              nodeElement.properties ||
+              ({ className: [] } as { className: string[] });
             nodeElement.properties.className =
               nodeElement.properties.className || [];
             if (!Array.isArray(nodeElement.properties.className)) {
@@ -118,7 +119,8 @@ export async function markdownToHtml(
               properties: { className: string[] };
             };
             nodeElement.properties =
-              nodeElement.properties || ({ className: [] } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+              nodeElement.properties ||
+              ({ className: [] } as { className: string[] });
             nodeElement.properties.className =
               nodeElement.properties.className || [];
             if (!Array.isArray(nodeElement.properties.className)) {
@@ -132,7 +134,7 @@ export async function markdownToHtml(
             );
           }
         },
-      } as any) // eslint-disable-line @typescript-eslint/no-explicit-any -- シンタックスハイライト
+      } as Record<string, unknown>) // rehype-pretty-code 設定オブジェクト
       .use(rehypeCodeCopy) // コードコピー機能を追加
       .use(rehypeHeadingExtractor) // 見出し抽出プラグインを最後近くに配置
       .use(rehypeStringify) // HTMLへの変換
