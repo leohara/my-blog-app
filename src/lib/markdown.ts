@@ -69,11 +69,6 @@ export async function markdownToHtml(
   markdown: string,
 ): Promise<MarkdownResult> {
   try {
-    console.log(
-      "[markdownToHtml] Processing markdown with length:",
-      markdown.length,
-    );
-
     // 入力検証
     if (typeof markdown !== "string") {
       throw new Error("Input must be a string");
@@ -168,13 +163,6 @@ export async function markdownToHtml(
         ? headingsFromResultData
         : headingsFromFileData;
 
-    console.log("[markdownToHtml] Final HTML length:", html.length);
-    console.log(
-      "[markdownToHtml] Contains code-block-wrapper:",
-      html.includes("code-block-wrapper"),
-    );
-    console.log("[markdownToHtml] Extracted headings:", headings.length);
-
     return { html, headings };
   } catch (error) {
     console.error("[markdownToHtml] Processing failed:", error);
@@ -188,7 +176,6 @@ export async function markdownToHtml(
       .replace(/'/g, "&#39;")
       .replace(/\n/g, "<br>");
 
-    console.log("[markdownToHtml] Returning fallback HTML");
     return {
       html: `<div class="markdown-fallback"><pre>${fallbackHtml}</pre></div>`,
       headings: [],
