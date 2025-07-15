@@ -9,6 +9,10 @@ on:
 jobs:
   lighthouse:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
 
     steps:
       - name: Checkout code
@@ -33,6 +37,7 @@ jobs:
       - name: Run Lighthouse CI
         run: |
           npx lhci autorun --config=./lighthouse.config.js
+          echo "✅ Lighthouse CI completed successfully"
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
@@ -46,7 +51,9 @@ jobs:
       - name: Comment PR with Lighthouse results
         uses: actions/github-script@v7
         if: github.event_name == 'pull_request'
+        continue-on-error: true
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
             const path = require('path');
@@ -86,11 +93,21 @@ jobs:
                 
                 📊 Results based on Lighthouse CI analysis`;
                 
-                github.rest.issues.createComment({
-                  issue_number: context.issue.number,
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  body: comment
-                });
+                try {
+                  await github.rest.issues.createComment({
+                    issue_number: context.issue.number,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    body: comment
+                  });
+                  console.log('Successfully posted Lighthouse results comment');
+                } catch (error) {
+                  console.log('Failed to post comment:', error.message);
+                  console.log('Lighthouse results are still available as artifacts');
+                }
+              } else {
+                console.log('No Lighthouse results found to comment on PR');
               }
+            } else {
+              console.log('Lighthouse results directory not found');
             }
