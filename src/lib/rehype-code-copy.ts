@@ -41,11 +41,29 @@ export function rehypeCodeCopy() {
             // Extract the raw code content
             const codeContent = toString(preElement);
 
-            // Extract filename from data-filename attribute if present
-            const filename =
-              preElement.properties?.["data-filename"] ||
-              preElement.properties?.["dataFilename"] ||
-              "";
+            // コメントアウト: デバッグログ
+            // if (process.env.NODE_ENV === "development") {
+            //   console.log("[rehype-code-copy] Figure properties:", node.properties);
+            //   console.log("[rehype-code-copy] Pre properties:", preElement.properties);
+            // }
+
+            // Extract filename from figcaption if it exists
+            let filename = "";
+
+            // Check if there's a figcaption element (rehype-pretty-code adds this for titles)
+            const figcaptionIndex = node.children.findIndex(
+              (child): child is Element =>
+                child.type === "element" && child.tagName === "figcaption",
+            );
+
+            if (figcaptionIndex !== -1) {
+              // eslint-disable-next-line security/detect-object-injection
+              const figcaption = node.children[figcaptionIndex] as Element;
+              // Get the text content from figcaption
+              filename = toString(figcaption);
+              // Remove the figcaption from children to avoid duplication
+              node.children.splice(figcaptionIndex, 1);
+            }
 
             // Create header element
             const header: Element = {

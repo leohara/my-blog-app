@@ -88,6 +88,14 @@ export async function markdownToHtml(
         defaultLang: "plaintext",
         // 背景色をCSSで制御
         keepBackground: false,
+        // figcaptionを使用してタイトルを表示
+        onVisitTitle(element: Record<string, unknown>) {
+          // デフォルトの動作を維持
+          const el = element as { properties: { className?: string[] } };
+          if (el.properties) {
+            el.properties.className = ["code-title"];
+          }
+        },
         // 行番号と行ハイライトを有効化
         onVisitLine(node: unknown) {
           try {
