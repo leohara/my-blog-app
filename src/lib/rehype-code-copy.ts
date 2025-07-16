@@ -57,6 +57,7 @@ export function rehypeCodeCopy() {
             );
 
             if (figcaptionIndex !== -1) {
+              // Safe: figcaptionIndex is a number from findIndex(), not user input
               // eslint-disable-next-line security/detect-object-injection
               const figcaption = node.children[figcaptionIndex] as Element;
               // Get the text content from figcaption
@@ -155,6 +156,7 @@ export function rehypeCodeCopy() {
 
             // Replace the original node with the wrapped version
             if (parent && typeof index === "number") {
+              // Safe: index is a number from unist-util-visit, not user input
               // eslint-disable-next-line security/detect-object-injection
               parent.children[index] = wrapper;
             }
