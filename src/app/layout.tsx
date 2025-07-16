@@ -51,7 +51,8 @@ export default function RootLayout({
         <Header />
         <WebVitals />
         <main id="main-content">{children}</main>
-        <Analytics />
+        {/* Analyticsは本番環境でのみ有効化 */}
+        {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
     </html>
   );
