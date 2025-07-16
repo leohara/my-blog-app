@@ -385,6 +385,46 @@ label {
   font-weight: 600;
 }
 
+/* Task List Styles */
+.prose-content .task-list-item {
+  list-style: none;
+  position: relative;
+  padding-left: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose-content .task-list-item input[type="checkbox"] {
+  position: absolute;
+  left: 0;
+  top: 0.375rem;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-base-secondary);
+  cursor: default;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.prose-content .task-list-item input[type="checkbox"]:checked {
+  background-color: var(--color-interactive);
+  border-color: var(--color-interactive);
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 3L4.5 8.5L2 6' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.prose-content .task-list-item input[type="checkbox"]:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.prose-content ul:has(.task-list-item) {
+  padding-left: 0;
+}
+
 /* Copy Button Component */
 .copy-button-container {
   display: inline-flex;
@@ -555,6 +595,16 @@ label {
   
   .prose-content [data-line-numbers] [data-line]::before {
     color: #666666;
+  }
+  
+  .prose-content .task-list-item input[type="checkbox"] {
+    border-color: var(--color-border);
+    background-color: var(--color-base-tertiary);
+  }
+  
+  .prose-content .task-list-item input[type="checkbox"]:checked {
+    background-color: var(--color-accent-secondary);
+    border-color: var(--color-accent-secondary);
   }
   
   .prose-content blockquote {
