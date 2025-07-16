@@ -6,17 +6,6 @@ interface CopyButtonProps {
   code: string;
 }
 
-// TypeScript type guard for validating props (currently unused but prepared for future use)
-
-function _validateCopyButtonProps(props: unknown): props is CopyButtonProps {
-  return (
-    props !== null &&
-    typeof props === "object" &&
-    "code" in props &&
-    typeof (props as CopyButtonProps).code === "string"
-  );
-}
-
 export function CopyButton({ code }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
 
@@ -33,46 +22,64 @@ export function CopyButton({ code }: CopyButtonProps) {
       }
 
       if (code.length === 0) {
-        console.warn("[CopyButton] Attempting to copy empty code content");
+        if (process.env.NODE_ENV === "development") {
+          console.warn("[CopyButton] Attempting to copy empty code content");
+        }
       }
 
-      console.log("[CopyButton] Copying code with length:", code.length);
+      if (process.env.NODE_ENV === "development") {
+        console.log("[CopyButton] Copying code with length:", code.length);
+      }
       await navigator.clipboard.writeText(code);
 
       setCopied(true);
-      console.log("[CopyButton] Code copied successfully");
+      if (process.env.NODE_ENV === "development") {
+        console.log("[CopyButton] Code copied successfully");
+      }
 
       // より安全なタイマー管理
       setTimeout(() => {
         setCopied(false);
-        console.log("[CopyButton] Copy status reset");
+        if (process.env.NODE_ENV === "development") {
+          console.log("[CopyButton] Copy status reset");
+        }
       }, 2000);
 
       // コンポーネントがアンマウントされた場合のクリーンアップは
       // React の useEffect で管理される想定（現在はシンプルなsetTimeoutを使用）
     } catch (err) {
-      console.error("[CopyButton] Failed to copy code:", err);
+      if (process.env.NODE_ENV === "development") {
+        console.error("[CopyButton] Failed to copy code:", err);
+      }
 
       // ユーザーフィードバック付きのエラーハンドリング
       if (err instanceof Error) {
         // セキュリティエラーや権限エラーの場合
         if (err.name === "NotAllowedError") {
-          console.warn("[CopyButton] Clipboard access denied by user");
+          if (process.env.NODE_ENV === "development") {
+            console.warn("[CopyButton] Clipboard access denied by user");
+          }
         } else if (err.name === "SecurityError") {
-          console.warn(
-            "[CopyButton] Clipboard access blocked due to security policy",
-          );
+          if (process.env.NODE_ENV === "development") {
+            console.warn(
+              "[CopyButton] Clipboard access blocked due to security policy",
+            );
+          }
         }
       }
 
       // フォールバック: 古いブラウザ対応やコンソールでの表示
       try {
-        console.log("Code content for manual copy:", code);
+        if (process.env.NODE_ENV === "development") {
+          console.log("Code content for manual copy:", code);
+        }
       } catch (fallbackError) {
-        console.error(
-          "[CopyButton] Even fallback logging failed:",
-          fallbackError,
-        );
+        if (process.env.NODE_ENV === "development") {
+          console.error(
+            "[CopyButton] Even fallback logging failed:",
+            fallbackError,
+          );
+        }
       }
     }
   };
