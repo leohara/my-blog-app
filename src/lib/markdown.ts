@@ -23,42 +23,10 @@ interface ThemeConfig {
 }
 
 // デフォルトのテーマ設定
-const DEFAULT_THEME_CONFIG: ThemeConfig = {
+const _DEFAULT_THEME_CONFIG: ThemeConfig = {
   theme: "one-dark-pro", // 現在は固定だが将来的に切り替え可能
   keepBackground: true,
 };
-
-// 将来的なダイナミックテーマ切り替えの準備 (現在は未使用だが将来の実装用)
-
-const _THEME_CONFIGS = {
-  dark: {
-    theme: "one-dark-pro",
-    keepBackground: true,
-  },
-  light: {
-    theme: "github-light",
-    keepBackground: false, // CSS で制御
-  },
-  auto: {
-    theme: {
-      dark: "one-dark-pro",
-      light: "github-light",
-    },
-    keepBackground: false,
-  },
-} as const;
-
-/**
- * システムテーマまたは設定に基づいてテーマ設定を取得
- * 現在は固定でダークテーマを返すが、将来的にはダイナミック切り替え対応予定
- */
-function getThemeConfig(): ThemeConfig {
-  // TODO: 将来的にはユーザー設定やシステムテーマを検出
-  // const prefersDark = window?.matchMedia?.('(prefers-color-scheme: dark)')?.matches;
-  // return prefersDark ? THEME_CONFIGS.dark : THEME_CONFIGS.light;
-
-  return DEFAULT_THEME_CONFIG;
-}
 
 /**
  * マークダウンテキストをHTMLに変換する
@@ -74,20 +42,28 @@ export async function markdownToHtml(
       throw new Error("Input must be a string");
     }
 
-    // 現在のテーマ設定を取得
-    const themeConfig = getThemeConfig();
+    // 現在のテーマ設定を取得（将来的に使用予定）
+    // const themeConfig = getThemeConfig();
 
     const result = await remark()
       .use(remarkGfm) // GitHub Flavored Markdownのサポート
       .use(remarkLinkCard) // リンクカードプラグインを追加
       .use(remarkRehype) // RemarkからRehypeへ変換
       .use(rehypePrettyCode, {
-        // テーマ設定 - 動的に取得
-        theme: themeConfig.theme,
+        // 最小限のテーマを使用し、CSSでオーバーライド
+        theme: "min-light",
         // 言語がない場合のデフォルト
         defaultLang: "plaintext",
-        // コードブロックに data-language 属性を追加
-        keepBackground: themeConfig.keepBackground,
+        // 背景色をCSSで制御
+        keepBackground: false,
+        // figcaptionを使用してタイトルを表示
+        onVisitTitle(element: Record<string, unknown>) {
+          // デフォルトの動作を維持
+          const el = element as { properties: { className?: string[] } };
+          if (el.properties) {
+            el.properties.className = ["code-title"];
+          }
+        },
         // 行番号と行ハイライトを有効化
         onVisitLine(node: unknown) {
           try {
@@ -143,10 +119,29 @@ export async function markdownToHtml(
     // マーカーをHTMLに変換（安全な変換処理）
     let html = result.toString();
     try {
-      html = html.replace(
-        /\$\$LINKCARD:([^$]+)\$\$/g,
-        '<div data-link-card="$1"></div>',
-      );
+      html = html.replace(/\$\$LINKCARD:([^$]+)\$\$/g, (match, url) => {
+        // URLの検証とサニタイゼーション
+        const trimmedUrl = url.trim();
+
+        // プロトコルの検証（http/httpsのみ許可）
+        if (!/^https?:\/\//i.test(trimmedUrl)) {
+          console.warn(
+            "[markdownToHtml] Invalid link card URL protocol:",
+            trimmedUrl,
+          );
+          return match; // 元のマーカーをそのまま返す
+        }
+
+        // HTMLエスケープ（属性値用）
+        const escapedUrl = trimmedUrl
+          .replace(/&/g, "&amp;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+
+        return `<div data-link-card="${escapedUrl}"></div>`;
+      });
     } catch (replaceError) {
       console.warn(
         "[markdownToHtml] Error processing link card markers:",

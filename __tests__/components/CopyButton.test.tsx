@@ -103,6 +103,10 @@ describe("CopyButton", () => {
 
   describe("Error handling", () => {
     it("should handle clipboard write errors gracefully", async () => {
+      // Mock process.env.NODE_ENV
+      const originalEnv = process.env;
+      process.env = { ...originalEnv, NODE_ENV: "development" };
+
       const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
       mockWriteText.mockRejectedValueOnce(new Error("Clipboard write failed"));
 
@@ -122,6 +126,8 @@ describe("CopyButton", () => {
       expect(button).toHaveAttribute("aria-label", "Copy code");
 
       consoleErrorSpy.mockRestore();
+      // Restore original env
+      process.env = originalEnv;
     });
   });
 
