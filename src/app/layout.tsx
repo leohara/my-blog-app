@@ -55,8 +55,12 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
-        {/* Analyticsは本番環境でのみ有効化 */}
-        {process.env.NODE_ENV === "production" && <Analytics />}
+        {/* Analyticsの有効化制御 */}
+        {(process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === "true" ||
+          (process.env.NODE_ENV === "production" &&
+            process.env.NEXT_PUBLIC_ENABLE_ANALYTICS !== "false")) && (
+          <Analytics />
+        )}
       </body>
     </html>
   );
