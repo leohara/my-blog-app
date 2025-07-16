@@ -52,7 +52,7 @@ const _THEME_CONFIGS = {
  * システムテーマまたは設定に基づいてテーマ設定を取得
  * 現在は固定でダークテーマを返すが、将来的にはダイナミック切り替え対応予定
  */
-function getThemeConfig(): ThemeConfig {
+function _getThemeConfig(): ThemeConfig {
   // TODO: 将来的にはユーザー設定やシステムテーマを検出
   // const prefersDark = window?.matchMedia?.('(prefers-color-scheme: dark)')?.matches;
   // return prefersDark ? THEME_CONFIGS.dark : THEME_CONFIGS.light;
@@ -74,20 +74,20 @@ export async function markdownToHtml(
       throw new Error("Input must be a string");
     }
 
-    // 現在のテーマ設定を取得
-    const themeConfig = getThemeConfig();
+    // 現在のテーマ設定を取得（将来的に使用予定）
+    // const themeConfig = getThemeConfig();
 
     const result = await remark()
       .use(remarkGfm) // GitHub Flavored Markdownのサポート
       .use(remarkLinkCard) // リンクカードプラグインを追加
       .use(remarkRehype) // RemarkからRehypeへ変換
       .use(rehypePrettyCode, {
-        // テーマ設定 - 動的に取得
-        theme: themeConfig.theme,
+        // 最小限のテーマを使用し、CSSでオーバーライド
+        theme: "min-light",
         // 言語がない場合のデフォルト
         defaultLang: "plaintext",
-        // コードブロックに data-language 属性を追加
-        keepBackground: themeConfig.keepBackground,
+        // 背景色をCSSで制御
+        keepBackground: false,
         // 行番号と行ハイライトを有効化
         onVisitLine(node: unknown) {
           try {
