@@ -23,42 +23,10 @@ interface ThemeConfig {
 }
 
 // デフォルトのテーマ設定
-const DEFAULT_THEME_CONFIG: ThemeConfig = {
+const _DEFAULT_THEME_CONFIG: ThemeConfig = {
   theme: "one-dark-pro", // 現在は固定だが将来的に切り替え可能
   keepBackground: true,
 };
-
-// 将来的なダイナミックテーマ切り替えの準備 (現在は未使用だが将来の実装用)
-
-const _THEME_CONFIGS = {
-  dark: {
-    theme: "one-dark-pro",
-    keepBackground: true,
-  },
-  light: {
-    theme: "github-light",
-    keepBackground: false, // CSS で制御
-  },
-  auto: {
-    theme: {
-      dark: "one-dark-pro",
-      light: "github-light",
-    },
-    keepBackground: false,
-  },
-} as const;
-
-/**
- * システムテーマまたは設定に基づいてテーマ設定を取得
- * 現在は固定でダークテーマを返すが、将来的にはダイナミック切り替え対応予定
- */
-function _getThemeConfig(): ThemeConfig {
-  // TODO: 将来的にはユーザー設定やシステムテーマを検出
-  // const prefersDark = window?.matchMedia?.('(prefers-color-scheme: dark)')?.matches;
-  // return prefersDark ? THEME_CONFIGS.dark : THEME_CONFIGS.light;
-
-  return DEFAULT_THEME_CONFIG;
-}
 
 /**
  * マークダウンテキストをHTMLに変換する
@@ -151,10 +119,29 @@ export async function markdownToHtml(
     // マーカーをHTMLに変換（安全な変換処理）
     let html = result.toString();
     try {
-      html = html.replace(
-        /\$\$LINKCARD:([^$]+)\$\$/g,
-        '<div data-link-card="$1"></div>',
-      );
+      html = html.replace(/\$\$LINKCARD:([^$]+)\$\$/g, (match, url) => {
+        // URLの検証とサニタイゼーション
+        const trimmedUrl = url.trim();
+
+        // プロトコルの検証（http/httpsのみ許可）
+        if (!/^https?:\/\//i.test(trimmedUrl)) {
+          console.warn(
+            "[markdownToHtml] Invalid link card URL protocol:",
+            trimmedUrl,
+          );
+          return match; // 元のマーカーをそのまま返す
+        }
+
+        // HTMLエスケープ（属性値用）
+        const escapedUrl = trimmedUrl
+          .replace(/&/g, "&amp;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+
+        return `<div data-link-card="${escapedUrl}"></div>`;
+      });
     } catch (replaceError) {
       console.warn(
         "[markdownToHtml] Error processing link card markers:",
