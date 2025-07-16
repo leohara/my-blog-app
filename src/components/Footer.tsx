@@ -6,7 +6,8 @@ export function Footer() {
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="text-sm text-gray-600">
-            © {new Date().getFullYear()} My Blog. All rights reserved.
+            © {process.env.NEXT_PUBLIC_BUILD_YEAR || "2025"} My Blog. All
+            rights reserved.
           </div>
           <nav className="flex gap-6">
             <Link

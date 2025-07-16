@@ -107,7 +107,7 @@ export default function PrivacyPage() {
               重要な変更がある場合は、このページでお知らせします。
             </p>
             <p className="text-sm text-gray-600">
-              最終更新日：{new Date().toLocaleDateString("ja-JP")}
+              最終更新日：{process.env.NEXT_PUBLIC_BUILD_DATE || "2025/7/17"}
             </p>
           </section>
         </div>
