@@ -49,15 +49,20 @@ export function CodeBlockEnhancer() {
                         continue;
                       }
 
-                      // Create a container for the copy button
-                      const buttonContainer = document.createElement("div");
-                      buttonContainer.className = "copy-button-container";
+                      // Find the header actions container
+                      const headerActions = block.querySelector(
+                        ".code-block-header-actions",
+                      );
+                      if (
+                        headerActions &&
+                        headerActions instanceof HTMLElement
+                      ) {
+                        // Create a container for the copy button
+                        const buttonContainer = document.createElement("div");
+                        buttonContainer.className = "copy-button-container";
 
-                      // Find the figure element (the actual code block) with validation
-                      const figure = block.querySelector("figure");
-                      if (figure && figure instanceof HTMLElement) {
-                        // Insert the button container as the first child of the figure
-                        figure.insertBefore(buttonContainer, figure.firstChild);
+                        // Insert the button container into the header actions
+                        headerActions.appendChild(buttonContainer);
 
                         // Mount the React component with error handling
                         try {
@@ -75,7 +80,7 @@ export function CodeBlockEnhancer() {
                         }
                       } else {
                         console.warn(
-                          "[CodeBlockEnhancer] No figure element found in code block:",
+                          "[CodeBlockEnhancer] No header actions element found in code block:",
                           block,
                         );
                       }
