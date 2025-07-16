@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/react";
 import { Quicksand, Nunito, Lora } from "next/font/google";
 
 import { Header } from "@/components/Header/Header";
@@ -50,6 +51,7 @@ export default function RootLayout({
         <Header />
         <WebVitals />
         <main id="main-content">{children}</main>
+        <Analytics />
       </body>
     </html>
   );
