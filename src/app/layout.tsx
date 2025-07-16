@@ -1,5 +1,7 @@
+import { Analytics } from "@vercel/analytics/react";
 import { Quicksand, Nunito, Lora } from "next/font/google";
 
+import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header/Header";
 import { WebVitals } from "@/components/WebVitals";
 
@@ -38,7 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${quicksand.variable} ${nunito.variable} ${lora.variable} antialiased bg-white`}
+        className={`${quicksand.variable} ${nunito.variable} ${lora.variable} antialiased bg-white min-h-screen flex flex-col`}
       >
         {/* Skip navigation link for accessibility */}
         <a
@@ -49,7 +51,16 @@ export default function RootLayout({
         </a>
         <Header />
         <WebVitals />
-        <main id="main-content">{children}</main>
+        <main id="main-content" className="flex-grow">
+          {children}
+        </main>
+        <Footer />
+        {/* Analyticsの有効化制御 */}
+        {(process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === "true" ||
+          (process.env.NODE_ENV === "production" &&
+            process.env.NEXT_PUBLIC_ENABLE_ANALYTICS !== "false")) && (
+          <Analytics />
+        )}
       </body>
     </html>
   );
