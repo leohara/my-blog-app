@@ -107,7 +107,7 @@ describe("CopyButton", () => {
       const originalNodeEnv = process.env.NODE_ENV;
       // Set to development to enable console logs
       process.env.NODE_ENV = "development";
-      
+
       const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
       mockWriteText.mockRejectedValueOnce(new Error("Clipboard write failed"));
 
