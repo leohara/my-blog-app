@@ -14,12 +14,13 @@ describe("Footer Component", () => {
     expect(privacyLink).toHaveAttribute("href", "/privacy");
   });
 
-  it("should display current year in copyright notice", () => {
+  it("should display build year in copyright notice", () => {
     render(<Footer />);
 
-    const currentYear = new Date().getFullYear();
+    // ビルド時の年またはフォールバック値を確認
+    const expectedYear = process.env.NEXT_PUBLIC_BUILD_YEAR || "2025";
     const copyrightText = screen.getByText(
-      new RegExp(`© ${currentYear} My Blog. All rights reserved.`),
+      new RegExp(`© ${expectedYear} My Blog. All rights reserved.`),
     );
     expect(copyrightText).toBeInTheDocument();
   });
@@ -68,18 +69,20 @@ describe("Footer Component", () => {
     );
   });
 
-  it("should update copyright year dynamically", () => {
-    // Mock Date to test different years
-    const mockDate = new Date("2025-01-01");
-    jest
-      .spyOn(global, "Date")
-      .mockImplementation(() => mockDate as unknown as Date);
+  it("should use environment variable for year when available", () => {
+    // Mock environment variable
+    const originalEnv = process.env.NEXT_PUBLIC_BUILD_YEAR;
+    process.env.NEXT_PUBLIC_BUILD_YEAR = "2024";
 
     render(<Footer />);
 
-    expect(screen.getByText(/© 2025 My Blog/)).toBeInTheDocument();
+    expect(screen.getByText(/© 2024 My Blog/)).toBeInTheDocument();
 
-    // Restore Date
-    jest.restoreAllMocks();
+    // Restore environment variable
+    if (originalEnv) {
+      process.env.NEXT_PUBLIC_BUILD_YEAR = originalEnv;
+    } else {
+      delete process.env.NEXT_PUBLIC_BUILD_YEAR;
+    }
   });
 });

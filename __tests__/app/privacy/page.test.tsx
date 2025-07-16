@@ -80,11 +80,14 @@ describe("Privacy Policy Page", () => {
     }
   });
 
-  it("should display current date in Japanese format", () => {
+  it("should display build date in Japanese format", () => {
     render(<PrivacyPage />);
 
-    const currentDate = new Date().toLocaleDateString("ja-JP");
-    const dateText = screen.getByText(new RegExp(`最終更新日：${currentDate}`));
+    // ビルド時の日付またはフォールバック値を確認
+    const expectedDate = process.env.NEXT_PUBLIC_BUILD_DATE || "2025/7/17";
+    const dateText = screen.getByText(
+      new RegExp(`最終更新日：${expectedDate}`),
+    );
     expect(dateText).toBeInTheDocument();
   });
 
@@ -136,18 +139,20 @@ describe("Privacy Policy Page", () => {
     expect(proseDiv).toBeInTheDocument();
   });
 
-  it("should update date dynamically", () => {
-    // Mock Date to test different dates
-    const mockDate = new Date("2025-12-31");
-    jest
-      .spyOn(global, "Date")
-      .mockImplementation(() => mockDate as unknown as Date);
+  it("should use environment variable for date when available", () => {
+    // Mock environment variable
+    const originalEnv = process.env.NEXT_PUBLIC_BUILD_DATE;
+    process.env.NEXT_PUBLIC_BUILD_DATE = "2025/12/31";
 
     render(<PrivacyPage />);
 
     expect(screen.getByText(/最終更新日：2025\/12\/31/)).toBeInTheDocument();
 
-    // Restore Date
-    jest.restoreAllMocks();
+    // Restore environment variable
+    if (originalEnv) {
+      process.env.NEXT_PUBLIC_BUILD_DATE = originalEnv;
+    } else {
+      delete process.env.NEXT_PUBLIC_BUILD_DATE;
+    }
   });
 });
