@@ -81,17 +81,23 @@ jobs:
                 }
                 
                 // Create comment with results
-                const comment = `## 🚦 Lighthouse CI Results
-                
-                Performance, Accessibility, Best Practices, and SEO scores:
-                
-                | URL | Performance | Accessibility | Best Practices | SEO |
-                |-----|-------------|---------------|----------------|-----|
-                ${results.map(result => {
+                const tableHeader = '| URL | Performance | Accessibility | Best Practices | SEO |';
+                const tableSeparator = '|-----|-------------|---------------|----------------|-----|';
+                const tableRows = results.map(result => {
                   return `| ${result.url} | ${result.performance}% | ${result.accessibility}% | ${result.bestPractices}% | ${result.seo}% |`;
-                }).join('\n')}
+                }).join('\n');
                 
-                📊 Results based on Lighthouse CI analysis`;
+                const comment = [
+                  '## 🚦 Lighthouse CI Results',
+                  '',
+                  'Performance, Accessibility, Best Practices, and SEO scores:',
+                  '',
+                  tableHeader,
+                  tableSeparator,
+                  tableRows,
+                  '',
+                  '📊 Results based on Lighthouse CI analysis'
+                ].join('\n');
                 
                 try {
                   await github.rest.issues.createComment({
