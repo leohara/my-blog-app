@@ -272,6 +272,7 @@ label {
 }
 
 /* Shiki specific token colors - Brown theme */
+/* TODO: Future optimization - add custom classes to reduce selector depth */
 .prose-content [data-rehype-pretty-code-figure] .token.comment,
 .prose-content [data-rehype-pretty-code-figure] .token.prolog,
 .prose-content [data-rehype-pretty-code-figure] .token.doctype,
