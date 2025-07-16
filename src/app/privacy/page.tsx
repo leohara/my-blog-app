@@ -70,16 +70,25 @@ export default function PrivacyPage() {
             <h2 className="text-2xl font-semibold mb-4">6. データの保管</h2>
             <p className="mb-4">
               収集されたアナリティクスデータは、Vercelのサーバーに安全に保管されます。
-              データの保持期間は、Vercelのデータ保持ポリシーに従います。
+              データの保持期間は通常90日間です。これはVercelのデータ保持ポリシーに
+              基づいており、この期間を過ぎたデータは自動的に削除されます。
             </p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">7. オプトアウト</h2>
             <p className="mb-4">
-              アナリティクスによるデータ収集を希望されない場合は、ブラウザの設定で
-              JavaScriptを無効にするか、広告ブロッカーを使用することで、データ収集を
-              防ぐことができます。
+              アナリティクスによるデータ収集を希望されない場合は、以下の方法で
+              オプトアウトすることができます：
+            </p>
+            <ul className="list-disc pl-6 mb-4">
+              <li>ブラウザの設定でJavaScriptを無効にする</li>
+              <li>広告ブロッカーを使用する</li>
+              <li>ブラウザのDo Not Track（DNT）設定を有効にする</li>
+            </ul>
+            <p className="mb-4">
+              当サイトはDo Not Trackヘッダーを尊重し、DNTが有効な場合は
+              アナリティクスデータの収集を行いません。
             </p>
           </section>
 
