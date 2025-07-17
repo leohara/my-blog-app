@@ -1,8 +1,8 @@
 export interface OGPData {
   title: string;
   description: string;
-  image?: string;
-  siteName?: string;
+  image?: string | null;
+  siteName?: string | null;
   url: string;
-  favicon?: string;
+  favicon?: string | null;
 }

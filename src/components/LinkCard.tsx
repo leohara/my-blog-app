@@ -177,7 +177,10 @@ const LinkCard = React.memo(function LinkCard({ url }: LinkCardProps) {
                     width="16"
                     height="16"
                     onLoad={() => {}}
-                    onError={() => {}}
+                    onError={() => {
+                      setFaviconUrl(null);
+                      console.warn("Failed to load favicon:", favicon);
+                    }}
                   />
                 );
               })()}

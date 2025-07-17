@@ -90,6 +90,55 @@ describe("/api/ogp", () => {
       expect(response.status).toBe(400);
       expect(data.error).toBe("Invalid URL");
     });
+
+    it("should block IPv6 private networks", async () => {
+      const ipv6PrivateUrls = [
+        "https://[fc00::1]/test", // Unique Local Address
+        "https://[fd00::1]/test", // Unique Local Address
+        "https://[fe80::1]/test", // Link-Local Address
+        "https://fc00::1/test", // Without brackets
+        "https://fd00::1/test", // Without brackets
+        "https://fe80::1/test", // Without brackets
+      ];
+
+      for (const url of ipv6PrivateUrls) {
+        const request = new NextRequest(
+          `http://localhost:3000/api/ogp?url=${encodeURIComponent(url)}`,
+        );
+        const response = await GET(request);
+        const data = await response.json();
+
+        expect(response.status).toBe(400);
+        expect(data.error).toBe("Invalid URL");
+      }
+    });
+
+    it("should correctly handle IPv4 class B private range", async () => {
+      // Should block 172.16.x.x to 172.31.x.x
+      const blockedIPs = ["172.16.0.1", "172.20.1.1", "172.31.255.254"];
+      for (const ip of blockedIPs) {
+        const request = new NextRequest(
+          `http://localhost:3000/api/ogp?url=${encodeURIComponent(`https://${ip}/test`)}`,
+        );
+        const response = await GET(request);
+        const data = await response.json();
+
+        expect(response.status).toBe(400);
+        expect(data.error).toBe("Invalid URL");
+      }
+
+      // Should NOT block 172.15.x.x or 172.32.x.x
+      const allowedIPs = ["172.15.1.1", "172.32.1.1", "172.100.1.1"];
+      for (const ip of allowedIPs) {
+        // These would fail on actual fetch but should pass URL validation
+        const request = new NextRequest(
+          `http://localhost:3000/api/ogp?url=${encodeURIComponent(`https://${ip}/test`)}`,
+        );
+        const response = await GET(request);
+        // Should get past URL validation (will fail on fetch, but that's OK for this test)
+        expect(response.status).not.toBe(400);
+      }
+    });
   });
 
   describe("Successful OGP extraction", () => {

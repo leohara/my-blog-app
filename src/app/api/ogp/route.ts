@@ -14,18 +14,41 @@ function isValidUrl(urlString: string): boolean {
     if (url.protocol !== "https:") return false;
 
     // 内部IPアドレスをブロック
-    // TODO: 他にも考慮するべきIPアドレスがあるか調査
     const hostname = url.hostname;
+
+    // IPv4チェック
     if (
       hostname === "localhost" || // localhost
       hostname === "127.0.0.1" || // ループバックアドレス
       hostname.startsWith("10.") || // 10.x.x.x - プライベートネットワーク (クラスA)
-      hostname.startsWith("172.") || // 172.16.x.x - プライベートネットワーク (クラスB)
       hostname.startsWith("192.168.") || // 192.168.x.x - プライベートネットワーク (クラスC)
       hostname.startsWith("169.254.") || // 169.254.x.x - リンクローカルアドレス
+      hostname === "0.0.0.0" // 全てのインターフェースを示す特殊アドレス (予期しない動作を防ぐ)
+    ) {
+      return false;
+    }
+
+    // 172.16.0.0 - 172.31.255.255 の範囲をチェック (クラスB プライベートネットワーク)
+    if (hostname.startsWith("172.")) {
+      const parts = hostname.split(".");
+      if (parts.length >= 2) {
+        const secondOctet = parseInt(parts[1], 10);
+        if (!isNaN(secondOctet) && secondOctet >= 16 && secondOctet <= 31) {
+          return false;
+        }
+      }
+    }
+
+    // IPv6チェック
+    if (
       hostname === "::1" || // IPv6ループバックアドレス
       hostname === "[::1]" || // IPv6ループバックアドレス (ブラケット付きIPv6表記)
-      hostname === "0.0.0.0" // 全てのインターフェースを示す特殊アドレス (予期しない動作を防ぐ)
+      hostname.startsWith("fc00:") || // IPv6 Unique Local Addresses (fc00::/7)
+      hostname.startsWith("fd") || // IPv6 Unique Local Addresses (fd00::/8)
+      hostname.startsWith("fe80:") || // IPv6 Link-Local Addresses (fe80::/10)
+      hostname.startsWith("[fc00:") || // ブラケット付きIPv6表記
+      hostname.startsWith("[fd") || // ブラケット付きIPv6表記
+      hostname.startsWith("[fe80:") // ブラケット付きIPv6表記
     ) {
       return false;
     }
