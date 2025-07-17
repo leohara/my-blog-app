@@ -475,11 +475,12 @@ label {
 
 /* Link Card Component */
 .link-card {
-  display: block;
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  margin: 0.5rem 0;
+  margin: 0;
   text-decoration: none;
   color: inherit;
   transition: all var(--transition-base);
@@ -514,6 +515,7 @@ label {
   height: 100%;
   object-fit: cover;
   transition: transform var(--transition-base);
+  display: block;
 }
 
 .link-card-image-fallback {
@@ -542,7 +544,7 @@ label {
 }
 
 .link-card-content {
-  padding: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-md);
 }
 
 .link-card-title {
@@ -560,7 +562,7 @@ label {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-xs);
 }
 
 .link-card-domain {
@@ -592,6 +594,8 @@ label {
   flex-shrink: 0;
   color: var(--color-text-secondary);
   transition: transform var(--transition-base);
+  width: 16px;
+  height: 16px;
 }
 
 .link-card:hover .link-card-arrow {
@@ -747,6 +751,17 @@ label {
   }
 }
 
+/* Link Card spacing in prose content */
+.prose-content .link-card {
+  margin-top: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Reset margin for link card images specifically */
+.prose-content .link-card .link-card-image {
+  margin: 0 !important;
+}
+
 /* Mobile Responsive for Link Cards */
 @media (max-width: 768px) {
   .link-card-image-wrapper {
@@ -754,10 +769,10 @@ label {
   }
   
   .link-card-content {
-    padding: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
   }
   
   .link-card-title {
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
   }
 }
