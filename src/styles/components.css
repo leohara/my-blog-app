@@ -117,13 +117,34 @@ label {
   margin-bottom: 0.5rem;
 }
 
-.prose-content code {
-  background-color: var(--color-base-tertiary);
+/* Inline code - optimized selector for code not inside pre elements */
+.prose-content code:not(pre code) {
+  display: inline;
+  background-color: rgba(139, 115, 85, 0.08);
   padding: var(--spacing-xs) calc(var(--spacing-xs) * 1.5);
   border-radius: var(--radius-sm);
   font-size: var(--font-size-sm);
   font-family: var(--font-mono), monospace;
   color: var(--color-text-primary);
+  border: 1px solid rgba(139, 115, 85, 0.12);
+  white-space: nowrap;
+}
+
+/* Code block wrapper - Simplified after bypassInlineCode: true */
+/* Only code blocks are wrapped by rehype-pretty-code now */
+/* Standalone code blocks (not wrapped) should have margin */
+.prose-content > figure[data-rehype-pretty-code-figure] {
+  display: block;
+  margin: 0 0 1.5rem 0;
+}
+
+.prose-content [data-rehype-pretty-code-figure] pre {
+  display: block;
+  margin: 0;
+}
+
+.prose-content [data-rehype-pretty-code-figure] pre code {
+  display: block;
 }
 
 /* Syntax Highlighting Styles */
@@ -134,8 +155,10 @@ label {
   line-height: 1.5;
 }
 
-.prose-content pre code {
-  background-color: transparent !important;
+/* Pre code blocks - higher specificity without !important */
+.prose-content pre > code,
+.prose-content [data-rehype-pretty-code-figure] pre > code {
+  background-color: transparent;
   padding: 0;
   font-size: 0.875rem;
   display: block;
@@ -149,6 +172,8 @@ label {
   overflow: hidden;
   background-color: var(--color-base-secondary);
   box-shadow: var(--shadow-sm);
+  /* Ensure no internal spacing conflicts */
+  padding: 0;
 }
 
 /* Code Block Header */
@@ -160,6 +185,7 @@ label {
   padding: 0 var(--spacing-md);
   background-color: var(--color-base-primary);
   border-bottom: 1px solid var(--color-border);
+  margin: 0;
 }
 
 .code-block-header-title {
@@ -191,26 +217,37 @@ label {
   align-items: center;
 }
 
-/* Shiki code blocks */
+/* Shiki code blocks - optimized selectors */
 .prose-content [data-rehype-pretty-code-figure] pre {
   padding: var(--spacing-lg) 0;
-  background-color: var(--color-base-tertiary) !important;
+  background-color: var(--color-base-tertiary);
   position: relative;
   margin: 0;
   border-radius: 0;
 }
 
-.prose-content [data-rehype-pretty-code-figure] code {
-  color: var(--color-text-primary) !important;
+/* Remove top padding for code blocks inside wrapper */
+.code-block-wrapper [data-rehype-pretty-code-figure] pre {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Code inside pre blocks */
+.prose-content [data-rehype-pretty-code-figure] pre > code {
+  color: var(--color-text-primary);
   display: block;
   font-size: var(--font-size-sm);
   line-height: var(--line-height-relaxed);
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Courier New', monospace;
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
 }
 
 .prose-content [data-rehype-pretty-code-figure] {
   position: relative;
   margin-bottom: 0;
+  margin-top: 0;
 }
 
 .code-block-wrapper figure {
@@ -218,42 +255,73 @@ label {
   margin: 0;
 }
 
+/* Ensure figure inside code-block-wrapper has no margin - higher specificity without !important */
+.prose-content .code-block-wrapper figure[data-rehype-pretty-code-figure] {
+  margin: 0;
+  padding: 0;
+}
+
+/* Reset all margins for direct children of code-block-wrapper */
+.code-block-wrapper > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 /* Language label - hide since we have header now */
 .prose-content [data-rehype-pretty-code-figure] pre[data-language]::before {
   display: none;
 }
 
-/* Line highlighting */
-.prose-content [data-rehype-pretty-code-figure] [data-line] {
+/* Line highlighting - Optimized selectors */
+
+/* Code block lines */
+.prose-content [data-rehype-pretty-code-figure] pre [data-line] {
   display: inline-block;
   width: 100%;
   padding: 0 1rem;
 }
 
-.prose-content [data-rehype-pretty-code-figure] [data-highlighted-line] {
+/* Ensure first line in code-block-wrapper has proper spacing */
+.code-block-wrapper [data-rehype-pretty-code-figure] pre [data-line]:first-child {
+  padding-top: var(--spacing-md);
+}
+
+/* Ensure last line in code-block-wrapper has proper spacing */
+.code-block-wrapper [data-rehype-pretty-code-figure] pre [data-line]:last-child {
+  padding-bottom: var(--spacing-md);
+}
+
+/* Inline code is no longer wrapped by rehype-pretty-code due to bypassInlineCode: true */
+/* Removed deprecated span[data-rehype-pretty-code-figure] rules */
+
+/* Highlighted lines in code blocks */
+.prose-content [data-rehype-pretty-code-figure] pre [data-highlighted-line] {
   background-color: rgba(212, 165, 116, 0.1);
   border-left: 3px solid var(--color-accent-secondary);
   margin-left: -3px;
   padding-left: calc(var(--spacing-md) - 3px);
 }
 
-.prose-content [data-rehype-pretty-code-figure] [data-highlighted-line-id="add"] {
+/* Specific highlight types */
+.prose-content [data-rehype-pretty-code-figure] pre [data-highlighted-line-id="add"] {
   background-color: rgba(124, 152, 133, 0.15);
   border-left-color: var(--color-success);
 }
 
-.prose-content [data-rehype-pretty-code-figure] [data-highlighted-line-id="remove"] {
+.prose-content [data-rehype-pretty-code-figure] pre [data-highlighted-line-id="remove"] {
   background-color: rgba(198, 113, 113, 0.15);
   border-left-color: var(--color-error);
 }
 
-/* Line numbers */
-.prose-content [data-line-numbers] [data-line] {
+/* Line numbers - code blocks only */
+.prose-content figure[data-rehype-pretty-code-figure] pre[data-line-numbers] [data-line],
+.prose-content div[data-rehype-pretty-code-figure] pre[data-line-numbers] [data-line] {
   position: relative;
   padding-left: 3.5rem;
 }
 
-.prose-content [data-line-numbers] [data-line]::before {
+.prose-content figure[data-rehype-pretty-code-figure] pre[data-line-numbers] [data-line]::before,
+.prose-content div[data-rehype-pretty-code-figure] pre[data-line-numbers] [data-line]::before {
   content: attr(data-line-number);
   position: absolute;
   left: 0;
@@ -265,69 +333,74 @@ label {
   font-size: var(--font-size-xs);
 }
 
-/* Inline code syntax highlighting */
-.prose-content :not(pre) > code[data-theme="light"],
-.prose-content :not(pre) > code[data-theme="dark"] {
-  padding: 0.125rem 0.375rem;
-}
+/* Inline code no longer has data-theme attributes with bypassInlineCode: true */
 
-/* Shiki specific token colors - Brown theme */
-/* TODO: Future optimization - add custom classes to reduce selector depth */
-.prose-content [data-rehype-pretty-code-figure] .token.comment,
-.prose-content [data-rehype-pretty-code-figure] .token.prolog,
-.prose-content [data-rehype-pretty-code-figure] .token.doctype,
-.prose-content [data-rehype-pretty-code-figure] .token.cdata {
-  color: var(--color-text-secondary) !important;
+/* Syntax highlighting tokens - Optimized without !important */
+/* Using higher specificity for reliable styling */
+
+/* Comments and metadata */
+.prose-content [data-rehype-pretty-code-figure] pre code .token.comment,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.prolog,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.doctype,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.cdata {
+  color: var(--color-text-secondary);
   font-style: italic;
 }
 
-.prose-content [data-rehype-pretty-code-figure] .token.punctuation {
-  color: var(--color-text-primary) !important;
+/* Basic syntax */
+.prose-content [data-rehype-pretty-code-figure] pre code .token.punctuation {
+  color: var(--color-text-primary);
 }
 
-.prose-content [data-rehype-pretty-code-figure] .token.property,
-.prose-content [data-rehype-pretty-code-figure] .token.tag,
-.prose-content [data-rehype-pretty-code-figure] .token.boolean,
-.prose-content [data-rehype-pretty-code-figure] .token.number,
-.prose-content [data-rehype-pretty-code-figure] .token.constant,
-.prose-content [data-rehype-pretty-code-figure] .token.symbol,
-.prose-content [data-rehype-pretty-code-figure] .token.deleted {
-  color: var(--color-success) !important;
+/* Values and literals */
+.prose-content [data-rehype-pretty-code-figure] pre code .token.property,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.tag,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.boolean,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.number,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.constant,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.symbol,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.deleted {
+  color: var(--color-success);
 }
 
-.prose-content [data-rehype-pretty-code-figure] .token.selector,
-.prose-content [data-rehype-pretty-code-figure] .token.attr-name,
-.prose-content [data-rehype-pretty-code-figure] .token.string,
-.prose-content [data-rehype-pretty-code-figure] .token.char,
-.prose-content [data-rehype-pretty-code-figure] .token.builtin,
-.prose-content [data-rehype-pretty-code-figure] .token.inserted {
-  color: var(--color-accent-secondary) !important;
+/* Strings and attributes */
+.prose-content [data-rehype-pretty-code-figure] pre code .token.selector,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.attr-name,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.string,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.char,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.builtin,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.inserted {
+  color: var(--color-accent-secondary);
 }
 
-.prose-content [data-rehype-pretty-code-figure] .token.operator,
-.prose-content [data-rehype-pretty-code-figure] .token.entity,
-.prose-content [data-rehype-pretty-code-figure] .token.url,
-.prose-content [data-rehype-pretty-code-figure] .language-css .token.string,
-.prose-content [data-rehype-pretty-code-figure] .style .token.string {
-  color: var(--color-text-primary) !important;
+/* Operators and entities */
+.prose-content [data-rehype-pretty-code-figure] pre code .token.operator,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.entity,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.url,
+.prose-content [data-rehype-pretty-code-figure] pre code .language-css .token.string,
+.prose-content [data-rehype-pretty-code-figure] pre code .style .token.string {
+  color: var(--color-text-primary);
 }
 
-.prose-content [data-rehype-pretty-code-figure] .token.atrule,
-.prose-content [data-rehype-pretty-code-figure] .token.attr-value,
-.prose-content [data-rehype-pretty-code-figure] .token.keyword {
-  color: var(--color-interactive) !important;
+/* Keywords */
+.prose-content [data-rehype-pretty-code-figure] pre code .token.atrule,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.attr-value,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.keyword {
+  color: var(--color-interactive);
   font-weight: var(--font-weight-medium);
 }
 
-.prose-content [data-rehype-pretty-code-figure] .token.function,
-.prose-content [data-rehype-pretty-code-figure] .token.class-name {
-  color: #A67E5B !important; /* Darker variant of accent-secondary */
+/* Functions and classes */
+.prose-content [data-rehype-pretty-code-figure] pre code .token.function,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.class-name {
+  color: #A67E5B; /* Darker variant of accent-secondary */
 }
 
-.prose-content [data-rehype-pretty-code-figure] .token.regex,
-.prose-content [data-rehype-pretty-code-figure] .token.important,
-.prose-content [data-rehype-pretty-code-figure] .token.variable {
-  color: var(--color-error) !important;
+/* Special tokens */
+.prose-content [data-rehype-pretty-code-figure] pre code .token.regex,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.important,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.variable {
+  color: var(--color-error);
 }
 
 .prose-content blockquote {
@@ -359,6 +432,13 @@ label {
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;
   border-radius: 0.5rem;
+}
+
+/* Ensure images inside code blocks don't have margin */
+.code-block-wrapper img,
+.code-block-header img,
+.code-block-header svg {
+  margin: 0;
 }
 
 .prose-content hr {
@@ -396,7 +476,7 @@ label {
 
 .prose-content .task-list-item input[type="checkbox"] {
   position: absolute;
-  left: 0;
+  left: -1.5rem;
   top: 0.375rem;
   width: 1rem;
   height: 1rem;
@@ -422,8 +502,16 @@ label {
   cursor: not-allowed;
 }
 
-.prose-content ul:has(.task-list-item) {
-  padding-left: 0;
+/* Task list container - class-based approach for better compatibility */
+.prose-content ul.contains-task-list {
+  padding-left: 1.5rem;
+}
+
+/* Modern browsers enhancement */
+@supports selector(:has(.task-list-item)) {
+  .prose-content ul:has(.task-list-item) {
+    padding-left: 1.5rem;
+  }
 }
 
 /* Copy Button Component */
@@ -544,14 +632,14 @@ label {
 }
 
 .link-card-content {
-  padding: var(--spacing-xs) var(--spacing-md);
+  padding: 2px var(--spacing-lg);
 }
 
 .link-card-title {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
-  line-height: var(--line-height-tight);
+  line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -573,8 +661,8 @@ label {
 }
 
 .link-card-favicon {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
   display: block;
   object-fit: contain;
@@ -594,8 +682,8 @@ label {
   flex-shrink: 0;
   color: var(--color-text-secondary);
   transition: transform var(--transition-base);
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 
 .link-card:hover .link-card-arrow {
@@ -609,9 +697,10 @@ label {
     color: var(--color-text-primary);
   }
   
-  .prose-content code {
-    background-color: var(--color-base-tertiary);
+  .prose-content code:not(pre code) {
+    background-color: rgba(212, 165, 116, 0.15);
     color: var(--color-text-primary);
+    border: 1px solid rgba(212, 165, 116, 0.25);
   }
   
   .code-block-wrapper {
@@ -634,11 +723,12 @@ label {
   }
 
   .prose-content [data-rehype-pretty-code-figure] pre {
-    background-color: var(--color-base-tertiary) !important;
+    background-color: var(--color-base-tertiary);
   }
 
-  .prose-content [data-rehype-pretty-code-figure] code {
-    color: var(--color-text-primary) !important;
+  .prose-content [data-rehype-pretty-code-figure] pre > code {
+    color: var(--color-text-primary);
+    background-color: transparent;
   }
 
   .copy-button {
@@ -659,12 +749,14 @@ label {
     border-color: var(--color-success);
   }
   
-  .prose-content [data-rehype-pretty-code-figure] [data-highlighted-line] {
+  .prose-content figure[data-rehype-pretty-code-figure] pre [data-highlighted-line],
+  .prose-content div[data-rehype-pretty-code-figure] pre [data-highlighted-line] {
     background-color: rgba(139, 92, 246, 0.3);
     border-left-color: #a78bfa;
   }
   
-  .prose-content [data-line-numbers] [data-line]::before {
+  .prose-content figure[data-rehype-pretty-code-figure] pre[data-line-numbers] [data-line]::before,
+  .prose-content div[data-rehype-pretty-code-figure] pre[data-line-numbers] [data-line]::before {
     color: #666666;
   }
   
@@ -759,7 +851,7 @@ label {
 
 /* Reset margin for link card images specifically */
 .prose-content .link-card .link-card-image {
-  margin: 0 !important;
+  margin: 0;
 }
 
 /* Mobile Responsive for Link Cards */

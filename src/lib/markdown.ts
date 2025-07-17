@@ -50,6 +50,8 @@ export async function markdownToHtml(
       .use(remarkLinkCard) // リンクカードプラグインを追加
       .use(remarkRehype) // RemarkからRehypeへ変換
       .use(rehypePrettyCode, {
+        // インラインコードの処理をスキップ（figure要素でラップしない）
+        bypassInlineCode: true,
         // 最小限のテーマを使用し、CSSでオーバーライド
         theme: "min-light",
         // 言語がない場合のデフォルト
