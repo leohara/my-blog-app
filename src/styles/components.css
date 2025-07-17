@@ -646,14 +646,14 @@ label {
 }
 
 .link-card-content {
-  padding: var(--spacing-xs) var(--spacing-md);
+  padding: 2px var(--spacing-lg);
 }
 
 .link-card-title {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
-  line-height: var(--line-height-tight);
+  line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -675,8 +675,8 @@ label {
 }
 
 .link-card-favicon {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
   display: block;
   object-fit: contain;
@@ -696,8 +696,8 @@ label {
   flex-shrink: 0;
   color: var(--color-text-secondary);
   transition: transform var(--transition-base);
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 
 .link-card:hover .link-card-arrow {

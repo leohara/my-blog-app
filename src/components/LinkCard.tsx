@@ -174,8 +174,8 @@ const LinkCard = React.memo(function LinkCard({ url }: LinkCardProps) {
                     src={favicon}
                     alt="favicon"
                     className="link-card-favicon"
-                    width="16"
-                    height="16"
+                    width="14"
+                    height="14"
                     onLoad={() => {}}
                     onError={() => {
                       setFaviconUrl(null);
@@ -188,8 +188,8 @@ const LinkCard = React.memo(function LinkCard({ url }: LinkCardProps) {
             </div>
             <svg
               className="link-card-arrow"
-              width="16"
-              height="16"
+              width="14"
+              height="14"
               viewBox="0 0 16 16"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
