@@ -129,40 +129,21 @@ label {
   white-space: nowrap;
 }
 
-/* Inline code wrapper elements */
-.prose-content figure[data-rehype-pretty-code-figure] {
-  display: inline !important;
-  margin: 0 !important;
+/* Code block wrapper - Simplified after bypassInlineCode: true */
+/* Only code blocks are wrapped by rehype-pretty-code now */
+/* Standalone code blocks (not wrapped) should have margin */
+.prose-content > figure[data-rehype-pretty-code-figure] {
+  display: block;
+  margin: 0 0 1.5rem 0;
 }
 
-/* Code blocks should remain as blocks */
-.prose-content figure[data-rehype-pretty-code-figure]:has(pre) {
-  display: block !important;
-  margin-bottom: 1.5rem !important;
+.prose-content [data-rehype-pretty-code-figure] pre {
+  display: block;
+  margin: 0;
 }
 
-/* Ensure inline code in lists and paragraphs displays inline */
-.prose-content li figure[data-rehype-pretty-code-figure],
-.prose-content p figure[data-rehype-pretty-code-figure] {
-  display: inline !important;
-  margin: 0 !important;
-}
-
-/* But keep code blocks as blocks even in lists/paragraphs */
-.prose-content li figure[data-rehype-pretty-code-figure]:has(pre),
-.prose-content p figure[data-rehype-pretty-code-figure]:has(pre) {
-  display: block !important;
-  margin-bottom: 1.5rem !important;
-}
-
-/* For compatibility with span wrappers */
-.prose-content span[data-rehype-pretty-code-figure] {
-  display: inline !important;
-}
-
-.prose-content figure[data-rehype-pretty-code-figure] code,
-.prose-content span[data-rehype-pretty-code-figure] code {
-  display: inline !important;
+.prose-content [data-rehype-pretty-code-figure] pre code {
+  display: block;
 }
 
 /* Syntax Highlighting Styles */
@@ -173,8 +154,10 @@ label {
   line-height: 1.5;
 }
 
-.prose-content pre code {
-  background-color: transparent !important;
+/* Pre code blocks - higher specificity without !important */
+.prose-content pre > code,
+.prose-content [data-rehype-pretty-code-figure] pre > code {
+  background-color: transparent;
   padding: 0;
   font-size: 0.875rem;
   display: block;
@@ -230,21 +213,23 @@ label {
   align-items: center;
 }
 
-/* Shiki code blocks */
+/* Shiki code blocks - optimized selectors */
 .prose-content [data-rehype-pretty-code-figure] pre {
   padding: var(--spacing-lg) 0;
-  background-color: var(--color-base-tertiary) !important;
+  background-color: var(--color-base-tertiary);
   position: relative;
   margin: 0;
   border-radius: 0;
 }
 
-.prose-content [data-rehype-pretty-code-figure] code {
-  color: var(--color-text-primary) !important;
+/* Code inside pre blocks */
+.prose-content [data-rehype-pretty-code-figure] pre > code {
+  color: var(--color-text-primary);
   display: block;
   font-size: var(--font-size-sm);
   line-height: var(--line-height-relaxed);
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Courier New', monospace;
+  background-color: transparent;
 }
 
 .prose-content [data-rehype-pretty-code-figure] {
@@ -257,44 +242,48 @@ label {
   margin: 0;
 }
 
+/* Ensure figure inside code-block-wrapper has no margin */
+.code-block-wrapper figure[data-rehype-pretty-code-figure] {
+  margin: 0;
+}
+
 /* Language label - hide since we have header now */
 .prose-content [data-rehype-pretty-code-figure] pre[data-language]::before {
   display: none;
 }
 
-/* Line highlighting */
-/* Code blocks only - not inline code */
-.prose-content figure[data-rehype-pretty-code-figure] pre [data-line],
-.prose-content div[data-rehype-pretty-code-figure] pre [data-line] {
+/* Line highlighting - Optimized selectors */
+
+/* Code block lines */
+.prose-content [data-rehype-pretty-code-figure] pre [data-line] {
   display: inline-block;
   width: 100%;
   padding: 0 1rem;
 }
 
-/* Inline code should remain inline */
+/* Inline code is no longer wrapped by rehype-pretty-code due to bypassInlineCode: true */
+/* This rule is kept for backward compatibility but may not be needed */
 .prose-content span[data-rehype-pretty-code-figure] [data-line] {
   display: inline;
   width: auto;
   padding: 0;
 }
 
-/* Highlighted lines - code blocks only */
-.prose-content figure[data-rehype-pretty-code-figure] pre [data-highlighted-line],
-.prose-content div[data-rehype-pretty-code-figure] pre [data-highlighted-line] {
+/* Highlighted lines in code blocks */
+.prose-content [data-rehype-pretty-code-figure] pre [data-highlighted-line] {
   background-color: rgba(212, 165, 116, 0.1);
   border-left: 3px solid var(--color-accent-secondary);
   margin-left: -3px;
   padding-left: calc(var(--spacing-md) - 3px);
 }
 
-.prose-content figure[data-rehype-pretty-code-figure] pre [data-highlighted-line-id="add"],
-.prose-content div[data-rehype-pretty-code-figure] pre [data-highlighted-line-id="add"] {
+/* Specific highlight types */
+.prose-content [data-rehype-pretty-code-figure] pre [data-highlighted-line-id="add"] {
   background-color: rgba(124, 152, 133, 0.15);
   border-left-color: var(--color-success);
 }
 
-.prose-content figure[data-rehype-pretty-code-figure] pre [data-highlighted-line-id="remove"],
-.prose-content div[data-rehype-pretty-code-figure] pre [data-highlighted-line-id="remove"] {
+.prose-content [data-rehype-pretty-code-figure] pre [data-highlighted-line-id="remove"] {
   background-color: rgba(198, 113, 113, 0.15);
   border-left-color: var(--color-error);
 }
@@ -325,63 +314,72 @@ label {
   padding: 0.125rem 0.375rem;
 }
 
-/* Shiki specific token colors - Brown theme */
-/* TODO: Future optimization - add custom classes to reduce selector depth */
-.prose-content [data-rehype-pretty-code-figure] .token.comment,
-.prose-content [data-rehype-pretty-code-figure] .token.prolog,
-.prose-content [data-rehype-pretty-code-figure] .token.doctype,
-.prose-content [data-rehype-pretty-code-figure] .token.cdata {
-  color: var(--color-text-secondary) !important;
+/* Syntax highlighting tokens - Optimized without !important */
+/* Using higher specificity for reliable styling */
+
+/* Comments and metadata */
+.prose-content [data-rehype-pretty-code-figure] pre code .token.comment,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.prolog,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.doctype,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.cdata {
+  color: var(--color-text-secondary);
   font-style: italic;
 }
 
-.prose-content [data-rehype-pretty-code-figure] .token.punctuation {
-  color: var(--color-text-primary) !important;
+/* Basic syntax */
+.prose-content [data-rehype-pretty-code-figure] pre code .token.punctuation {
+  color: var(--color-text-primary);
 }
 
-.prose-content [data-rehype-pretty-code-figure] .token.property,
-.prose-content [data-rehype-pretty-code-figure] .token.tag,
-.prose-content [data-rehype-pretty-code-figure] .token.boolean,
-.prose-content [data-rehype-pretty-code-figure] .token.number,
-.prose-content [data-rehype-pretty-code-figure] .token.constant,
-.prose-content [data-rehype-pretty-code-figure] .token.symbol,
-.prose-content [data-rehype-pretty-code-figure] .token.deleted {
-  color: var(--color-success) !important;
+/* Values and literals */
+.prose-content [data-rehype-pretty-code-figure] pre code .token.property,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.tag,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.boolean,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.number,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.constant,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.symbol,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.deleted {
+  color: var(--color-success);
 }
 
-.prose-content [data-rehype-pretty-code-figure] .token.selector,
-.prose-content [data-rehype-pretty-code-figure] .token.attr-name,
-.prose-content [data-rehype-pretty-code-figure] .token.string,
-.prose-content [data-rehype-pretty-code-figure] .token.char,
-.prose-content [data-rehype-pretty-code-figure] .token.builtin,
-.prose-content [data-rehype-pretty-code-figure] .token.inserted {
-  color: var(--color-accent-secondary) !important;
+/* Strings and attributes */
+.prose-content [data-rehype-pretty-code-figure] pre code .token.selector,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.attr-name,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.string,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.char,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.builtin,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.inserted {
+  color: var(--color-accent-secondary);
 }
 
-.prose-content [data-rehype-pretty-code-figure] .token.operator,
-.prose-content [data-rehype-pretty-code-figure] .token.entity,
-.prose-content [data-rehype-pretty-code-figure] .token.url,
-.prose-content [data-rehype-pretty-code-figure] .language-css .token.string,
-.prose-content [data-rehype-pretty-code-figure] .style .token.string {
-  color: var(--color-text-primary) !important;
+/* Operators and entities */
+.prose-content [data-rehype-pretty-code-figure] pre code .token.operator,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.entity,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.url,
+.prose-content [data-rehype-pretty-code-figure] pre code .language-css .token.string,
+.prose-content [data-rehype-pretty-code-figure] pre code .style .token.string {
+  color: var(--color-text-primary);
 }
 
-.prose-content [data-rehype-pretty-code-figure] .token.atrule,
-.prose-content [data-rehype-pretty-code-figure] .token.attr-value,
-.prose-content [data-rehype-pretty-code-figure] .token.keyword {
-  color: var(--color-interactive) !important;
+/* Keywords */
+.prose-content [data-rehype-pretty-code-figure] pre code .token.atrule,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.attr-value,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.keyword {
+  color: var(--color-interactive);
   font-weight: var(--font-weight-medium);
 }
 
-.prose-content [data-rehype-pretty-code-figure] .token.function,
-.prose-content [data-rehype-pretty-code-figure] .token.class-name {
-  color: #A67E5B !important; /* Darker variant of accent-secondary */
+/* Functions and classes */
+.prose-content [data-rehype-pretty-code-figure] pre code .token.function,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.class-name {
+  color: #A67E5B; /* Darker variant of accent-secondary */
 }
 
-.prose-content [data-rehype-pretty-code-figure] .token.regex,
-.prose-content [data-rehype-pretty-code-figure] .token.important,
-.prose-content [data-rehype-pretty-code-figure] .token.variable {
-  color: var(--color-error) !important;
+/* Special tokens */
+.prose-content [data-rehype-pretty-code-figure] pre code .token.regex,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.important,
+.prose-content [data-rehype-pretty-code-figure] pre code .token.variable {
+  color: var(--color-error);
 }
 
 .prose-content blockquote {
@@ -476,8 +474,16 @@ label {
   cursor: not-allowed;
 }
 
-.prose-content ul:has(.task-list-item) {
+/* Task list container - class-based approach for better compatibility */
+.prose-content ul.contains-task-list {
   padding-left: 1.5rem;
+}
+
+/* Modern browsers enhancement */
+@supports selector(:has(.task-list-item)) {
+  .prose-content ul:has(.task-list-item) {
+    padding-left: 1.5rem;
+  }
 }
 
 /* Copy Button Component */
@@ -689,11 +695,12 @@ label {
   }
 
   .prose-content [data-rehype-pretty-code-figure] pre {
-    background-color: var(--color-base-tertiary) !important;
+    background-color: var(--color-base-tertiary);
   }
 
-  .prose-content [data-rehype-pretty-code-figure] code {
-    color: var(--color-text-primary) !important;
+  .prose-content [data-rehype-pretty-code-figure] pre > code {
+    color: var(--color-text-primary);
+    background-color: transparent;
   }
 
   .copy-button {
@@ -816,7 +823,7 @@ label {
 
 /* Reset margin for link card images specifically */
 .prose-content .link-card .link-card-image {
-  margin: 0 !important;
+  margin: 0;
 }
 
 /* Mobile Responsive for Link Cards */
