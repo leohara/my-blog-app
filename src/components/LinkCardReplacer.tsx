@@ -20,6 +20,7 @@ export default function LinkCardReplacer() {
     }
 
     const url = element.getAttribute("data-link-card");
+
     if (url) {
       // React 18のcreateRootを使用してコンポーネントをマウント
       const root = createRoot(element as HTMLElement);
@@ -51,6 +52,7 @@ export default function LinkCardReplacer() {
     // DOMが準備されたら要素を探して監視開始
     const timeoutId = setTimeout(() => {
       const linkCardElements = document.querySelectorAll("[data-link-card]");
+
       for (const element of linkCardElements) {
         observerRef.current?.observe(element);
       }

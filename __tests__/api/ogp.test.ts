@@ -129,6 +129,7 @@ describe("/api/ogp", () => {
         image: "https://example.com/image.jpg",
         siteName: "Test Site",
         url: "https://example.com",
+        favicon: "https://example.com/favicon.ico",
       });
     });
 
@@ -194,6 +195,7 @@ describe("/api/ogp", () => {
         image: undefined,
         siteName: undefined,
         url: "https://example.com",
+        favicon: "https://example.com/favicon.ico",
       });
     });
   });

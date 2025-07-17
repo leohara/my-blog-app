@@ -4,4 +4,5 @@ export interface OGPData {
   image?: string;
   siteName?: string;
   url: string;
+  favicon?: string;
 }
