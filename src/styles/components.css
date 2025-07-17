@@ -118,12 +118,51 @@ label {
 }
 
 .prose-content code {
-  background-color: var(--color-base-tertiary);
+  display: inline;
+  background-color: rgba(139, 115, 85, 0.08);
   padding: var(--spacing-xs) calc(var(--spacing-xs) * 1.5);
   border-radius: var(--radius-sm);
   font-size: var(--font-size-sm);
   font-family: var(--font-mono), monospace;
   color: var(--color-text-primary);
+  border: 1px solid rgba(139, 115, 85, 0.12);
+  white-space: nowrap;
+}
+
+/* Inline code wrapper elements */
+.prose-content figure[data-rehype-pretty-code-figure] {
+  display: inline !important;
+  margin: 0 !important;
+}
+
+/* Code blocks should remain as blocks */
+.prose-content figure[data-rehype-pretty-code-figure]:has(pre) {
+  display: block !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* Ensure inline code in lists and paragraphs displays inline */
+.prose-content li figure[data-rehype-pretty-code-figure],
+.prose-content p figure[data-rehype-pretty-code-figure] {
+  display: inline !important;
+  margin: 0 !important;
+}
+
+/* But keep code blocks as blocks even in lists/paragraphs */
+.prose-content li figure[data-rehype-pretty-code-figure]:has(pre),
+.prose-content p figure[data-rehype-pretty-code-figure]:has(pre) {
+  display: block !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* For compatibility with span wrappers */
+.prose-content span[data-rehype-pretty-code-figure] {
+  display: inline !important;
+}
+
+.prose-content figure[data-rehype-pretty-code-figure] code,
+.prose-content span[data-rehype-pretty-code-figure] code {
+  display: inline !important;
 }
 
 /* Syntax Highlighting Styles */
@@ -224,36 +263,51 @@ label {
 }
 
 /* Line highlighting */
-.prose-content [data-rehype-pretty-code-figure] [data-line] {
+/* Code blocks only - not inline code */
+.prose-content figure[data-rehype-pretty-code-figure] pre [data-line],
+.prose-content div[data-rehype-pretty-code-figure] pre [data-line] {
   display: inline-block;
   width: 100%;
   padding: 0 1rem;
 }
 
-.prose-content [data-rehype-pretty-code-figure] [data-highlighted-line] {
+/* Inline code should remain inline */
+.prose-content span[data-rehype-pretty-code-figure] [data-line] {
+  display: inline;
+  width: auto;
+  padding: 0;
+}
+
+/* Highlighted lines - code blocks only */
+.prose-content figure[data-rehype-pretty-code-figure] pre [data-highlighted-line],
+.prose-content div[data-rehype-pretty-code-figure] pre [data-highlighted-line] {
   background-color: rgba(212, 165, 116, 0.1);
   border-left: 3px solid var(--color-accent-secondary);
   margin-left: -3px;
   padding-left: calc(var(--spacing-md) - 3px);
 }
 
-.prose-content [data-rehype-pretty-code-figure] [data-highlighted-line-id="add"] {
+.prose-content figure[data-rehype-pretty-code-figure] pre [data-highlighted-line-id="add"],
+.prose-content div[data-rehype-pretty-code-figure] pre [data-highlighted-line-id="add"] {
   background-color: rgba(124, 152, 133, 0.15);
   border-left-color: var(--color-success);
 }
 
-.prose-content [data-rehype-pretty-code-figure] [data-highlighted-line-id="remove"] {
+.prose-content figure[data-rehype-pretty-code-figure] pre [data-highlighted-line-id="remove"],
+.prose-content div[data-rehype-pretty-code-figure] pre [data-highlighted-line-id="remove"] {
   background-color: rgba(198, 113, 113, 0.15);
   border-left-color: var(--color-error);
 }
 
-/* Line numbers */
-.prose-content [data-line-numbers] [data-line] {
+/* Line numbers - code blocks only */
+.prose-content figure[data-rehype-pretty-code-figure] pre[data-line-numbers] [data-line],
+.prose-content div[data-rehype-pretty-code-figure] pre[data-line-numbers] [data-line] {
   position: relative;
   padding-left: 3.5rem;
 }
 
-.prose-content [data-line-numbers] [data-line]::before {
+.prose-content figure[data-rehype-pretty-code-figure] pre[data-line-numbers] [data-line]::before,
+.prose-content div[data-rehype-pretty-code-figure] pre[data-line-numbers] [data-line]::before {
   content: attr(data-line-number);
   position: absolute;
   left: 0;
@@ -396,7 +450,7 @@ label {
 
 .prose-content .task-list-item input[type="checkbox"] {
   position: absolute;
-  left: 0;
+  left: -1.5rem;
   top: 0.375rem;
   width: 1rem;
   height: 1rem;
@@ -423,7 +477,7 @@ label {
 }
 
 .prose-content ul:has(.task-list-item) {
-  padding-left: 0;
+  padding-left: 1.5rem;
 }
 
 /* Copy Button Component */
@@ -610,8 +664,9 @@ label {
   }
   
   .prose-content code {
-    background-color: var(--color-base-tertiary);
+    background-color: rgba(212, 165, 116, 0.15);
     color: var(--color-text-primary);
+    border: 1px solid rgba(212, 165, 116, 0.25);
   }
   
   .code-block-wrapper {
@@ -659,12 +714,14 @@ label {
     border-color: var(--color-success);
   }
   
-  .prose-content [data-rehype-pretty-code-figure] [data-highlighted-line] {
+  .prose-content figure[data-rehype-pretty-code-figure] pre [data-highlighted-line],
+  .prose-content div[data-rehype-pretty-code-figure] pre [data-highlighted-line] {
     background-color: rgba(139, 92, 246, 0.3);
     border-left-color: #a78bfa;
   }
   
-  .prose-content [data-line-numbers] [data-line]::before {
+  .prose-content figure[data-rehype-pretty-code-figure] pre[data-line-numbers] [data-line]::before,
+  .prose-content div[data-rehype-pretty-code-figure] pre[data-line-numbers] [data-line]::before {
     color: #666666;
   }
   
