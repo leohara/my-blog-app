@@ -1,3 +1,4 @@
+import * as cheerio from "cheerio";
 import { NextRequest, NextResponse } from "next/server";
 
 import { decodeHtmlEntities } from "@/lib/html-entities";
@@ -52,6 +53,9 @@ async function fetchOGPData(url: string): Promise<OGPData | null> {
     if (!response.ok) return null;
 
     const html = await response.text();
+
+    // cheerioでHTMLをパース
+    const $ = cheerio.load(html);
 
     // 正規表現でメタタグを抽出（属性の順序に依存しない）
     const getMetaContent = (property: string): string | undefined => {
@@ -114,6 +118,29 @@ async function fetchOGPData(url: string): Promise<OGPData | null> {
       }
     }
 
+    // ファビコンURLを生成（複数のオプションを試す）
+    const domain = new URL(url).hostname;
+    let faviconUrl: string | undefined;
+
+    try {
+      // 1. HTMLからfaviconのlinkタグを探す
+      const faviconLink = $(
+        'link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]',
+      )
+        .first()
+        .attr("href");
+
+      if (faviconLink) {
+        faviconUrl = new URL(faviconLink, url).href;
+      } else {
+        // 2. 標準のfavicon.icoを試す
+        faviconUrl = `https://${domain}/favicon.ico`;
+      }
+    } catch (error) {
+      console.error("[OGP API] Error generating favicon URL:", error);
+      faviconUrl = `https://${domain}/favicon.ico`;
+    }
+
     const ogpData: OGPData = {
       title: getMetaContent("og:title") || getTitleText(),
       description:
@@ -123,6 +150,7 @@ async function fetchOGPData(url: string): Promise<OGPData | null> {
       image: imageUrl,
       siteName: getMetaContent("og:site_name"),
       url: url,
+      favicon: faviconUrl,
     };
 
     return ogpData;
