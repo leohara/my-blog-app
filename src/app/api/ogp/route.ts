@@ -1,3 +1,4 @@
+import * as cheerio from "cheerio";
 import { NextRequest, NextResponse } from "next/server";
 
 import { decodeHtmlEntities } from "@/lib/html-entities";
@@ -13,18 +14,41 @@ function isValidUrl(urlString: string): boolean {
     if (url.protocol !== "https:") return false;
 
     // 内部IPアドレスをブロック
-    // TODO: 他にも考慮するべきIPアドレスがあるか調査
     const hostname = url.hostname;
+
+    // IPv4チェック
     if (
       hostname === "localhost" || // localhost
       hostname === "127.0.0.1" || // ループバックアドレス
       hostname.startsWith("10.") || // 10.x.x.x - プライベートネットワーク (クラスA)
-      hostname.startsWith("172.") || // 172.16.x.x - プライベートネットワーク (クラスB)
       hostname.startsWith("192.168.") || // 192.168.x.x - プライベートネットワーク (クラスC)
       hostname.startsWith("169.254.") || // 169.254.x.x - リンクローカルアドレス
+      hostname === "0.0.0.0" // 全てのインターフェースを示す特殊アドレス (予期しない動作を防ぐ)
+    ) {
+      return false;
+    }
+
+    // 172.16.0.0 - 172.31.255.255 の範囲をチェック (クラスB プライベートネットワーク)
+    if (hostname.startsWith("172.")) {
+      const parts = hostname.split(".");
+      if (parts.length >= 2) {
+        const secondOctet = parseInt(parts[1], 10);
+        if (!isNaN(secondOctet) && secondOctet >= 16 && secondOctet <= 31) {
+          return false;
+        }
+      }
+    }
+
+    // IPv6チェック
+    if (
       hostname === "::1" || // IPv6ループバックアドレス
       hostname === "[::1]" || // IPv6ループバックアドレス (ブラケット付きIPv6表記)
-      hostname === "0.0.0.0" // 全てのインターフェースを示す特殊アドレス (予期しない動作を防ぐ)
+      hostname.startsWith("fc00:") || // IPv6 Unique Local Addresses (fc00::/7)
+      hostname.startsWith("fd") || // IPv6 Unique Local Addresses (fd00::/8)
+      hostname.startsWith("fe80:") || // IPv6 Link-Local Addresses (fe80::/10)
+      hostname.startsWith("[fc00:") || // ブラケット付きIPv6表記
+      hostname.startsWith("[fd") || // ブラケット付きIPv6表記
+      hostname.startsWith("[fe80:") // ブラケット付きIPv6表記
     ) {
       return false;
     }
@@ -52,6 +76,9 @@ async function fetchOGPData(url: string): Promise<OGPData | null> {
     if (!response.ok) return null;
 
     const html = await response.text();
+
+    // cheerioでHTMLをパース
+    const $ = cheerio.load(html);
 
     // 正規表現でメタタグを抽出（属性の順序に依存しない）
     const getMetaContent = (property: string): string | undefined => {
@@ -114,6 +141,29 @@ async function fetchOGPData(url: string): Promise<OGPData | null> {
       }
     }
 
+    // ファビコンURLを生成（複数のオプションを試す）
+    const domain = new URL(url).hostname;
+    let faviconUrl: string | undefined;
+
+    try {
+      // 1. HTMLからfaviconのlinkタグを探す
+      const faviconLink = $(
+        'link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]',
+      )
+        .first()
+        .attr("href");
+
+      if (faviconLink) {
+        faviconUrl = new URL(faviconLink, url).href;
+      } else {
+        // 2. 標準のfavicon.icoを試す
+        faviconUrl = `https://${domain}/favicon.ico`;
+      }
+    } catch (error) {
+      console.error("[OGP API] Error generating favicon URL:", error);
+      faviconUrl = `https://${domain}/favicon.ico`;
+    }
+
     const ogpData: OGPData = {
       title: getMetaContent("og:title") || getTitleText(),
       description:
@@ -123,6 +173,7 @@ async function fetchOGPData(url: string): Promise<OGPData | null> {
       image: imageUrl,
       siteName: getMetaContent("og:site_name"),
       url: url,
+      favicon: faviconUrl,
     };
 
     return ogpData;

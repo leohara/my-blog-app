@@ -25,7 +25,9 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@types/cheerio": "^0.22.35",
     "@vercel/analytics": "^1.5.0",
+    "cheerio": "^1.1.0",
     "contentful": "^11.7.6",
     "next": "15.3.5",
     "react": "^19.0.0",
