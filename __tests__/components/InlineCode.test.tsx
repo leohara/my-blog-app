@@ -9,18 +9,12 @@ beforeAll(() => {
   window.getComputedStyle = jest.fn().mockImplementation((element) => {
     const styles = originalGetComputedStyle(element);
 
-    // Mock styles for inline code elements
-    if (
-      element.matches &&
-      element.matches("span[data-rehype-pretty-code-figure]")
-    ) {
+    // Mock styles for inline code elements (bypassInlineCode: true means no wrapper)
+    if (element.matches && element.matches("code:not(pre code)")) {
       return { ...styles, display: "inline" };
     }
-    if (
-      element.matches &&
-      element.matches("span[data-rehype-pretty-code-figure] code")
-    ) {
-      return { ...styles, display: "inline" };
+    if (element.matches && element.matches("pre > code")) {
+      return { ...styles, display: "block" };
     }
     if (element.matches && element.matches("pre")) {
       return { ...styles, display: "block" };
@@ -43,31 +37,17 @@ describe("InlineCode display tests", () => {
       <div className="prose-content">
         <p>
           Create your feature branch with{" "}
-          <span data-rehype-pretty-code-figure="">
-            <code data-language="plaintext" data-theme="min-light">
-              <span data-line="">
-                <span>git checkout -b feature/AmazingFeature</span>
-              </span>
-            </code>
-          </span>
+          <code>git checkout -b feature/AmazingFeature</code>
         </p>
       </div>,
     );
 
-    const codeElement = container.querySelector(
-      "span[data-rehype-pretty-code-figure]",
-    );
+    const codeElement = container.querySelector("p > code");
     expect(codeElement).toBeInTheDocument();
 
     // Check that the element displays inline
     const computedStyle = window.getComputedStyle(codeElement!);
     expect(computedStyle.display).toBe("inline");
-
-    // Check that code element itself is inline
-    const innerCode = codeElement!.querySelector("code");
-    expect(innerCode).toBeInTheDocument();
-    const codeStyle = window.getComputedStyle(innerCode!);
-    expect(codeStyle.display).toBe("inline");
   });
 
   it("should display inline code in lists without line breaks", () => {
@@ -75,23 +55,14 @@ describe("InlineCode display tests", () => {
       <div className="prose-content">
         <ul>
           <li>
-            <strong>ESLint</strong>:{" "}
-            <span data-rehype-pretty-code-figure="">
-              <code data-language="plaintext" data-theme="min-light">
-                <span data-line="">
-                  <span>Linting</span>
-                </span>
-              </code>
-            </span>{" "}
-            for JavaScript/TypeScript
+            <strong>ESLint</strong>: <code>Linting</code> for
+            JavaScript/TypeScript
           </li>
         </ul>
       </div>,
     );
 
-    const codeElement = container.querySelector(
-      "li span[data-rehype-pretty-code-figure]",
-    );
+    const codeElement = container.querySelector("li code");
     expect(codeElement).toBeInTheDocument();
 
     const computedStyle = window.getComputedStyle(codeElement!);
@@ -144,5 +115,68 @@ describe("InlineCode display tests", () => {
     // Check that ul has appropriate padding
     const ulStyle = window.getComputedStyle(ulElement!);
     expect(ulStyle.paddingLeft).toBeTruthy();
+  });
+
+  it("should handle multiple inline codes in a paragraph", () => {
+    const { container } = render(
+      <div className="prose-content">
+        <p>
+          Use <code>git add</code> and then <code>git commit</code> commands.
+        </p>
+      </div>,
+    );
+
+    const codeElements = container.querySelectorAll("p > code");
+    expect(codeElements).toHaveLength(2);
+
+    for (const code of codeElements) {
+      const computedStyle = window.getComputedStyle(code);
+      expect(computedStyle.display).toBe("inline");
+    }
+  });
+
+  it("should handle inline code in nested contexts", () => {
+    const { container } = render(
+      <div className="prose-content">
+        <blockquote>
+          <p>
+            The <code>useState</code> hook is essential.
+          </p>
+        </blockquote>
+      </div>,
+    );
+
+    const codeElement = container.querySelector("blockquote code");
+    expect(codeElement).toBeInTheDocument();
+
+    const computedStyle = window.getComputedStyle(codeElement!);
+    expect(computedStyle.display).toBe("inline");
+  });
+
+  it("should properly style inline code differently from code blocks", () => {
+    const { container } = render(
+      <div className="prose-content">
+        <p>
+          Inline: <code>const x = 1;</code>
+        </p>
+        <figure data-rehype-pretty-code-figure="">
+          <pre>
+            <code>const y = 2;</code>
+          </pre>
+        </figure>
+      </div>,
+    );
+
+    const inlineCode = container.querySelector("p > code");
+    const blockCode = container.querySelector("pre > code");
+
+    expect(inlineCode).toBeInTheDocument();
+    expect(blockCode).toBeInTheDocument();
+
+    const inlineStyle = window.getComputedStyle(inlineCode!);
+    const blockStyle = window.getComputedStyle(blockCode!);
+
+    expect(inlineStyle.display).toBe("inline");
+    expect(blockStyle.display).toBe("block");
   });
 });

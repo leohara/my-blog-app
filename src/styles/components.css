@@ -117,7 +117,8 @@ label {
   margin-bottom: 0.5rem;
 }
 
-.prose-content code {
+/* Inline code - optimized selector for code not inside pre elements */
+.prose-content code:not(pre code) {
   display: inline;
   background-color: rgba(139, 115, 85, 0.08);
   padding: var(--spacing-xs) calc(var(--spacing-xs) * 1.5);
@@ -254,9 +255,9 @@ label {
   margin: 0;
 }
 
-/* Ensure figure inside code-block-wrapper has no margin */
-.code-block-wrapper figure[data-rehype-pretty-code-figure] {
-  margin: 0 !important;
+/* Ensure figure inside code-block-wrapper has no margin - higher specificity without !important */
+.prose-content .code-block-wrapper figure[data-rehype-pretty-code-figure] {
+  margin: 0;
   padding: 0;
 }
 
@@ -264,12 +265,6 @@ label {
 .code-block-wrapper > * {
   margin-top: 0;
   margin-bottom: 0;
-}
-
-/* Specifically reset figure margin in code-block-wrapper */
-.code-block-wrapper > figure {
-  margin: 0 !important;
-  padding: 0;
 }
 
 /* Language label - hide since we have header now */
@@ -297,12 +292,7 @@ label {
 }
 
 /* Inline code is no longer wrapped by rehype-pretty-code due to bypassInlineCode: true */
-/* This rule is kept for backward compatibility but may not be needed */
-.prose-content span[data-rehype-pretty-code-figure] [data-line] {
-  display: inline;
-  width: auto;
-  padding: 0;
-}
+/* Removed deprecated span[data-rehype-pretty-code-figure] rules */
 
 /* Highlighted lines in code blocks */
 .prose-content [data-rehype-pretty-code-figure] pre [data-highlighted-line] {
@@ -343,11 +333,7 @@ label {
   font-size: var(--font-size-xs);
 }
 
-/* Inline code syntax highlighting */
-.prose-content :not(pre) > code[data-theme="light"],
-.prose-content :not(pre) > code[data-theme="dark"] {
-  padding: 0.125rem 0.375rem;
-}
+/* Inline code no longer has data-theme attributes with bypassInlineCode: true */
 
 /* Syntax highlighting tokens - Optimized without !important */
 /* Using higher specificity for reliable styling */
@@ -711,7 +697,7 @@ label {
     color: var(--color-text-primary);
   }
   
-  .prose-content code {
+  .prose-content code:not(pre code) {
     background-color: rgba(212, 165, 116, 0.15);
     color: var(--color-text-primary);
     border: 1px solid rgba(212, 165, 116, 0.25);
