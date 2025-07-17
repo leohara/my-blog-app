@@ -171,6 +171,8 @@ label {
   overflow: hidden;
   background-color: var(--color-base-secondary);
   box-shadow: var(--shadow-sm);
+  /* Ensure no internal spacing conflicts */
+  padding: 0;
 }
 
 /* Code Block Header */
@@ -222,6 +224,11 @@ label {
   border-radius: 0;
 }
 
+/* Remove top padding for pre elements inside code-block-wrapper */
+.code-block-wrapper [data-rehype-pretty-code-figure] pre {
+  padding-top: 0;
+}
+
 /* Code inside pre blocks */
 .prose-content [data-rehype-pretty-code-figure] pre > code {
   color: var(--color-text-primary);
@@ -230,6 +237,8 @@ label {
   line-height: var(--line-height-relaxed);
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Courier New', monospace;
   background-color: transparent;
+  padding: 0;
+  margin: 0;
 }
 
 .prose-content [data-rehype-pretty-code-figure] {
@@ -244,7 +253,8 @@ label {
 
 /* Ensure figure inside code-block-wrapper has no margin */
 .code-block-wrapper figure[data-rehype-pretty-code-figure] {
-  margin: 0;
+  margin: 0 !important;
+  padding: 0;
 }
 
 /* Language label - hide since we have header now */
@@ -259,6 +269,16 @@ label {
   display: inline-block;
   width: 100%;
   padding: 0 1rem;
+}
+
+/* Ensure first line in code-block-wrapper has proper spacing */
+.code-block-wrapper [data-rehype-pretty-code-figure] pre [data-line]:first-child {
+  padding-top: var(--spacing-md);
+}
+
+/* Ensure last line in code-block-wrapper has proper spacing */
+.code-block-wrapper [data-rehype-pretty-code-figure] pre [data-line]:last-child {
+  padding-bottom: var(--spacing-md);
 }
 
 /* Inline code is no longer wrapped by rehype-pretty-code due to bypassInlineCode: true */
@@ -411,6 +431,13 @@ label {
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;
   border-radius: 0.5rem;
+}
+
+/* Ensure images inside code blocks don't have margin */
+.code-block-wrapper img,
+.code-block-header img,
+.code-block-header svg {
+  margin: 0;
 }
 
 .prose-content hr {
