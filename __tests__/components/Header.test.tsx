@@ -53,6 +53,7 @@ jest.mock("@/components/Header/HamburgerIcon", () => ({
     <button
       data-testid="hamburger-icon"
       aria-label={isOpen ? "Close mobile menu" : "Open mobile menu"}
+      aria-expanded={isOpen}
       onClick={onClick}
     >
       Menu
@@ -312,6 +313,22 @@ describe("Header Component", () => {
 
       // Menu should be closed after clicking a link
       // The menu state is managed by the component
+    });
+
+    it("should close mobile menu when pressing Escape key", () => {
+      render(<Header />);
+
+      const menuButton = screen.getByTestId("hamburger-icon");
+      
+      // Open the menu
+      fireEvent.click(menuButton);
+      expect(menuButton).toHaveAttribute("aria-expanded", "true");
+
+      // Press Escape key
+      fireEvent.keyDown(document, { key: "Escape" });
+
+      // Menu should be closed
+      expect(menuButton).toHaveAttribute("aria-expanded", "false");
     });
   });
 
