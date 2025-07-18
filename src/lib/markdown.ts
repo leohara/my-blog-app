@@ -4,6 +4,8 @@ import { remark } from "remark";
 import remarkGfm from "remark-gfm";
 import remarkRehype from "remark-rehype";
 
+import { getShikiThemeConfig } from "@/config/themes";
+
 import { rehypeCodeCopy } from "./rehype-code-copy";
 import { rehypeHeadingExtractor } from "./rehype-heading-extractor";
 import { remarkLinkCard } from "./remark-link-card";
@@ -17,16 +19,16 @@ export interface MarkdownResult {
 }
 
 // テーマ設定の型定義（rehype-pretty-code の型に合わせて調整）
-interface ThemeConfig {
-  theme: string; // 現在は string のみサポート、将来的に object もサポート予定
-  keepBackground: boolean;
-}
+// interface ThemeConfig {
+//   theme: string; // 現在は string のみサポート、将来的に object もサポート予定
+//   keepBackground: boolean;
+// }
 
-// デフォルトのテーマ設定
-const _DEFAULT_THEME_CONFIG: ThemeConfig = {
-  theme: "one-dark-pro", // 現在は固定だが将来的に切り替え可能
-  keepBackground: true,
-};
+// デフォルトのテーマ設定（将来の拡張用）
+// const _DEFAULT_THEME_CONFIG: ThemeConfig = {
+//   theme: "one-dark-pro", // 現在は固定だが将来的に切り替え可能
+//   keepBackground: true,
+// };
 
 /**
  * マークダウンテキストをHTMLに変換する
@@ -53,12 +55,8 @@ export async function markdownToHtml(
         // インラインコードの処理をスキップ（figure要素でラップしない）
         bypassInlineCode: true,
         // デュアルテーマ設定（ライト/ダークモード対応）
-        themes: {
-          light: "min-light",
-          dark: "github-dark-dimmed",
-        },
-        // CSS変数を使用してテーマを切り替え
-        defaultColor: false,
+        theme: getShikiThemeConfig(),
+        // CSS変数を使用してテーマを切り替え（defaultColorは削除）
         // 言語がない場合のデフォルト
         defaultLang: "plaintext",
         // 背景色をCSSで制御
