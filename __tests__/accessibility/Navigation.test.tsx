@@ -460,10 +460,10 @@ describe("Accessibility Navigation Tests", () => {
       const logoImages = screen.getAllByRole("img", { name: /logo/i });
       expect(logoImages.length).toBeGreaterThan(0);
 
-      logoImages.forEach((img) => {
+      for (const img of logoImages) {
         expect(img).toHaveAttribute("alt");
         expect(img.getAttribute("alt")).toBeTruthy();
-      });
+      }
     });
 
     it("should have proper heading structure", () => {

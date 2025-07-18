@@ -183,10 +183,10 @@ describe("Header Component", () => {
 
       const logos = screen.getAllByRole("img", { name: /logo/i });
       expect(logos.length).toBeGreaterThan(0);
-      logos.forEach((logo) => {
+      for (const logo of logos) {
         expect(logo).toHaveAttribute("src");
         expect(logo.getAttribute("src")).toContain("icon.png");
-      });
+      }
     });
 
     it("should have correct logo link", () => {
@@ -196,9 +196,9 @@ describe("Header Component", () => {
         name: /go to home page/i,
       });
       expect(logoLinks.length).toBeGreaterThan(0);
-      logoLinks.forEach((link) => {
+      for (const link of logoLinks) {
         expect(link).toHaveAttribute("href", "/");
-      });
+      }
     });
   });
 
@@ -319,7 +319,7 @@ describe("Header Component", () => {
       render(<Header />);
 
       const menuButton = screen.getByTestId("hamburger-icon");
-      
+
       // Open the menu
       fireEvent.click(menuButton);
       expect(menuButton).toHaveAttribute("aria-expanded", "true");
