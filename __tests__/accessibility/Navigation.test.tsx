@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 
 import { Header } from "@/components/Header/Header";
 import { Sidebar } from "@/components/Sidebar";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { BlogPostSummary } from "@/types/blogPost";
 import { Heading } from "@/types/heading";
 
@@ -99,6 +100,11 @@ Object.defineProperty(window, "IntersectionObserver", {
 
 const mockUsePathname = usePathname as jest.MockedFunction<typeof usePathname>;
 
+// Helper function to render with ThemeProvider
+const renderWithTheme = (component: React.ReactElement) => {
+  return render(<ThemeProvider>{component}</ThemeProvider>);
+};
+
 describe("Accessibility Navigation Tests", () => {
   const mockPosts: BlogPostSummary[] = [
     {
@@ -142,7 +148,7 @@ describe("Accessibility Navigation Tests", () => {
 
   describe("Header Navigation Accessibility", () => {
     it("should have proper ARIA roles and landmarks", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       // Check for main landmark roles - now we have multiple headers (desktop & mobile)
       const banners = screen.getAllByRole("banner");
@@ -153,7 +159,7 @@ describe("Accessibility Navigation Tests", () => {
     });
 
     it("should have accessible navigation links", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       // Check for accessible link labels - now we have multiple instances (desktop & mobile)
       const homeLinks = screen.getAllByRole("link", {
@@ -170,7 +176,7 @@ describe("Accessibility Navigation Tests", () => {
 
     it("should indicate current page with aria-current", () => {
       mockUsePathname.mockReturnValue("/posts");
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const postsLink = screen.getByRole("link", {
         name: /navigate to posts page/i,
@@ -179,7 +185,7 @@ describe("Accessibility Navigation Tests", () => {
     });
 
     it("should support keyboard navigation", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const homeLink = screen.getByRole("link", {
         name: /navigate to home page/i,
@@ -200,7 +206,7 @@ describe("Accessibility Navigation Tests", () => {
     });
 
     it("should handle Enter and Space keys on links", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const homeLink = screen.getByRole("link", {
         name: /navigate to home page/i,
@@ -218,7 +224,7 @@ describe("Accessibility Navigation Tests", () => {
     });
 
     it("should have accessible mobile menu", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const menuButton = screen.getByTestId("hamburger-icon");
       expect(menuButton).toBeInTheDocument();
@@ -232,7 +238,7 @@ describe("Accessibility Navigation Tests", () => {
     });
 
     it("should handle Escape key to close mobile menu", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const menuButton = screen.getByTestId("hamburger-icon");
 
@@ -246,7 +252,7 @@ describe("Accessibility Navigation Tests", () => {
     });
 
     it("should have proper focus management in mobile menu", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const menuButton = screen.getByTestId("hamburger-icon");
 
@@ -367,8 +373,8 @@ describe("Accessibility Navigation Tests", () => {
       render(<Sidebar posts={mockPosts} currentSlug="first-post" />);
 
       const currentPostLink = screen.getByText("First Post");
-      expect(currentPostLink).toHaveClass("text-black");
       expect(currentPostLink).toHaveClass("font-medium");
+      // スタイルのインラインチェックは削除（CSS変数を使用しているため）
     });
 
     it("should handle heading clicks for smooth scrolling", () => {
@@ -393,7 +399,7 @@ describe("Accessibility Navigation Tests", () => {
 
   describe("Focus Management", () => {
     it("should maintain focus during navigation state changes", () => {
-      const { rerender } = render(<Header />);
+      const { rerender } = renderWithTheme(<Header />);
 
       const homeLink = screen.getByRole("link", {
         name: /navigate to home page/i,
@@ -403,7 +409,11 @@ describe("Accessibility Navigation Tests", () => {
 
       // Simulate navigation change
       mockUsePathname.mockReturnValue("/posts");
-      rerender(<Header />);
+      rerender(
+        <ThemeProvider>
+          <Header />
+        </ThemeProvider>,
+      );
 
       // Focus should be maintained or properly managed
       const focusedElement = document.activeElement;
@@ -411,7 +421,7 @@ describe("Accessibility Navigation Tests", () => {
     });
 
     it("should handle focus trapping in mobile menu", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const menuButton = screen.getByTestId("hamburger-icon");
 
@@ -426,7 +436,7 @@ describe("Accessibility Navigation Tests", () => {
     });
 
     it("should restore focus when mobile menu closes", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const menuButton = screen.getByTestId("hamburger-icon");
 
@@ -444,7 +454,7 @@ describe("Accessibility Navigation Tests", () => {
 
   describe("Screen Reader Support", () => {
     it("should have proper aria-hidden attributes on decorative elements", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       // Check for aria-hidden on decorative spans
       const decorativeElements = document.querySelectorAll(
@@ -454,7 +464,7 @@ describe("Accessibility Navigation Tests", () => {
     });
 
     it("should provide meaningful text alternatives", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       // Check for logo alt text - now we have multiple logos (desktop & mobile)
       const logoImages = screen.getAllByRole("img", { name: /logo/i });
@@ -519,7 +529,7 @@ describe("Accessibility Navigation Tests", () => {
 
   describe("Color Contrast and Visual Accessibility", () => {
     it("should have sufficient color contrast for text", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       // Check that text elements are rendered
       const textElements = screen.getAllByRole("link");
@@ -531,7 +541,7 @@ describe("Accessibility Navigation Tests", () => {
     });
 
     it("should provide focus indicators", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const homeLink = screen.getByRole("link", {
         name: /navigate to home page/i,
@@ -560,7 +570,7 @@ describe("Accessibility Navigation Tests", () => {
         })),
       });
 
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       // Component should render without issues in high contrast mode
       const banners = screen.getAllByRole("banner");

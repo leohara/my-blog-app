@@ -35,7 +35,7 @@ describe("Footer Component", () => {
       "py-8",
       "px-4",
       "border-t",
-      "border-gray-200",
+      "border-[var(--color-border)]",
     );
   });
 
@@ -63,8 +63,8 @@ describe("Footer Component", () => {
     });
     expect(privacyLink).toHaveClass(
       "text-sm",
-      "text-gray-600",
-      "hover:text-gray-900",
+      "text-[var(--color-text-secondary)]",
+      "hover:text-[var(--color-text-primary)]",
       "transition-colors",
     );
   });

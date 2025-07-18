@@ -95,30 +95,49 @@
 /* Dark Theme (Explicit) */
 :root[data-theme="dark"] {
   /* Legacy colors */
-  --background: #000000;
-  --foreground: #ffffff;
+  --background: #1C1C1E;
+  --foreground: #F2F2F7;
   
-  /* Dark mode color overrides */
-  --color-base-primary: #1A1A1A;
-  --color-base-secondary: #0A0A0A;
-  --color-base-tertiary: #2A2A2A;
+  /* Hierarchical Background System */
+  --color-base-primary: #1C1C1E;      /* Main background - Apple-inspired dark gray */
+  --color-base-secondary: #242426;    /* Sidebar background - slightly lighter */
+  --color-base-tertiary: #2C2C2E;     /* Cards, code blocks background */
+  --color-base-quaternary: #38383A;   /* Hover states, selections */
   
-  --color-text-primary: #F5F5F0;
-  --color-text-secondary: #B8B0A8;
-  --color-border: #3A3A3A;
-  --color-interactive: #D4A574;
+  /* Text Colors with Better Contrast */
+  --color-text-primary: #F2F2F7;      /* Main text - high contrast */
+  --color-text-secondary: #A1A1A6;    /* Secondary text - readable */
+  --color-text-tertiary: #8E8E93;     /* Tertiary text */
+  --color-text-disabled: #636366;     /* Disabled text */
   
-  /* Accents with reduced saturation */
-  --color-accent-primary: #D81B60;
-  --color-accent-secondary: #E6C08A;
-  --color-success: #8FA898;
-  --color-error: #D88888;
+  /* Border and UI Elements */
+  --color-border: #38383A;
+  --color-interactive: #5AC8FA;       /* Arctic blue for elegant accent */
+  
+  /* Vibrant Accent Colors */
+  --color-accent-primary: #FF375F;    /* Apple-style pink */
+  --color-accent-secondary: #FFB800;  /* Orange-gold */
+  --color-success: #4ECDC4;           /* Teal for success states */
+  --color-error: #FF453A;             /* Bright red */
+  
+  /* Code Block Colors - GitHub Dark Dimmed Official */
+  --color-code-bg: #22272e;           /* Official background color */
+  --color-code-border: #444c56;       /* Border color */
+  --color-code-line-number: #768390;  /* Line numbers (same as comments) */
+  --color-code-comment: #768390;      /* Comments - muted gray */
+  --color-code-keyword: #f47067;      /* Keywords - soft red */
+  --color-code-string: #96d0ff;       /* Strings - calm blue */
+  --color-code-function: #dcbdfb;     /* Functions - gentle purple */
+  --color-code-number: #6cb6ff;       /* Numbers - bright blue */
+  --color-code-operator: #6cb6ff;     /* Operators - bright blue */
+  --color-code-punctuation: #adbac7;  /* Brackets - text color */
+  --color-code-variable: #f69d50;     /* Variables - orange */
   
   /* Shadows for dark mode */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
-  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.6);
 }
 
 /* System Theme - Respects user preference */
@@ -130,30 +149,49 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     /* Legacy colors */
-    --background: #000000;
-    --foreground: #ffffff;
+    --background: #1C1C1E;
+    --foreground: #F2F2F7;
     
-    /* Dark mode color overrides */
-    --color-base-primary: #1A1A1A;       /* ダークモード背景 */
-    --color-base-secondary: #0A0A0A;     /* より深い黒 */
-    --color-base-tertiary: #2A2A2A;      /* ダークグレー */
+    /* Hierarchical Background System */
+    --color-base-primary: #1C1C1E;      /* Main background - Apple-inspired dark gray */
+    --color-base-secondary: #242426;    /* Sidebar background - slightly lighter */
+    --color-base-tertiary: #2C2C2E;     /* Cards, code blocks background */
+    --color-base-quaternary: #38383A;   /* Hover states, selections */
     
-    --color-text-primary: #F5F5F0;       /* ライトクリーム */
-    --color-text-secondary: #B8B0A8;     /* ライトブラウングレー */
-    --color-border: #3A3A3A;             /* ダークボーダー */
-    --color-interactive: #D4A574;        /* ゴールドブラウン (そのまま) */
+    /* Text Colors with Better Contrast */
+    --color-text-primary: #F2F2F7;      /* Main text - high contrast */
+    --color-text-secondary: #A1A1A6;    /* Secondary text - readable */
+    --color-text-tertiary: #8E8E93;     /* Tertiary text */
+    --color-text-disabled: #636366;     /* Disabled text */
     
-    /* Accents with reduced saturation */
-    --color-accent-primary: #D81B60;     /* ピンク (彩度-20%) */
-    --color-accent-secondary: #E6C08A;   /* より明るいゴールド */
-    --color-success: #8FA898;            /* 明るいセージ */
-    --color-error: #D88888;              /* 明るいレッド */
+    /* Border and UI Elements */
+    --color-border: #38383A;
+    --color-interactive: #5AC8FA;       /* Arctic blue for elegant accent */
+    
+    /* Vibrant Accent Colors */
+    --color-accent-primary: #FF375F;    /* Apple-style pink */
+    --color-accent-secondary: #FFB800;  /* Orange-gold */
+    --color-success: #4ECDC4;           /* Teal for success states */
+    --color-error: #FF453A;             /* Bright red */
+    
+    /* Code Block Colors - GitHub Dark Dimmed Official */
+    --color-code-bg: #22272e;           /* Official background color */
+    --color-code-border: #444c56;       /* Border color */
+    --color-code-line-number: #768390;  /* Line numbers (same as comments) */
+    --color-code-comment: #768390;      /* Comments - muted gray */
+    --color-code-keyword: #f47067;      /* Keywords - soft red */
+    --color-code-string: #96d0ff;       /* Strings - calm blue */
+    --color-code-function: #dcbdfb;     /* Functions - gentle purple */
+    --color-code-number: #6cb6ff;       /* Numbers - bright blue */
+    --color-code-operator: #6cb6ff;     /* Operators - bright blue */
+    --color-code-punctuation: #adbac7;  /* Brackets - text color */
+    --color-code-variable: #f69d50;     /* Variables - orange */
     
     /* Shadows for dark mode */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
-    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
-    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.5);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.6);
   }
 }
 

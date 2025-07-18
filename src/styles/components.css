@@ -229,7 +229,7 @@ label {
 /* Shiki code blocks - optimized selectors */
 .prose-content [data-rehype-pretty-code-figure] pre {
   padding: var(--spacing-lg) 0;
-  background-color: var(--color-base-tertiary);
+  background-color: var(--color-code-bg, var(--color-base-tertiary));
   position: relative;
   margin: 0;
   border-radius: 0;
@@ -251,6 +251,39 @@ label {
   background-color: transparent;
   padding: 0;
   margin: 0;
+}
+
+/* Shiki Dual Theme Support - Light/Dark Mode */
+[data-theme="light"] .shiki,
+[data-theme="light"] .shiki span {
+  color: var(--shiki-light) !important;
+  background-color: var(--shiki-light-bg) !important;
+}
+
+[data-theme="dark"] .shiki,
+[data-theme="dark"] .shiki span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+}
+
+/* System preference fallback */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .shiki,
+  :root:not([data-theme="light"]) .shiki span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
+}
+
+/* Dark mode link styles - explicit theme selection */
+[data-theme="dark"] .prose-content a {
+  color: var(--color-interactive) !important;
+  border-bottom-color: transparent;
+}
+
+[data-theme="dark"] .prose-content a:hover {
+  color: var(--color-accent-primary) !important;
+  border-bottom-color: var(--color-accent-primary);
 }
 
 .prose-content [data-rehype-pretty-code-figure] {
@@ -352,13 +385,13 @@ label {
 .prose-content [data-rehype-pretty-code-figure] pre code .token.prolog,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.doctype,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.cdata {
-  color: var(--color-text-secondary);
+  color: var(--color-code-comment, var(--color-text-secondary));
   font-style: italic;
 }
 
 /* Basic syntax */
 .prose-content [data-rehype-pretty-code-figure] pre code .token.punctuation {
-  color: var(--color-text-primary);
+  color: var(--color-code-punctuation, var(--color-text-primary));
 }
 
 /* Values and literals */
@@ -369,7 +402,7 @@ label {
 .prose-content [data-rehype-pretty-code-figure] pre code .token.constant,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.symbol,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.deleted {
-  color: var(--color-success);
+  color: var(--color-code-number, var(--color-success));
 }
 
 /* Strings and attributes */
@@ -379,7 +412,7 @@ label {
 .prose-content [data-rehype-pretty-code-figure] pre code .token.char,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.builtin,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.inserted {
-  color: var(--color-accent-secondary);
+  color: var(--color-code-string, var(--color-accent-secondary));
 }
 
 /* Operators and entities */
@@ -388,28 +421,28 @@ label {
 .prose-content [data-rehype-pretty-code-figure] pre code .token.url,
 .prose-content [data-rehype-pretty-code-figure] pre code .language-css .token.string,
 .prose-content [data-rehype-pretty-code-figure] pre code .style .token.string {
-  color: var(--color-text-primary);
+  color: var(--color-code-operator, var(--color-text-primary));
 }
 
 /* Keywords */
 .prose-content [data-rehype-pretty-code-figure] pre code .token.atrule,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.attr-value,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.keyword {
-  color: var(--color-interactive);
+  color: var(--color-code-keyword, var(--color-interactive));
   font-weight: var(--font-weight-medium);
 }
 
 /* Functions and classes */
 .prose-content [data-rehype-pretty-code-figure] pre code .token.function,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.class-name {
-  color: #A67E5B; /* Darker variant of accent-secondary */
+  color: var(--color-code-function, #A67E5B);
 }
 
 /* Special tokens */
 .prose-content [data-rehype-pretty-code-figure] pre code .token.regex,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.important,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.variable {
-  color: var(--color-error);
+  color: var(--color-code-variable, var(--color-error));
 }
 
 .prose-content blockquote {
@@ -719,14 +752,14 @@ label {
   }
   
   .code-block-wrapper {
-    background-color: var(--color-base-secondary);
-    border-color: var(--color-border);
+    background-color: var(--color-code-bg, var(--color-base-secondary));
+    border-color: var(--color-code-border, var(--color-border));
     box-shadow: var(--shadow-sm);
   }
 
   .code-block-header {
-    background-color: var(--color-base-dark);
-    border-bottom-color: var(--color-border);
+    background-color: var(--color-base-quaternary, var(--color-base-dark));
+    border-bottom-color: var(--color-code-border, var(--color-border));
   }
 
   .code-block-header-title {
@@ -738,7 +771,7 @@ label {
   }
 
   .prose-content [data-rehype-pretty-code-figure] pre {
-    background-color: var(--color-base-tertiary);
+    background-color: var(--color-code-bg, var(--color-base-tertiary));
   }
 
   .prose-content [data-rehype-pretty-code-figure] pre > code {
@@ -772,7 +805,7 @@ label {
   
   .prose-content figure[data-rehype-pretty-code-figure] pre[data-line-numbers] [data-line]::before,
   .prose-content div[data-rehype-pretty-code-figure] pre[data-line-numbers] [data-line]::before {
-    color: #666666;
+    color: var(--color-code-line-number, #666666);
   }
   
   .prose-content .task-list-item input[type="checkbox"] {
@@ -790,13 +823,13 @@ label {
     color: var(--color-text-secondary);
   }
   
-  .prose-content a {
-    color: var(--color-accent-secondary);
+  :root:not([data-theme="light"]) .prose-content a {
+    color: var(--color-interactive) !important;
     border-bottom-color: transparent;
   }
   
-  .prose-content a:hover {
-    color: var(--color-accent-primary);
+  :root:not([data-theme="light"]) .prose-content a:hover {
+    color: var(--color-accent-primary) !important;
     border-bottom-color: var(--color-accent-primary);
   }
   
@@ -815,14 +848,14 @@ label {
   }
 
   .link-card {
-    border-color: var(--color-border);
+    border: 1px solid var(--color-border) !important;
     background-color: var(--color-base-secondary);
     box-shadow: var(--shadow-sm);
   }
 
   .link-card:hover {
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
-    border-color: var(--color-accent-secondary);
+    border-color: var(--color-interactive) !important;
   }
 
   .link-card-image-wrapper {
@@ -854,7 +887,12 @@ label {
   }
 
   .link-card:hover .link-card-arrow {
-    color: var(--color-accent-secondary);
+    color: var(--color-interactive);
+  }
+  
+  /* LinkCardに.prose-content aのスタイルが適用されないようにする */
+  .prose-content .link-card {
+    border-bottom: none !important;
   }
 }
 
@@ -862,6 +900,8 @@ label {
 .prose-content .link-card {
   margin-top: var(--spacing-lg);
   margin-bottom: var(--spacing-lg);
+  border-bottom: none !important;
+  text-decoration: none !important;
 }
 
 /* Reset margin for link card images specifically */
