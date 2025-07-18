@@ -1,9 +1,12 @@
 import { Analytics } from "@vercel/analytics/react";
 import { Quicksand, Nunito, Lora } from "next/font/google";
+import { cookies } from "next/headers";
 
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header/Header";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { WebVitals } from "@/components/WebVitals";
+import { getInitialThemeAttributes, type Theme } from "@/lib/theme";
 
 import type { Metadata } from "next";
 
@@ -39,35 +42,53 @@ export const viewport = {
   userScalable: true,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Get theme from cookie
+  const cookieStore = await cookies();
+  const themeCookie = cookieStore.get("theme");
+  const theme: Theme = (themeCookie?.value as Theme) || "system";
+
+  // Get attributes for HTML element
+  const themeAttributes = getInitialThemeAttributes(theme);
+
+  // Convert style string to React style object
+  const htmlProps = {
+    "data-theme": themeAttributes["data-theme"],
+    ...(themeAttributes.style && {
+      style: { colorScheme: theme as "light" | "dark" },
+    }),
+  };
+
   return (
-    <html lang="en">
+    <html lang="en" {...htmlProps}>
       <body
-        className={`${quicksand.variable} ${nunito.variable} ${lora.variable} antialiased bg-white min-h-screen flex flex-col overflow-x-hidden`}
+        className={`${quicksand.variable} ${nunito.variable} ${lora.variable} antialiased bg-[var(--color-base-primary)] min-h-screen flex flex-col overflow-x-hidden`}
       >
-        {/* Skip navigation link for accessibility */}
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[60] focus:px-4 focus:py-2 focus:bg-white focus:text-black focus:rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
-        >
-          Skip to main content
-        </a>
-        <Header />
-        <WebVitals />
-        <main id="main-content" className="flex-grow">
-          {children}
-        </main>
-        <Footer />
-        {/* Analyticsの有効化制御 */}
-        {(process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === "true" ||
-          (process.env.NODE_ENV === "production" &&
-            process.env.NEXT_PUBLIC_ENABLE_ANALYTICS !== "false")) && (
-          <Analytics />
-        )}
+        <ThemeProvider initialTheme={theme}>
+          {/* Skip navigation link for accessibility */}
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[60] focus:px-4 focus:py-2 focus:bg-[var(--color-base-secondary)] focus:text-[var(--color-text-primary)] focus:rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-primary)]"
+          >
+            Skip to main content
+          </a>
+          <Header />
+          <WebVitals />
+          <main id="main-content" className="flex-grow">
+            {children}
+          </main>
+          <Footer />
+          {/* Analyticsの有効化制御 */}
+          {(process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === "true" ||
+            (process.env.NODE_ENV === "production" &&
+              process.env.NEXT_PUBLIC_ENABLE_ANALYTICS !== "false")) && (
+            <Analytics />
+          )}
+        </ThemeProvider>
       </body>
     </html>
   );
