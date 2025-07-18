@@ -20,6 +20,16 @@ jest.mock("@vercel/analytics/react", () => ({
   Analytics: () => <div data-testid="analytics">Analytics</div>,
 }));
 
+jest.mock("@/components/ThemeProvider", () => ({
+  ThemeProvider: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
+}));
+
+jest.mock("@/lib/theme", () => ({
+  getThemeScript: () => "// theme script",
+}));
+
 describe("RootLayout Analytics Integration", () => {
   const originalEnv = process.env;
 

@@ -3,6 +3,7 @@ import { usePathname } from "next/navigation";
 import React from "react";
 
 import { Header } from "@/components/Header/Header";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 // Mock Next.js navigation
 jest.mock("next/navigation", () => ({
@@ -65,6 +66,11 @@ jest.mock("@/components/Header/HamburgerIcon", () => ({
 
 const mockUsePathname = usePathname as jest.MockedFunction<typeof usePathname>;
 
+// Helper function to render with ThemeProvider
+const renderWithTheme = (component: React.ReactElement) => {
+  return render(<ThemeProvider>{component}</ThemeProvider>);
+};
+
 describe("Header Component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -79,7 +85,7 @@ describe("Header Component", () => {
   describe("Page-based rendering", () => {
     it("should render on home page", () => {
       mockUsePathname.mockReturnValue("/");
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const banners = screen.getAllByRole("banner");
       expect(banners.length).toBeGreaterThan(0);
@@ -87,7 +93,7 @@ describe("Header Component", () => {
 
     it("should render on posts page", () => {
       mockUsePathname.mockReturnValue("/posts");
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const banners = screen.getAllByRole("banner");
       expect(banners.length).toBeGreaterThan(0);
@@ -95,7 +101,7 @@ describe("Header Component", () => {
 
     it("should render on about page", () => {
       mockUsePathname.mockReturnValue("/about");
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const banners = screen.getAllByRole("banner");
       expect(banners.length).toBeGreaterThan(0);
@@ -103,7 +109,7 @@ describe("Header Component", () => {
 
     it("should render on individual post page", () => {
       mockUsePathname.mockReturnValue("/posts/my-post");
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const banners = screen.getAllByRole("banner");
       expect(banners.length).toBeGreaterThan(0);
@@ -111,7 +117,7 @@ describe("Header Component", () => {
 
     it("should not render on other pages", () => {
       mockUsePathname.mockReturnValue("/contact");
-      const { container } = render(<Header />);
+      const { container } = renderWithTheme(<Header />);
 
       expect(container.firstChild).toBeNull();
     });
@@ -123,7 +129,7 @@ describe("Header Component", () => {
     });
 
     it("should render all navigation items", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       expect(
         screen.getByRole("link", { name: /navigate to home page/i }),
@@ -137,7 +143,7 @@ describe("Header Component", () => {
     });
 
     it("should have correct href attributes", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       expect(
         screen.getByRole("link", { name: /navigate to home page/i }),
@@ -152,24 +158,30 @@ describe("Header Component", () => {
 
     it("should highlight current page", () => {
       mockUsePathname.mockReturnValue("/posts");
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const postsLinks = screen.getAllByRole("link", { name: /posts/i });
       const desktopPostsLink = postsLinks.find(
         (link) => link.getAttribute("aria-label") === "Navigate to Posts page",
       );
-      expect(desktopPostsLink).toHaveClass("text-pink-700", "font-semibold");
+      expect(desktopPostsLink).toHaveClass(
+        "text-[var(--color-accent-primary)]",
+        "font-semibold",
+      );
     });
 
     it("should highlight posts page when on individual post", () => {
       mockUsePathname.mockReturnValue("/posts/my-post");
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const postsLinks = screen.getAllByRole("link", { name: /posts/i });
       const desktopPostsLink = postsLinks.find(
         (link) => link.getAttribute("aria-label") === "Navigate to Posts page",
       );
-      expect(desktopPostsLink).toHaveClass("text-pink-700", "font-semibold");
+      expect(desktopPostsLink).toHaveClass(
+        "text-[var(--color-accent-primary)]",
+        "font-semibold",
+      );
     });
   });
 
@@ -179,7 +191,7 @@ describe("Header Component", () => {
     });
 
     it("should render logo image", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const logos = screen.getAllByRole("img", { name: /logo/i });
       expect(logos.length).toBeGreaterThan(0);
@@ -190,7 +202,7 @@ describe("Header Component", () => {
     });
 
     it("should have correct logo link", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const logoLinks = screen.getAllByRole("link", {
         name: /go to home page/i,
@@ -208,7 +220,7 @@ describe("Header Component", () => {
     });
 
     it("should start with hidden stage", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       // Initially hidden - get the first banner (desktop)
       const headers = screen.getAllByRole("banner");
@@ -217,7 +229,7 @@ describe("Header Component", () => {
     });
 
     it("should progress through animation stages", async () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       // Wait for circle stage
       jest.advanceTimersByTime(100);
@@ -261,14 +273,14 @@ describe("Header Component", () => {
     });
 
     it("should render mobile menu button", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const menuButton = screen.getByTestId("hamburger-icon");
       expect(menuButton).toBeInTheDocument();
     });
 
     it("should toggle mobile menu", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const menuButton = screen.getByTestId("hamburger-icon");
 
@@ -287,7 +299,7 @@ describe("Header Component", () => {
     });
 
     it("should show navigation items in mobile header", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       // Mobile navigation items are always present in the DOM but hidden initially
       const allHomeLinks = screen.getAllByRole("link", { name: /home/i });
@@ -301,7 +313,7 @@ describe("Header Component", () => {
     });
 
     it("should close mobile menu when clicking navigation item", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const menuButton = screen.getByTestId("hamburger-icon");
       fireEvent.click(menuButton);
@@ -316,7 +328,7 @@ describe("Header Component", () => {
     });
 
     it("should close mobile menu when pressing Escape key", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const menuButton = screen.getByTestId("hamburger-icon");
 
@@ -338,7 +350,7 @@ describe("Header Component", () => {
     });
 
     it("should handle logo hover", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const logoLinks = screen.getAllByRole("link", {
         name: /go to home page/i,
@@ -354,7 +366,7 @@ describe("Header Component", () => {
     });
 
     it("should handle navigation item hover", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const homeLink = screen.getByRole("link", {
         name: /navigate to home page/i,
@@ -379,7 +391,7 @@ describe("Header Component", () => {
     });
 
     it("should have proper ARIA roles", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const banners = screen.getAllByRole("banner");
       expect(banners.length).toBeGreaterThan(0);
@@ -389,7 +401,7 @@ describe("Header Component", () => {
     });
 
     it("should have accessible navigation structure", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const navs = screen.getAllByRole("navigation");
       expect(navs.length).toBeGreaterThan(0);
@@ -399,7 +411,7 @@ describe("Header Component", () => {
     });
 
     it("should have accessible mobile menu button", () => {
-      render(<Header />);
+      renderWithTheme(<Header />);
 
       const menuButton = screen.getByTestId("hamburger-icon");
       expect(menuButton).toBeInTheDocument();
