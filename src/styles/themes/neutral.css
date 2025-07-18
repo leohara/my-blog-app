@@ -1,0 +1,74 @@
+/**
+ * Neutral Theme Styles
+ * ハイドレーション前のニュートラルなスタイル
+ * 
+ * During SSR and initial client render, we show a neutral state
+ * to prevent hydration mismatches
+ */
+
+/* Neutral state - no theme-specific styles */
+:root:not([data-theme]) {
+  /* Hide theme-dependent elements with opacity transition */
+  .theme-dependent {
+    opacity: 0;
+    transition: opacity 200ms ease-in-out;
+  }
+}
+
+/* Once hydrated, show theme-dependent elements */
+:root[data-theme] .theme-dependent {
+  opacity: 1;
+}
+
+/* Prevent layout shifts during hydration */
+.theme-toggle-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 0.5rem;
+  background-color: transparent;
+}
+
+/* Neutral color scheme for critical elements */
+:root:not([data-theme]) {
+  /* Use system defaults or neutral colors */
+  color-scheme: light dark;
+  
+  /* Critical UI elements use neutral colors */
+  .header-background {
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .header-background {
+      background-color: rgba(28, 28, 30, 0.8);
+    }
+  }
+}
+
+/* Loading skeleton for theme toggle */
+.theme-toggle-skeleton {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 0.5rem;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Dark mode skeleton */
+@media (prefers-color-scheme: dark) {
+  .theme-toggle-skeleton {
+    background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+  }
+}

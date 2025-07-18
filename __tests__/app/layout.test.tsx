@@ -20,6 +20,25 @@ jest.mock("@vercel/analytics/react", () => ({
   Analytics: () => <div data-testid="analytics">Analytics</div>,
 }));
 
+jest.mock("@/components/ThemeProvider", () => ({
+  ThemeProvider: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
+}));
+
+jest.mock("@/lib/theme", () => ({
+  getThemeScript: () => "// theme script",
+  getInitialThemeAttributes: () => ({ "data-theme": "system" }),
+  type: {},
+}));
+
+// Mock next/headers
+jest.mock("next/headers", () => ({
+  cookies: jest.fn(() => ({
+    get: jest.fn(() => null),
+  })),
+}));
+
 describe("RootLayout Analytics Integration", () => {
   const originalEnv = process.env;
 
@@ -32,76 +51,61 @@ describe("RootLayout Analytics Integration", () => {
     process.env = originalEnv;
   });
 
-  it("should render Analytics component in production environment by default", () => {
+  it("should render Analytics component in production environment by default", async () => {
     Object.defineProperty(process.env, "NODE_ENV", {
       value: "production",
       writable: true,
     });
     delete process.env.NEXT_PUBLIC_ENABLE_ANALYTICS;
 
-    render(
-      <RootLayout>
-        <div>Test Content</div>
-      </RootLayout>,
-    );
+    const layout = await RootLayout({ children: <div>Test Content</div> });
+    render(layout);
 
     expect(screen.getByTestId("analytics")).toBeInTheDocument();
   });
 
-  it("should not render Analytics component in development environment by default", () => {
+  it("should not render Analytics component in development environment by default", async () => {
     Object.defineProperty(process.env, "NODE_ENV", {
       value: "development",
       writable: true,
     });
     delete process.env.NEXT_PUBLIC_ENABLE_ANALYTICS;
 
-    render(
-      <RootLayout>
-        <div>Test Content</div>
-      </RootLayout>,
-    );
+    const layout = await RootLayout({ children: <div>Test Content</div> });
+    render(layout);
 
     expect(screen.queryByTestId("analytics")).not.toBeInTheDocument();
   });
 
-  it("should render Analytics when NEXT_PUBLIC_ENABLE_ANALYTICS is 'true' regardless of environment", () => {
+  it("should render Analytics when NEXT_PUBLIC_ENABLE_ANALYTICS is 'true' regardless of environment", async () => {
     Object.defineProperty(process.env, "NODE_ENV", {
       value: "development",
       writable: true,
     });
     process.env.NEXT_PUBLIC_ENABLE_ANALYTICS = "true";
 
-    render(
-      <RootLayout>
-        <div>Test Content</div>
-      </RootLayout>,
-    );
+    const layout = await RootLayout({ children: <div>Test Content</div> });
+    render(layout);
 
     expect(screen.getByTestId("analytics")).toBeInTheDocument();
   });
 
-  it("should not render Analytics when NEXT_PUBLIC_ENABLE_ANALYTICS is 'false' even in production", () => {
+  it("should not render Analytics when NEXT_PUBLIC_ENABLE_ANALYTICS is 'false' even in production", async () => {
     Object.defineProperty(process.env, "NODE_ENV", {
       value: "production",
       writable: true,
     });
     process.env.NEXT_PUBLIC_ENABLE_ANALYTICS = "false";
 
-    render(
-      <RootLayout>
-        <div>Test Content</div>
-      </RootLayout>,
-    );
+    const layout = await RootLayout({ children: <div>Test Content</div> });
+    render(layout);
 
     expect(screen.queryByTestId("analytics")).not.toBeInTheDocument();
   });
 
-  it("should render all core components", () => {
-    render(
-      <RootLayout>
-        <div>Test Content</div>
-      </RootLayout>,
-    );
+  it("should render all core components", async () => {
+    const layout = await RootLayout({ children: <div>Test Content</div> });
+    render(layout);
 
     expect(screen.getByTestId("header")).toBeInTheDocument();
     expect(screen.getByTestId("footer")).toBeInTheDocument();
@@ -109,24 +113,18 @@ describe("RootLayout Analytics Integration", () => {
     expect(screen.getByText("Test Content")).toBeInTheDocument();
   });
 
-  it("should render skip navigation link for accessibility", () => {
-    render(
-      <RootLayout>
-        <div>Test Content</div>
-      </RootLayout>,
-    );
+  it("should render skip navigation link for accessibility", async () => {
+    const layout = await RootLayout({ children: <div>Test Content</div> });
+    render(layout);
 
     const skipLink = screen.getByText("Skip to main content");
     expect(skipLink).toBeInTheDocument();
     expect(skipLink).toHaveAttribute("href", "#main-content");
   });
 
-  it("should have proper flex layout classes", () => {
-    render(
-      <RootLayout>
-        <div>Test Content</div>
-      </RootLayout>,
-    );
+  it("should have proper flex layout classes", async () => {
+    const layout = await RootLayout({ children: <div>Test Content</div> });
+    render(layout);
 
     // Since we're rendering RootLayout which includes html/body tags,
     // we need to query from document.body instead of container

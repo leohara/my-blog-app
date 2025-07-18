@@ -229,7 +229,7 @@ label {
 /* Shiki code blocks - optimized selectors */
 .prose-content [data-rehype-pretty-code-figure] pre {
   padding: var(--spacing-lg) 0;
-  background-color: var(--color-base-tertiary);
+  background-color: var(--color-code-bg, var(--color-base-tertiary));
   position: relative;
   margin: 0;
   border-radius: 0;
@@ -252,6 +252,8 @@ label {
   padding: 0;
   margin: 0;
 }
+
+/* Theme-specific styles have been moved to src/styles/themes/ */
 
 .prose-content [data-rehype-pretty-code-figure] {
   position: relative;
@@ -352,13 +354,13 @@ label {
 .prose-content [data-rehype-pretty-code-figure] pre code .token.prolog,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.doctype,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.cdata {
-  color: var(--color-text-secondary);
+  color: var(--color-code-comment, var(--color-text-secondary));
   font-style: italic;
 }
 
 /* Basic syntax */
 .prose-content [data-rehype-pretty-code-figure] pre code .token.punctuation {
-  color: var(--color-text-primary);
+  color: var(--color-code-punctuation, var(--color-text-primary));
 }
 
 /* Values and literals */
@@ -369,7 +371,7 @@ label {
 .prose-content [data-rehype-pretty-code-figure] pre code .token.constant,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.symbol,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.deleted {
-  color: var(--color-success);
+  color: var(--color-code-number, var(--color-success));
 }
 
 /* Strings and attributes */
@@ -379,7 +381,7 @@ label {
 .prose-content [data-rehype-pretty-code-figure] pre code .token.char,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.builtin,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.inserted {
-  color: var(--color-accent-secondary);
+  color: var(--color-code-string, var(--color-accent-secondary));
 }
 
 /* Operators and entities */
@@ -388,28 +390,28 @@ label {
 .prose-content [data-rehype-pretty-code-figure] pre code .token.url,
 .prose-content [data-rehype-pretty-code-figure] pre code .language-css .token.string,
 .prose-content [data-rehype-pretty-code-figure] pre code .style .token.string {
-  color: var(--color-text-primary);
+  color: var(--color-code-operator, var(--color-text-primary));
 }
 
 /* Keywords */
 .prose-content [data-rehype-pretty-code-figure] pre code .token.atrule,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.attr-value,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.keyword {
-  color: var(--color-interactive);
+  color: var(--color-code-keyword, var(--color-interactive));
   font-weight: var(--font-weight-medium);
 }
 
 /* Functions and classes */
 .prose-content [data-rehype-pretty-code-figure] pre code .token.function,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.class-name {
-  color: #A67E5B; /* Darker variant of accent-secondary */
+  color: var(--color-code-function, #A67E5B);
 }
 
 /* Special tokens */
 .prose-content [data-rehype-pretty-code-figure] pre code .token.regex,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.important,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.variable {
-  color: var(--color-error);
+  color: var(--color-code-variable, var(--color-error));
 }
 
 .prose-content blockquote {
@@ -706,162 +708,14 @@ label {
   color: var(--color-interactive);
 }
 
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .prose-content {
-    color: var(--color-text-primary);
-  }
-  
-  .prose-content code:not(pre code) {
-    background-color: rgba(212, 165, 116, 0.15);
-    color: var(--color-text-primary);
-    border: 1px solid rgba(212, 165, 116, 0.25);
-  }
-  
-  .code-block-wrapper {
-    background-color: var(--color-base-secondary);
-    border-color: var(--color-border);
-    box-shadow: var(--shadow-sm);
-  }
-
-  .code-block-header {
-    background-color: var(--color-base-dark);
-    border-bottom-color: var(--color-border);
-  }
-
-  .code-block-header-title {
-    color: var(--color-text-primary);
-  }
-
-  .code-block-file-icon {
-    color: var(--color-accent-secondary);
-  }
-
-  .prose-content [data-rehype-pretty-code-figure] pre {
-    background-color: var(--color-base-tertiary);
-  }
-
-  .prose-content [data-rehype-pretty-code-figure] pre > code {
-    color: var(--color-text-primary);
-    background-color: transparent;
-  }
-
-  .copy-button {
-    background-color: transparent;
-    border-color: var(--color-border);
-    color: var(--color-text-secondary);
-  }
-
-  .copy-button:hover {
-    background-color: var(--color-base-dark);
-    border-color: var(--color-accent-secondary);
-    color: var(--color-accent-secondary);
-  }
-
-  .copy-button[data-copied="true"] {
-    color: var(--color-success);
-    background-color: rgba(143, 168, 152, 0.1);
-    border-color: var(--color-success);
-  }
-  
-  .prose-content figure[data-rehype-pretty-code-figure] pre [data-highlighted-line],
-  .prose-content div[data-rehype-pretty-code-figure] pre [data-highlighted-line] {
-    background-color: rgba(139, 92, 246, 0.3);
-    border-left-color: #a78bfa;
-  }
-  
-  .prose-content figure[data-rehype-pretty-code-figure] pre[data-line-numbers] [data-line]::before,
-  .prose-content div[data-rehype-pretty-code-figure] pre[data-line-numbers] [data-line]::before {
-    color: #666666;
-  }
-  
-  .prose-content .task-list-item input[type="checkbox"] {
-    border-color: var(--color-border);
-    background-color: var(--color-base-tertiary);
-  }
-  
-  .prose-content .task-list-item input[type="checkbox"]:checked {
-    background-color: var(--color-accent-secondary);
-    border-color: var(--color-accent-secondary);
-  }
-  
-  .prose-content blockquote {
-    border-left-color: var(--color-accent-secondary);
-    color: var(--color-text-secondary);
-  }
-  
-  .prose-content a {
-    color: var(--color-accent-secondary);
-    border-bottom-color: transparent;
-  }
-  
-  .prose-content a:hover {
-    color: var(--color-accent-primary);
-    border-bottom-color: var(--color-accent-primary);
-  }
-  
-  .prose-content hr {
-    border-top-color: #374151;
-  }
-  
-  .prose-content th,
-  .prose-content td {
-    border-color: #374151;
-  }
-  
-  .prose-content th {
-    background-color: #1f2937;
-    color: #f9fafb;
-  }
-
-  .link-card {
-    border-color: var(--color-border);
-    background-color: var(--color-base-secondary);
-    box-shadow: var(--shadow-sm);
-  }
-
-  .link-card:hover {
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
-    border-color: var(--color-accent-secondary);
-  }
-
-  .link-card-image-wrapper {
-    background-color: var(--color-base-tertiary);
-  }
-
-  .link-card-image-fallback {
-    background-color: var(--color-base-tertiary);
-  }
-
-  .link-card-image-skeleton {
-    background-color: var(--color-border);
-  }
-
-  .link-card-title {
-    color: var(--color-text-primary);
-  }
-
-  .link-card-description {
-    color: var(--color-text-secondary);
-  }
-
-  .link-card-sitename {
-    color: var(--color-text-secondary);
-  }
-
-  .link-card-arrow {
-    color: var(--color-text-secondary);
-  }
-
-  .link-card:hover .link-card-arrow {
-    color: var(--color-accent-secondary);
-  }
-}
+/* Dark mode styles have been moved to src/styles/themes/dark.css */
 
 /* Link Card spacing in prose content */
 .prose-content .link-card {
   margin-top: var(--spacing-lg);
   margin-bottom: var(--spacing-lg);
+  border-bottom: none !important;
+  text-decoration: none !important;
 }
 
 /* Reset margin for link card images specifically */

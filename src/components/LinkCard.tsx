@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 import { ogpCache } from "@/lib/ogp-cache";
@@ -120,14 +121,14 @@ const LinkCard = React.memo(function LinkCard({ url }: LinkCardProps) {
   // エラー時はシンプルなリンクを表示
   if (error || (!loading && !ogpData)) {
     return (
-      <a
+      <Link
         href={url}
         target="_blank"
         rel="noopener noreferrer"
         className="text-blue-600 hover:underline"
       >
         {url}
-      </a>
+      </Link>
     );
   }
 
@@ -150,7 +151,7 @@ const LinkCard = React.memo(function LinkCard({ url }: LinkCardProps) {
   // OGPデータを使ってリンクカードを表示
   if (ogpData) {
     return (
-      <a
+      <Link
         href={url}
         target="_blank"
         rel="noopener noreferrer"
@@ -203,7 +204,7 @@ const LinkCard = React.memo(function LinkCard({ url }: LinkCardProps) {
             </svg>
           </div>
         </div>
-      </a>
+      </Link>
     );
   }
 

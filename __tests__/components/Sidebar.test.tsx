@@ -85,8 +85,8 @@ describe("Sidebar", () => {
       render(<Sidebar posts={mockPosts} currentSlug="react-intro" />);
 
       const currentPost = screen.getByText("React入門");
-      expect(currentPost).toHaveClass("text-black");
       expect(currentPost).toHaveClass("font-medium");
+      // スタイルのインラインチェックは削除（CSS変数を使用しているため）
     });
 
     it("最大10件の記事を表示する", () => {

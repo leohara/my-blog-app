@@ -52,8 +52,13 @@ export async function markdownToHtml(
       .use(rehypePrettyCode, {
         // インラインコードの処理をスキップ（figure要素でラップしない）
         bypassInlineCode: true,
-        // 最小限のテーマを使用し、CSSでオーバーライド
-        theme: "min-light",
+        // デュアルテーマ設定（ライト/ダークモード対応）
+        themes: {
+          light: "min-light",
+          dark: "github-dark-dimmed",
+        },
+        // CSS変数を使用してテーマを切り替え
+        defaultColor: false,
         // 言語がない場合のデフォルト
         defaultLang: "plaintext",
         // 背景色をCSSで制御

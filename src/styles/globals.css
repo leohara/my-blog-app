@@ -9,6 +9,12 @@
 @import "./utilities.css";
 @import "./components.css";
 
+/* Theme-specific styles */
+@import "./themes/neutral.css";
+@import "./themes/light.css";
+@import "./themes/dark.css";
+@import "./themes/system.css";
+
 /* Global reset and base styles are now in components.css */
 
 /* Tailwind CSS utilities can still be used alongside our design system */

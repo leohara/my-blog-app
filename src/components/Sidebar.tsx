@@ -81,7 +81,8 @@ export function Sidebar({ posts, currentSlug, headings }: SidebarProps) {
           <div>
             <Link
               href="/posts"
-              className="text-sm font-medium hover:underline transition-colors text-gray-600 dark:text-gray-400"
+              className="text-sm font-medium hover:underline transition-colors"
+              style={{ color: "var(--color-text-secondary)" }}
             >
               ← Posts
             </Link>
@@ -95,9 +96,7 @@ export function Sidebar({ posts, currentSlug, headings }: SidebarProps) {
                     <button
                       onClick={() => handleHeadingClick(heading.id)}
                       className={`block text-left text-sm leading-relaxed hover:underline transition-colors w-full ${
-                        activeHeadingId === heading.id
-                          ? "text-black dark:text-white font-medium"
-                          : "text-gray-600 dark:text-gray-400"
+                        activeHeadingId === heading.id ? "font-medium" : ""
                       } ${
                         heading.level === 1
                           ? SIDEBAR_CONSTANTS.HEADING_STYLES.LEVEL_1
@@ -107,6 +106,12 @@ export function Sidebar({ posts, currentSlug, headings }: SidebarProps) {
                               ? SIDEBAR_CONSTANTS.HEADING_STYLES.LEVEL_3
                               : SIDEBAR_CONSTANTS.HEADING_STYLES.LEVEL_4
                       }`}
+                      style={{
+                        color:
+                          activeHeadingId === heading.id
+                            ? "var(--color-text-primary)"
+                            : "var(--color-text-secondary)",
+                      }}
                     >
                       {heading.text}
                     </button>
@@ -124,10 +129,14 @@ export function Sidebar({ posts, currentSlug, headings }: SidebarProps) {
                       <Link
                         href={`/posts/${post.slug}`}
                         className={`block text-sm leading-relaxed hover:underline transition-colors ${
-                          post.slug === currentSlug
-                            ? "text-black dark:text-white font-medium"
-                            : "text-gray-600 dark:text-gray-400"
+                          post.slug === currentSlug ? "font-medium" : ""
                         }`}
+                        style={{
+                          color:
+                            post.slug === currentSlug
+                              ? "var(--color-text-primary)"
+                              : "var(--color-text-secondary)",
+                        }}
                       >
                         {post.title}
                       </Link>

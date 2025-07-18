@@ -99,7 +99,7 @@ export default async function PostsPage() {
                           className="text-sm font-medium px-4 py-2 rounded-lg"
                           style={{
                             color: "var(--color-interactive)",
-                            backgroundColor: "rgba(139, 115, 85, 0.1)",
+                            backgroundColor: "rgba(90, 200, 250, 0.1)",
                             fontFamily: "var(--font-nunito)",
                           }}
                         >

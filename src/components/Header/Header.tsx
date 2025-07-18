@@ -5,6 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useMemo, useEffect, useCallback } from "react";
 
+import { ThemeToggle } from "@/components/ThemeToggle";
+
 import { AnimatedText } from "./AnimatedText";
 import { HEADER_CONSTANTS } from "./constants";
 import { HamburgerIcon } from "./HamburgerIcon";
@@ -110,15 +112,15 @@ export function Header() {
             {/* Background with soft cream color */}
             <div
               className={`
-                absolute inset-0 bg-[#FAF9F6]/95 backdrop-blur-sm transition-all duration-700
-                ${animationStage === "circle" ? "rounded-full shadow-[0_0_20px_rgba(255,182,193,0.3)]" : "rounded-3xl shadow-lg"}
+                absolute inset-0 bg-[var(--color-base-primary)]/95 backdrop-blur-sm transition-all duration-700
+                ${animationStage === "circle" ? "rounded-full shadow-[0_0_20px_var(--color-accent-primary)/20]" : "rounded-3xl shadow-lg"}
                 ${animationStage === "circle" ? "animate-[soft-glow_2s_ease-in-out_infinite]" : ""}
               `}
             />
 
             {/* Gradient border */}
             {animationStage === "expanded" && (
-              <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-pink-200 to-transparent opacity-50" />
+              <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-[var(--color-accent-primary)]/30 to-transparent opacity-50" />
             )}
 
             {/* Content */}
@@ -143,7 +145,7 @@ export function Header() {
                   className={`
                   relative overflow-hidden rounded-2xl transition-all duration-300
                   ${animationStage === "circle" ? "w-8 h-8" : "w-10 h-10"}
-                  ${hoveredItem === "logo" ? "shadow-lg shadow-pink-200/50" : ""}
+                  ${hoveredItem === "logo" ? "shadow-lg shadow-[var(--color-accent-primary)]/20" : ""}
                 `}
                 >
                   <Image
@@ -180,7 +182,7 @@ export function Header() {
                           relative px-4 py-2 text-sm font-nunito tracking-wide
                           transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]
                           focus:outline-none
-                          ${pathname === item.href || (item.href === "/posts" && pathname.startsWith("/posts/")) ? "text-pink-700 font-semibold" : "text-[#3E2723] font-medium"}
+                          ${pathname === item.href || (item.href === "/posts" && pathname.startsWith("/posts/")) ? "text-[var(--color-accent-primary)] font-semibold" : "text-[var(--color-text-primary)] font-medium"}
                           ${
                             animationStage === "expanding" ||
                             animationStage === "expanded"
@@ -207,7 +209,7 @@ export function Header() {
                         {/* Hover background */}
                         <span
                           className={`
-                          absolute inset-0 bg-gradient-to-r from-pink-100/30 via-purple-100/50 to-pink-100/30 
+                          absolute inset-0 bg-gradient-to-r from-[var(--color-accent-primary)]/10 via-[var(--color-accent-secondary)]/20 to-[var(--color-accent-primary)]/10 
                           rounded-full scale-0 transition-all duration-500 blur-sm
                           ${hoveredItem === item.label ? "scale-110" : ""}
                         `}
@@ -224,7 +226,7 @@ export function Header() {
                         {/* Active page indicator */}
                         <span
                           className={`
-                          absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-pink-400 to-purple-400 
+                          absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[var(--color-accent-primary)] to-[var(--color-accent-secondary)] 
                           rounded-full transition-all duration-300
                           ${pathname === item.href || (item.href === "/posts" && pathname.startsWith("/posts/")) ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"}
                           group-hover:h-1
@@ -237,7 +239,7 @@ export function Header() {
                       {index < NAV_ITEMS.length - 1 && (
                         <span
                           className={`
-                          mx-2 text-pink-300 transition-all duration-700
+                          mx-2 text-[var(--color-accent-primary)]/50 transition-all duration-700
                           ${animationStage === "expanding" || animationStage === "expanded" ? "opacity-100" : "opacity-0"}
                         `}
                           style={{
@@ -255,7 +257,27 @@ export function Header() {
                   ))}
                 </nav>
 
-                {/* No mobile menu button in desktop header */}
+                {/* Theme toggle button */}
+                <div
+                  className={`
+                    ml-2 transition-all duration-700
+                    ${
+                      animationStage === "expanding" ||
+                      animationStage === "expanded"
+                        ? "translate-y-0 opacity-100"
+                        : "translate-y-4 opacity-0"
+                    }
+                  `}
+                  style={{
+                    transitionDelay:
+                      animationStage === "expanding" ||
+                      animationStage === "expanded"
+                        ? `${ANIMATION_TIMING.TEXT_ANIMATION_DELAY + 100}ms`
+                        : "0ms",
+                  }}
+                >
+                  <ThemeToggle />
+                </div>
               </div>
             </div>
           </div>
@@ -267,13 +289,13 @@ export function Header() {
         <div
           className={`
             fixed top-4 left-1/2 -translate-x-1/2 z-50
-            bg-[#FAF9F6]/95 backdrop-blur-sm
+            bg-[var(--color-base-primary)]/95 backdrop-blur-sm
             rounded-3xl shadow-lg
             transition-all duration-500 ease-out
             w-64
             ${
               isMobileMenuOpen
-                ? "max-h-[400px] shadow-[0_0_20px_rgba(255,182,193,0.3)] animate-[soft-glow_2s_ease-in-out_infinite]"
+                ? "max-h-[400px] shadow-[0_0_20px_var(--color-accent-primary)/20] animate-[soft-glow_2s_ease-in-out_infinite]"
                 : "max-h-16"
             }
           `}
@@ -313,7 +335,7 @@ export function Header() {
           `}
           >
             {/* Gradient border */}
-            <div className="h-[1px] bg-gradient-to-r from-transparent via-pink-200 to-transparent opacity-50" />
+            <div className="h-[1px] bg-gradient-to-r from-transparent via-[var(--color-accent-primary)]/30 to-transparent opacity-50" />
 
             <nav className="py-2">
               {NAV_ITEMS.map((item, index) => {
@@ -330,8 +352,8 @@ export function Header() {
                       transition-all duration-300
                       ${
                         isActive
-                          ? "text-pink-700 font-semibold"
-                          : "text-[#3E2723] font-medium hover:bg-pink-50/50"
+                          ? "text-[var(--color-accent-primary)] font-semibold"
+                          : "text-[var(--color-text-primary)] font-medium hover:bg-[var(--color-accent-primary)]/10"
                       }
                       group
                     `}
@@ -351,7 +373,7 @@ export function Header() {
                       <span
                         className={`
                           absolute bottom-0 left-0 right-0 h-0.5
-                          bg-gradient-to-r from-pink-400 to-purple-400
+                          bg-gradient-to-r from-[var(--color-accent-primary)] to-[var(--color-accent-secondary)]
                           rounded-full transition-all duration-300
                           ${isActive ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"}
                         `}
@@ -360,6 +382,13 @@ export function Header() {
                   </Link>
                 );
               })}
+
+              {/* Theme toggle in mobile menu */}
+              <div className="px-6 py-3 border-t border-[var(--color-border)]">
+                <div className="flex items-center justify-center">
+                  <ThemeToggle />
+                </div>
+              </div>
             </nav>
           </div>
         </div>
