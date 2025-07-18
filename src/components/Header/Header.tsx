@@ -3,15 +3,37 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 
 import { AnimatedText } from "./AnimatedText";
 import { HEADER_CONSTANTS } from "./constants";
+import { HamburgerIcon } from "./HamburgerIcon";
 import { useHeaderAnimation } from "./useHeaderAnimation";
 import { useScrollHeader } from "./useScrollHeader";
 
 const { NAV_ITEMS, HEADER_PAGES, ANIMATION_TIMING, CSS_CLASSES } =
   HEADER_CONSTANTS;
+
+// Helper functions for cleaner code
+const getVisibilityClasses = (isInitialMount: boolean, isVisible: boolean) => {
+  if (isInitialMount) return "translate-y-0";
+  return isVisible ? "translate-y-0" : "-translate-y-[calc(100%+1rem)]";
+};
+
+const getAnimationStageClasses = (stage: string) => {
+  switch (stage) {
+    case "hidden":
+      return CSS_CLASSES.HIDDEN;
+    case "circle":
+      return CSS_CLASSES.CIRCLE;
+    case "expanding":
+      return CSS_CLASSES.EXPANDING;
+    case "expanded":
+      return CSS_CLASSES.EXPANDED;
+    default:
+      return "";
+  }
+};
 
 export function Header() {
   const pathname = usePathname();
@@ -20,15 +42,46 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Check if current page should display header
-  const shouldShowHeader =
-    HEADER_PAGES.includes(pathname as (typeof HEADER_PAGES)[number]) ||
-    pathname.startsWith("/posts/");
+  const shouldShowHeader = pathname
+    ? HEADER_PAGES.includes(pathname as (typeof HEADER_PAGES)[number]) ||
+      pathname.startsWith("/posts/")
+    : false;
 
   // Use custom hook for animation state management
   const { animationStage, isInitialMount } =
     useHeaderAnimation(shouldShowHeader);
 
-  // Keyboard navigation for mobile menu
+  // Memoize complex class names for better performance
+  const headerClassName = useMemo(() => {
+    const baseClasses =
+      "fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-700";
+    const visibilityClasses = getVisibilityClasses(isInitialMount, isVisible);
+    const animationClasses =
+      animationStage === "expanded" ? CSS_CLASSES.BREATHE : "";
+
+    return `${baseClasses} ${visibilityClasses} ${animationClasses}`;
+  }, [isInitialMount, isVisible, animationStage]);
+
+  const animationContainerClassName = useMemo(() => {
+    const baseClasses = "relative transition-all ease-out";
+    const stageClass = getAnimationStageClasses(animationStage);
+    return `${baseClasses} ${stageClass}`;
+  }, [animationStage]);
+
+  // Optimized event handlers
+  const handleMobileMenuToggle = useCallback(() => {
+    setIsMobileMenuOpen((prev) => !prev);
+  }, []);
+
+  const handleNavItemClick = useCallback(() => {
+    setIsMobileMenuOpen(false);
+  }, []);
+
+  const handleHoverItem = useCallback((label: string | null) => {
+    setHoveredItem(label);
+  }, []);
+
+  // Handle Escape key to close mobile menu
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape" && isMobileMenuOpen) {
@@ -38,53 +91,9 @@ export function Header() {
 
     if (isMobileMenuOpen) {
       document.addEventListener("keydown", handleKeyDown);
-      // Prevent body scroll when menu is open
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
+      return () => document.removeEventListener("keydown", handleKeyDown);
     }
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "unset";
-    };
   }, [isMobileMenuOpen]);
-
-  // Memoize complex class names for better performance
-  const headerClassName = useMemo(() => {
-    const baseClasses =
-      "fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-700";
-    const visibilityClasses = isInitialMount
-      ? "translate-y-0"
-      : isVisible
-        ? "translate-y-0"
-        : "-translate-y-[calc(100%+1rem)]";
-    const animationClasses =
-      animationStage === "expanded" ? CSS_CLASSES.BREATHE : "";
-
-    return `${baseClasses} ${visibilityClasses} ${animationClasses}`;
-  }, [isInitialMount, isVisible, animationStage]);
-
-  const animationContainerClassName = useMemo(() => {
-    const baseClasses = "relative transition-all ease-out";
-    let stageClass = "";
-    switch (animationStage) {
-      case "hidden":
-        stageClass = CSS_CLASSES.HIDDEN;
-        break;
-      case "circle":
-        stageClass = CSS_CLASSES.CIRCLE;
-        break;
-      case "expanding":
-        stageClass = CSS_CLASSES.EXPANDING;
-        break;
-      case "expanded":
-        stageClass = CSS_CLASSES.EXPANDED;
-        break;
-    }
-
-    return `${baseClasses} ${stageClass}`;
-  }, [animationStage]);
 
   // Return nothing for pages that shouldn't display header
   if (!shouldShowHeader) {
@@ -93,7 +102,8 @@ export function Header() {
 
   return (
     <>
-      <header role="banner" className={headerClassName}>
+      {/* Desktop Header - unchanged */}
+      <header role="banner" className={`${headerClassName} hidden md:block`}>
         <div className="relative">
           {/* Animation container */}
           <div className={animationContainerClassName}>
@@ -126,8 +136,8 @@ export function Header() {
                   ${animationStage === "expanded" ? "md:-translate-x-[210px] -translate-x-[120px] -translate-y-1/2 rotate-[-360deg] scale-100" : ""}
                   ${animationStage === "hidden" ? "-translate-x-1/2 -translate-y-1/2 transition-transform duration-300 ease-out" : ""}
                 `}
-                onMouseEnter={() => setHoveredItem("logo")}
-                onMouseLeave={() => setHoveredItem(null)}
+                onMouseEnter={() => handleHoverItem("logo")}
+                onMouseLeave={() => handleHoverItem(null)}
               >
                 <div
                   className={`
@@ -191,8 +201,8 @@ export function Header() {
                               ? `wave-in 0.6s ${ANIMATION_TIMING.TEXT_ANIMATION_DELAY}ms ease-out forwards`
                               : "none",
                         }}
-                        onMouseEnter={() => setHoveredItem(item.label)}
-                        onMouseLeave={() => setHoveredItem(null)}
+                        onMouseEnter={() => handleHoverItem(item.label)}
+                        onMouseLeave={() => handleHoverItem(null)}
                       >
                         {/* Hover background */}
                         <span
@@ -245,83 +255,115 @@ export function Header() {
                   ))}
                 </nav>
 
-                {/* Mobile Menu Button - Only visible on mobile */}
-                <button
-                  type="button"
-                  aria-label={
-                    isMobileMenuOpen ? "Close mobile menu" : "Open mobile menu"
-                  }
-                  aria-expanded={isMobileMenuOpen}
-                  aria-controls="mobile-menu"
-                  className={`
-                    block md:!hidden px-3 py-1.5 text-[#3E2723] text-sm font-medium font-nunito
-                    transition-all duration-500 ease-out rounded-full
-                    hover:bg-pink-100/50
-                    focus:outline-none
-                    ${
-                      animationStage === "expanding" ||
-                      animationStage === "expanded"
-                        ? "translate-y-0 opacity-100"
-                        : "translate-y-4 opacity-0"
-                    }
-                  `}
-                  style={{
-                    transitionDelay:
-                      animationStage === "expanding" ||
-                      animationStage === "expanded"
-                        ? `${ANIMATION_TIMING.TEXT_ANIMATION_DELAY}ms`
-                        : "0ms",
-                  }}
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                >
-                  Menu
-                </button>
+                {/* No mobile menu button in desktop header */}
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Mobile Menu Overlay */}
-      {isMobileMenuOpen && (
+      {/* Mobile Header - floating circular expandable */}
+      <header role="banner" className="md:hidden">
         <div
-          id="mobile-menu"
-          className="fixed inset-0 bg-[#FAF9F6]/95 backdrop-blur-xl z-40 md:!hidden"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Mobile navigation menu"
+          className={`
+            fixed top-4 left-1/2 -translate-x-1/2 z-50
+            bg-[#FAF9F6]/95 backdrop-blur-sm
+            rounded-3xl shadow-lg
+            transition-all duration-500 ease-out
+            w-64
+            ${
+              isMobileMenuOpen
+                ? "max-h-[400px] shadow-[0_0_20px_rgba(255,182,193,0.3)] animate-[soft-glow_2s_ease-in-out_infinite]"
+                : "max-h-16"
+            }
+          `}
         >
-          <div className="flex flex-col items-center justify-center h-full gap-8">
-            <button
-              type="button"
-              aria-label="Close mobile menu"
-              className="absolute top-8 right-8 text-[#3E2723] text-2xl focus:outline-none"
-              onClick={() => setIsMobileMenuOpen(false)}
+          {/* Header content - always visible */}
+          <div className="flex items-center justify-between px-4 py-3">
+            <Link
+              href="/"
+              aria-label="Go to home page"
+              className={`
+                flex items-center justify-center hover:scale-110
+                transition-transform duration-300 ease-out
+              `}
             >
-              ×
-            </button>
-            <nav role="navigation" aria-label="Mobile navigation">
-              {NAV_ITEMS.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  aria-label={`Navigate to ${item.label} page`}
-                  aria-current={
-                    pathname === item.href ||
-                    (item.href === "/posts" && pathname.startsWith("/posts/"))
-                      ? "page"
-                      : undefined
-                  }
-                  className="block text-[#3E2723] text-2xl font-medium font-nunito hover:opacity-80 transition-opacity mb-4 focus:outline-none"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              <div className="relative overflow-hidden rounded-2xl w-10 h-10">
+                <Image
+                  src="/icon.png"
+                  alt="Logo"
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-cover"
+                  priority
+                />
+              </div>
+            </Link>
+            <HamburgerIcon
+              isOpen={isMobileMenuOpen}
+              onClick={handleMobileMenuToggle}
+            />
+          </div>
+
+          {/* Expandable menu with gradient border */}
+          <div
+            className={`
+            overflow-hidden transition-all duration-500
+            ${isMobileMenuOpen ? "max-h-64" : "max-h-0"}
+          `}
+          >
+            {/* Gradient border */}
+            <div className="h-[1px] bg-gradient-to-r from-transparent via-pink-200 to-transparent opacity-50" />
+
+            <nav className="py-2">
+              {NAV_ITEMS.map((item, index) => {
+                const isActive =
+                  pathname === item.href ||
+                  (item.href === "/posts" && pathname.startsWith("/posts/"));
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`
+                      block px-6 py-3 text-center
+                      transition-all duration-300
+                      ${
+                        isActive
+                          ? "text-pink-700 font-semibold"
+                          : "text-[#3E2723] font-medium hover:bg-pink-50/50"
+                      }
+                      group
+                    `}
+                    onClick={handleNavItemClick}
+                    onMouseEnter={() => handleHoverItem(item.label)}
+                    onMouseLeave={() => handleHoverItem(null)}
+                    style={{
+                      animationDelay: `${index * 50}ms`,
+                    }}
+                  >
+                    <span className="relative">
+                      <AnimatedText
+                        text={item.label}
+                        isHovered={hoveredItem === item.label}
+                      />
+                      {/* Active indicator */}
+                      <span
+                        className={`
+                          absolute bottom-0 left-0 right-0 h-0.5
+                          bg-gradient-to-r from-pink-400 to-purple-400
+                          rounded-full transition-all duration-300
+                          ${isActive ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"}
+                        `}
+                      />
+                    </span>
+                  </Link>
+                );
+              })}
             </nav>
           </div>
         </div>
-      )}
+      </header>
     </>
   );
 }

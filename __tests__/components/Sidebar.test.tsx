@@ -310,7 +310,7 @@ describe("Sidebar", () => {
       expect(sidebar).toHaveClass("flex-shrink-0");
 
       const scrollableContent = container.querySelector(
-        ".sticky.top-0.h-screen.overflow-y-auto",
+        ".sticky.top-24.overflow-y-auto",
       );
       expect(scrollableContent).toBeInTheDocument();
     });
