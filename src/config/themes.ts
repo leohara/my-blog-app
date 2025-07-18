@@ -82,10 +82,11 @@ export const getCodeThemeDisplayName = (mode: ThemeMode): string => {
   return THEME_CONFIG.codeThemes.light.displayName;
 };
 
-// rehype-pretty-code用の設定を生成
-export const getShikiThemeConfig = () => {
-  return {
-    light: THEME_CONFIG.codeThemes.light.name,
-    dark: THEME_CONFIG.codeThemes.dark.name,
-  };
-};
+// rehype-pretty-code用の設定を定数として定義（パフォーマンス最適化）
+const SHIKI_THEME_CONFIG = {
+  light: THEME_CONFIG.codeThemes.light.name,
+  dark: THEME_CONFIG.codeThemes.dark.name,
+} as const;
+
+// メモ化された設定を返す
+export const getShikiThemeConfig = () => SHIKI_THEME_CONFIG;
