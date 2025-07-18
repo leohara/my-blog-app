@@ -5,10 +5,5 @@
 
 /* Light theme specific styles */
 [data-theme="light"] {
-  /* Shiki code highlighting for light theme */
-  .shiki,
-  .shiki span {
-    color: var(--shiki-light) !important;
-    background-color: var(--shiki-light-bg) !important;
-  }
+  /* Shiki theme colors are handled by CSS variables on each span element */
 }

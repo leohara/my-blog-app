@@ -243,7 +243,7 @@ label {
 
 /* Code inside pre blocks */
 .prose-content [data-rehype-pretty-code-figure] pre > code {
-  color: var(--color-text-primary);
+  /* Color is handled by Shiki theme CSS variables */
   display: block;
   font-size: var(--font-size-sm);
   line-height: var(--line-height-relaxed);
@@ -349,7 +349,8 @@ label {
 /* Syntax highlighting tokens - Optimized without !important */
 /* Using higher specificity for reliable styling */
 
-/* Comments and metadata */
+/* Comments and metadata - Shikiテーマを使用するため一時的にコメントアウト */
+/*
 .prose-content [data-rehype-pretty-code-figure] pre code .token.comment,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.prolog,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.doctype,
@@ -357,13 +358,17 @@ label {
   color: var(--color-code-comment, var(--color-text-secondary));
   font-style: italic;
 }
+*/
 
-/* Basic syntax */
+/* Basic syntax - Shikiテーマを使用するため一時的にコメントアウト */
+/*
 .prose-content [data-rehype-pretty-code-figure] pre code .token.punctuation {
   color: var(--color-code-punctuation, var(--color-text-primary));
 }
+*/
 
-/* Values and literals */
+/* Values and literals - Shikiテーマを使用するため一時的にコメントアウト */
+/*
 .prose-content [data-rehype-pretty-code-figure] pre code .token.property,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.tag,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.boolean,
@@ -373,8 +378,10 @@ label {
 .prose-content [data-rehype-pretty-code-figure] pre code .token.deleted {
   color: var(--color-code-number, var(--color-success));
 }
+*/
 
-/* Strings and attributes */
+/* Strings and attributes - Shikiテーマを使用するため一時的にコメントアウト */
+/*
 .prose-content [data-rehype-pretty-code-figure] pre code .token.selector,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.attr-name,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.string,
@@ -383,8 +390,10 @@ label {
 .prose-content [data-rehype-pretty-code-figure] pre code .token.inserted {
   color: var(--color-code-string, var(--color-accent-secondary));
 }
+*/
 
-/* Operators and entities */
+/* Operators and entities - Shikiテーマを使用するため一時的にコメントアウト */
+/*
 .prose-content [data-rehype-pretty-code-figure] pre code .token.operator,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.entity,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.url,
@@ -392,27 +401,34 @@ label {
 .prose-content [data-rehype-pretty-code-figure] pre code .style .token.string {
   color: var(--color-code-operator, var(--color-text-primary));
 }
+*/
 
-/* Keywords */
+/* Keywords - Shikiテーマを使用するため一時的にコメントアウト */
+/*
 .prose-content [data-rehype-pretty-code-figure] pre code .token.atrule,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.attr-value,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.keyword {
   color: var(--color-code-keyword, var(--color-interactive));
   font-weight: var(--font-weight-medium);
 }
+*/
 
-/* Functions and classes */
+/* Functions and classes - Shikiテーマを使用するため一時的にコメントアウト */
+/*
 .prose-content [data-rehype-pretty-code-figure] pre code .token.function,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.class-name {
   color: var(--color-code-function, #A67E5B);
 }
+*/
 
-/* Special tokens */
+/* Special tokens - Shikiテーマを使用するため一時的にコメントアウト */
+/*
 .prose-content [data-rehype-pretty-code-figure] pre code .token.regex,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.important,
 .prose-content [data-rehype-pretty-code-figure] pre code .token.variable {
   color: var(--color-code-variable, var(--color-error));
 }
+*/
 
 .prose-content blockquote {
   border-left: 3px solid var(--color-interactive);

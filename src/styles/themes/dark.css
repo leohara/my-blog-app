@@ -5,12 +5,7 @@
 
 /* Dark theme specific styles */
 [data-theme="dark"] {
-  /* Shiki code highlighting */
-  .shiki,
-  .shiki span {
-    color: var(--shiki-dark) !important;
-    background-color: var(--shiki-dark-bg) !important;
-  }
+  /* Shiki theme colors are handled by CSS variables on each span element */
 
   /* Prose content link styles */
   .prose-content a {
@@ -196,11 +191,6 @@
       border-bottom: none !important;
     }
 
-    /* Shiki code highlighting */
-    .shiki,
-    .shiki span {
-      color: var(--shiki-dark) !important;
-      background-color: var(--shiki-dark-bg) !important;
-    }
+    /* Shiki theme colors are handled by CSS variables on each span element */
   }
 }
