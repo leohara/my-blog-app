@@ -3,10 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 
 import { AnimatedText } from "./AnimatedText";
 import { HEADER_CONSTANTS } from "./constants";
+import { HamburgerIcon } from "./HamburgerIcon";
+import { MobileMenu } from "./MobileMenu";
 import { useHeaderAnimation } from "./useHeaderAnimation";
 import { useScrollHeader } from "./useScrollHeader";
 
@@ -27,28 +29,6 @@ export function Header() {
   // Use custom hook for animation state management
   const { animationStage, isInitialMount } =
     useHeaderAnimation(shouldShowHeader);
-
-  // Keyboard navigation for mobile menu
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && isMobileMenuOpen) {
-        setIsMobileMenuOpen(false);
-      }
-    };
-
-    if (isMobileMenuOpen) {
-      document.addEventListener("keydown", handleKeyDown);
-      // Prevent body scroll when menu is open
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "unset";
-    };
-  }, [isMobileMenuOpen]);
 
   // Memoize complex class names for better performance
   const headerClassName = useMemo(() => {
@@ -246,18 +226,10 @@ export function Header() {
                 </nav>
 
                 {/* Mobile Menu Button - Only visible on mobile */}
-                <button
-                  type="button"
-                  aria-label={
-                    isMobileMenuOpen ? "Close mobile menu" : "Open mobile menu"
-                  }
-                  aria-expanded={isMobileMenuOpen}
-                  aria-controls="mobile-menu"
+                <div
                   className={`
-                    block md:!hidden px-3 py-1.5 text-[#3E2723] text-sm font-medium font-nunito
-                    transition-all duration-500 ease-out rounded-full
-                    hover:bg-pink-100/50
-                    focus:outline-none
+                    block md:!hidden
+                    transition-all duration-500 ease-out
                     ${
                       animationStage === "expanding" ||
                       animationStage === "expanded"
@@ -272,56 +244,24 @@ export function Header() {
                         ? `${ANIMATION_TIMING.TEXT_ANIMATION_DELAY}ms`
                         : "0ms",
                   }}
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >
-                  Menu
-                </button>
+                  <HamburgerIcon
+                    isOpen={isMobileMenuOpen}
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Mobile Menu Overlay */}
-      {isMobileMenuOpen && (
-        <div
-          id="mobile-menu"
-          className="fixed inset-0 bg-[#FAF9F6]/95 backdrop-blur-xl z-40 md:!hidden"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Mobile navigation menu"
-        >
-          <div className="flex flex-col items-center justify-center h-full gap-8">
-            <button
-              type="button"
-              aria-label="Close mobile menu"
-              className="absolute top-8 right-8 text-[#3E2723] text-2xl focus:outline-none"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              ×
-            </button>
-            <nav role="navigation" aria-label="Mobile navigation">
-              {NAV_ITEMS.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  aria-label={`Navigate to ${item.label} page`}
-                  aria-current={
-                    pathname === item.href ||
-                    (item.href === "/posts" && pathname.startsWith("/posts/"))
-                      ? "page"
-                      : undefined
-                  }
-                  className="block text-[#3E2723] text-2xl font-medium font-nunito hover:opacity-80 transition-opacity mb-4 focus:outline-none"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-          </div>
-        </div>
-      )}
+      {/* Mobile Menu */}
+      <MobileMenu
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        pathname={pathname}
+      />
     </>
   );
 }
