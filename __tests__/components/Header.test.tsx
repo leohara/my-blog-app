@@ -176,7 +176,7 @@ describe("Header Component", () => {
         const header = screen.getByRole("banner");
         expect(
           header.querySelector(
-            ".w-\\[320px\\].md\\:w-\\[480px\\].h-16.opacity-100",
+            ".w-\\[calc\\(100vw-2rem\\)\\].max-w-\\[480px\\].h-16.opacity-100",
           ),
         ).toBeInTheDocument();
       });
@@ -187,7 +187,7 @@ describe("Header Component", () => {
         const header = screen.getByRole("banner");
         expect(
           header.querySelector(
-            ".w-\\[320px\\].md\\:w-\\[480px\\].h-16.opacity-100",
+            ".w-\\[calc\\(100vw-2rem\\)\\].max-w-\\[480px\\].h-16.opacity-100",
           ),
         ).toBeInTheDocument();
       });

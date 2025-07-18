@@ -55,17 +55,17 @@ export default async function PostPage({ params }: Props) {
 
   return (
     <div className="min-h-screen pt-20">
-      <div className="mx-auto max-w-7xl">
-        <div className="flex">
+      <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
+        <div className="flex w-full">
           {/* サイドバー */}
           <Sidebar posts={allPosts} currentSlug={slug} headings={headings} />
 
           {/* メインコンテンツ */}
-          <main className="flex-1 px-6 py-8 lg:px-12 lg:py-12">
-            <article className="mx-auto max-w-[650px] animate-fadeIn">
+          <main className="flex-1 min-w-0 px-4 py-6 sm:px-6 sm:py-8 lg:px-12 lg:py-12">
+            <article className="mx-auto w-full max-w-full lg:max-w-[650px] animate-fadeIn">
               <header className="mb-12">
                 <h1
-                  className="text-4xl lg:text-5xl leading-tight mb-6"
+                  className="text-3xl sm:text-4xl lg:text-5xl leading-tight mb-6"
                   style={{
                     fontFamily:
                       '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
@@ -100,7 +100,7 @@ export default async function PostPage({ params }: Props) {
                 </div>
                 {post.description && (
                   <p
-                    className="mt-6 text-lg"
+                    className="mt-6 text-base sm:text-lg"
                     style={{
                       fontFamily: "var(--font-lora)",
                       color: "var(--color-text-secondary)",
