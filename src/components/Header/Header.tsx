@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 
 import { AnimatedText } from "./AnimatedText";
 import { HEADER_CONSTANTS } from "./constants";
@@ -14,6 +14,27 @@ import { useScrollHeader } from "./useScrollHeader";
 const { NAV_ITEMS, HEADER_PAGES, ANIMATION_TIMING, CSS_CLASSES } =
   HEADER_CONSTANTS;
 
+// Helper functions for cleaner code
+const getVisibilityClasses = (isInitialMount: boolean, isVisible: boolean) => {
+  if (isInitialMount) return "translate-y-0";
+  return isVisible ? "translate-y-0" : "-translate-y-[calc(100%+1rem)]";
+};
+
+const getAnimationStageClasses = (stage: string) => {
+  switch (stage) {
+    case "hidden":
+      return CSS_CLASSES.HIDDEN;
+    case "circle":
+      return CSS_CLASSES.CIRCLE;
+    case "expanding":
+      return CSS_CLASSES.EXPANDING;
+    case "expanded":
+      return CSS_CLASSES.EXPANDED;
+    default:
+      return "";
+  }
+};
+
 export function Header() {
   const pathname = usePathname();
   const { isVisible } = useScrollHeader();
@@ -21,9 +42,10 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Check if current page should display header
-  const shouldShowHeader =
-    HEADER_PAGES.includes(pathname as (typeof HEADER_PAGES)[number]) ||
-    pathname.startsWith("/posts/");
+  const shouldShowHeader = pathname
+    ? HEADER_PAGES.includes(pathname as (typeof HEADER_PAGES)[number]) ||
+      pathname.startsWith("/posts/")
+    : false;
 
   // Use custom hook for animation state management
   const { animationStage, isInitialMount } =
@@ -33,11 +55,7 @@ export function Header() {
   const headerClassName = useMemo(() => {
     const baseClasses =
       "fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-700";
-    const visibilityClasses = isInitialMount
-      ? "translate-y-0"
-      : isVisible
-        ? "translate-y-0"
-        : "-translate-y-[calc(100%+1rem)]";
+    const visibilityClasses = getVisibilityClasses(isInitialMount, isVisible);
     const animationClasses =
       animationStage === "expanded" ? CSS_CLASSES.BREATHE : "";
 
@@ -46,24 +64,36 @@ export function Header() {
 
   const animationContainerClassName = useMemo(() => {
     const baseClasses = "relative transition-all ease-out";
-    let stageClass = "";
-    switch (animationStage) {
-      case "hidden":
-        stageClass = CSS_CLASSES.HIDDEN;
-        break;
-      case "circle":
-        stageClass = CSS_CLASSES.CIRCLE;
-        break;
-      case "expanding":
-        stageClass = CSS_CLASSES.EXPANDING;
-        break;
-      case "expanded":
-        stageClass = CSS_CLASSES.EXPANDED;
-        break;
-    }
-
+    const stageClass = getAnimationStageClasses(animationStage);
     return `${baseClasses} ${stageClass}`;
   }, [animationStage]);
+
+  // Optimized event handlers
+  const handleMobileMenuToggle = useCallback(() => {
+    setIsMobileMenuOpen((prev) => !prev);
+  }, []);
+
+  const handleNavItemClick = useCallback(() => {
+    setIsMobileMenuOpen(false);
+  }, []);
+
+  const handleHoverItem = useCallback((label: string | null) => {
+    setHoveredItem(label);
+  }, []);
+
+  // Handle Escape key to close mobile menu
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    if (isMobileMenuOpen) {
+      document.addEventListener("keydown", handleKeyDown);
+      return () => document.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [isMobileMenuOpen]);
 
   // Return nothing for pages that shouldn't display header
   if (!shouldShowHeader) {
@@ -106,8 +136,8 @@ export function Header() {
                   ${animationStage === "expanded" ? "md:-translate-x-[210px] -translate-x-[120px] -translate-y-1/2 rotate-[-360deg] scale-100" : ""}
                   ${animationStage === "hidden" ? "-translate-x-1/2 -translate-y-1/2 transition-transform duration-300 ease-out" : ""}
                 `}
-                onMouseEnter={() => setHoveredItem("logo")}
-                onMouseLeave={() => setHoveredItem(null)}
+                onMouseEnter={() => handleHoverItem("logo")}
+                onMouseLeave={() => handleHoverItem(null)}
               >
                 <div
                   className={`
@@ -171,8 +201,8 @@ export function Header() {
                               ? `wave-in 0.6s ${ANIMATION_TIMING.TEXT_ANIMATION_DELAY}ms ease-out forwards`
                               : "none",
                         }}
-                        onMouseEnter={() => setHoveredItem(item.label)}
-                        onMouseLeave={() => setHoveredItem(null)}
+                        onMouseEnter={() => handleHoverItem(item.label)}
+                        onMouseLeave={() => handleHoverItem(null)}
                       >
                         {/* Hover background */}
                         <span
@@ -271,7 +301,7 @@ export function Header() {
             </Link>
             <HamburgerIcon
               isOpen={isMobileMenuOpen}
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={handleMobileMenuToggle}
             />
           </div>
 
@@ -305,9 +335,9 @@ export function Header() {
                       }
                       group
                     `}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    onMouseEnter={() => setHoveredItem(item.label)}
-                    onMouseLeave={() => setHoveredItem(null)}
+                    onClick={handleNavItemClick}
+                    onMouseEnter={() => handleHoverItem(item.label)}
+                    onMouseLeave={() => handleHoverItem(null)}
                     style={{
                       animationDelay: `${index * 50}ms`,
                     }}
