@@ -24,7 +24,10 @@ describe("CopyButton", () => {
 
       const button = screen.getByRole("button");
       expect(button).toBeInTheDocument();
-      expect(button).toHaveAttribute("aria-label", "Copy code");
+      expect(button).toHaveAttribute(
+        "aria-label",
+        "コードをクリップボードにコピー",
+      );
 
       // Check for copy icon (svg with specific path)
       const copyIcon = button.querySelector("svg");
@@ -37,8 +40,17 @@ describe("CopyButton", () => {
       render(<CopyButton code={testCode} />);
 
       const button = screen.getByRole("button");
-      expect(button).toHaveAttribute("aria-label", "Copy code");
+      expect(button).toHaveAttribute(
+        "aria-label",
+        "コードをクリップボードにコピー",
+      );
+      expect(button).toHaveAttribute("aria-live", "polite");
+      expect(button).toHaveAttribute("aria-pressed", "false");
+      expect(button).toHaveAttribute("type", "button");
       expect(button).toHaveClass("copy-button");
+
+      const svg = button.querySelector("svg");
+      expect(svg).toHaveAttribute("aria-hidden", "true");
     });
   });
 
@@ -66,7 +78,10 @@ describe("CopyButton", () => {
       fireEvent.click(button);
 
       await waitFor(() => {
-        expect(button).toHaveAttribute("aria-label", "Copied!");
+        expect(button).toHaveAttribute(
+          "aria-label",
+          "コードがコピーされました",
+        );
         // Check for check icon
         const checkIcon = button.querySelector("svg");
         expect(checkIcon).toBeInTheDocument();
@@ -87,14 +102,20 @@ describe("CopyButton", () => {
 
       // Immediately after click, should show check icon
       await waitFor(() => {
-        expect(button).toHaveAttribute("aria-label", "Copied!");
+        expect(button).toHaveAttribute(
+          "aria-label",
+          "コードがコピーされました",
+        );
       });
 
       // Fast forward 2 seconds
       jest.advanceTimersByTime(2000);
 
       await waitFor(() => {
-        expect(button).toHaveAttribute("aria-label", "Copy code");
+        expect(button).toHaveAttribute(
+          "aria-label",
+          "コードをクリップボードにコピー",
+        );
       });
 
       jest.useRealTimers();
@@ -123,7 +144,10 @@ describe("CopyButton", () => {
       });
 
       // Should still show copy icon on error
-      expect(button).toHaveAttribute("aria-label", "Copy code");
+      expect(button).toHaveAttribute(
+        "aria-label",
+        "コードをクリップボードにコピー",
+      );
 
       consoleErrorSpy.mockRestore();
       // Restore original env

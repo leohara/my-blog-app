@@ -88,8 +88,13 @@ export function CopyButton({ code }: CopyButtonProps) {
     <button
       onClick={handleCopy}
       className="copy-button"
-      aria-label={copied ? "Copied!" : "Copy code"}
+      aria-label={
+        copied ? "コードがコピーされました" : "コードをクリップボードにコピー"
+      }
+      aria-live="polite"
+      aria-pressed={copied}
       data-copied={copied}
+      type="button"
     >
       <svg
         width="20"
@@ -97,6 +102,7 @@ export function CopyButton({ code }: CopyButtonProps) {
         viewBox="0 0 20 20"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
       >
         {copied ? (
           <path
@@ -125,7 +131,7 @@ export function CopyButton({ code }: CopyButtonProps) {
           </>
         )}
       </svg>
-      <span>{copied ? "Copied" : "Copy"}</span>
+      <span className="copy-button-text">{copied ? "Copied" : "Copy"}</span>
     </button>
   );
 }
