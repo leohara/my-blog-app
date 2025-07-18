@@ -53,19 +53,21 @@
   0%,
   100% {
     box-shadow: 0 0 20px rgba(255, 182, 193, 0.3);
+    transform: translateZ(0); /* Force GPU layer */
   }
   50% {
     box-shadow: 0 0 25px rgba(255, 182, 193, 0.5);
+    transform: translateZ(0); /* Force GPU layer */
   }
 }
 
 @keyframes breathe {
   0%,
   100% {
-    transform: scale(1);
+    transform: scale3d(1, 1, 1);
   }
   50% {
-    transform: scale(1.02);
+    transform: scale3d(1.02, 1.02, 1);
   }
 }
 
