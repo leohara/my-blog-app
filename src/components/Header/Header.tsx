@@ -8,7 +8,6 @@ import { useState, useMemo } from "react";
 import { AnimatedText } from "./AnimatedText";
 import { HEADER_CONSTANTS } from "./constants";
 import { HamburgerIcon } from "./HamburgerIcon";
-import { MobileMenu } from "./MobileMenu";
 import { useHeaderAnimation } from "./useHeaderAnimation";
 import { useScrollHeader } from "./useScrollHeader";
 
@@ -73,7 +72,8 @@ export function Header() {
 
   return (
     <>
-      <header role="banner" className={headerClassName}>
+      {/* Desktop Header - unchanged */}
+      <header role="banner" className={`${headerClassName} hidden md:block`}>
         <div className="relative">
           {/* Animation container */}
           <div className={animationContainerClassName}>
@@ -225,43 +225,115 @@ export function Header() {
                   ))}
                 </nav>
 
-                {/* Mobile Menu Button - Only visible on mobile */}
-                <div
-                  className={`
-                    block md:!hidden
-                    transition-all duration-500 ease-out
-                    ${
-                      animationStage === "expanding" ||
-                      animationStage === "expanded"
-                        ? "translate-y-0 opacity-100"
-                        : "translate-y-4 opacity-0"
-                    }
-                  `}
-                  style={{
-                    transitionDelay:
-                      animationStage === "expanding" ||
-                      animationStage === "expanded"
-                        ? `${ANIMATION_TIMING.TEXT_ANIMATION_DELAY}ms`
-                        : "0ms",
-                  }}
-                >
-                  <HamburgerIcon
-                    isOpen={isMobileMenuOpen}
-                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  />
-                </div>
+                {/* No mobile menu button in desktop header */}
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Mobile Menu */}
-      <MobileMenu
-        isOpen={isMobileMenuOpen}
-        onClose={() => setIsMobileMenuOpen(false)}
-        pathname={pathname}
-      />
+      {/* Mobile Header - floating circular expandable */}
+      <header role="banner" className="md:hidden">
+        <div
+          className={`
+            fixed top-4 left-1/2 -translate-x-1/2 z-50
+            bg-[#FAF9F6]/95 backdrop-blur-sm
+            rounded-3xl shadow-lg
+            transition-all duration-500 ease-out
+            w-64
+            ${
+              isMobileMenuOpen
+                ? "max-h-[400px] shadow-[0_0_20px_rgba(255,182,193,0.3)] animate-[soft-glow_2s_ease-in-out_infinite]"
+                : "max-h-16"
+            }
+          `}
+        >
+          {/* Header content - always visible */}
+          <div className="flex items-center justify-between px-4 py-3">
+            <Link
+              href="/"
+              aria-label="Go to home page"
+              className={`
+                flex items-center justify-center hover:scale-110
+                transition-transform duration-300 ease-out
+              `}
+            >
+              <div className="relative overflow-hidden rounded-2xl w-10 h-10">
+                <Image
+                  src="/icon.png"
+                  alt="Logo"
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-cover"
+                  priority
+                />
+              </div>
+            </Link>
+            <HamburgerIcon
+              isOpen={isMobileMenuOpen}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            />
+          </div>
+
+          {/* Expandable menu with gradient border */}
+          <div
+            className={`
+            overflow-hidden transition-all duration-500
+            ${isMobileMenuOpen ? "max-h-64" : "max-h-0"}
+          `}
+          >
+            {/* Gradient border */}
+            <div className="h-[1px] bg-gradient-to-r from-transparent via-pink-200 to-transparent opacity-50" />
+
+            <nav className="py-2">
+              {NAV_ITEMS.map((item, index) => {
+                const isActive =
+                  pathname === item.href ||
+                  (item.href === "/posts" && pathname.startsWith("/posts/"));
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`
+                      block px-6 py-3 text-center
+                      transition-all duration-300
+                      ${
+                        isActive
+                          ? "text-pink-700 font-semibold"
+                          : "text-[#3E2723] font-medium hover:bg-pink-50/50"
+                      }
+                      group
+                    `}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    onMouseEnter={() => setHoveredItem(item.label)}
+                    onMouseLeave={() => setHoveredItem(null)}
+                    style={{
+                      animationDelay: `${index * 50}ms`,
+                    }}
+                  >
+                    <span className="relative">
+                      <AnimatedText
+                        text={item.label}
+                        isHovered={hoveredItem === item.label}
+                      />
+                      {/* Active indicator */}
+                      <span
+                        className={`
+                          absolute bottom-0 left-0 right-0 h-0.5
+                          bg-gradient-to-r from-pink-400 to-purple-400
+                          rounded-full transition-all duration-300
+                          ${isActive ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"}
+                        `}
+                      />
+                    </span>
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+        </div>
+      </header>
     </>
   );
 }
