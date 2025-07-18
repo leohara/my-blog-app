@@ -1,0 +1,14 @@
+/**
+ * Light Theme Styles
+ * ライトテーマ専用のスタイル定義
+ */
+
+/* Light theme specific styles */
+[data-theme="light"] {
+  /* Shiki code highlighting for light theme */
+  .shiki,
+  .shiki span {
+    color: var(--shiki-light) !important;
+    background-color: var(--shiki-light-bg) !important;
+  }
+}

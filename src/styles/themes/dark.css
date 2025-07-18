@@ -1,0 +1,206 @@
+/**
+ * Dark Theme Styles
+ * ダークテーマ専用のスタイル定義
+ */
+
+/* Dark theme specific styles */
+[data-theme="dark"] {
+  /* Shiki code highlighting */
+  .shiki,
+  .shiki span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
+
+  /* Prose content link styles */
+  .prose-content a {
+    color: var(--color-interactive) !important;
+    border-bottom-color: transparent;
+  }
+
+  .prose-content a:hover {
+    color: var(--color-accent-primary) !important;
+    border-bottom-color: var(--color-accent-primary);
+  }
+
+  /* Link card hover - elegant border color */
+  .link-card:hover {
+    border-color: var(--color-text-secondary) !important;
+  }
+}
+
+/* Dark Mode Support via media query */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    /* Prose content */
+    .prose-content {
+      color: var(--color-text-primary);
+    }
+    
+    .prose-content code:not(pre code) {
+      background-color: rgba(212, 165, 116, 0.15);
+      color: var(--color-text-primary);
+      border: 1px solid rgba(212, 165, 116, 0.25);
+    }
+    
+    /* Code blocks */
+    .code-block-wrapper {
+      background-color: var(--color-code-bg, var(--color-base-secondary));
+      border-color: var(--color-code-border, var(--color-border));
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-block-header {
+      background-color: var(--color-base-quaternary, var(--color-base-dark));
+      border-bottom-color: var(--color-code-border, var(--color-border));
+    }
+
+    .code-block-header-title {
+      color: var(--color-text-primary);
+    }
+
+    .code-block-file-icon {
+      color: var(--color-accent-secondary);
+    }
+
+    .prose-content [data-rehype-pretty-code-figure] pre {
+      background-color: var(--color-code-bg, var(--color-base-tertiary));
+    }
+
+    .prose-content [data-rehype-pretty-code-figure] pre > code {
+      color: var(--color-text-primary);
+      background-color: transparent;
+    }
+
+    /* Copy button */
+    .copy-button {
+      background-color: transparent;
+      border-color: var(--color-border);
+      color: var(--color-text-secondary);
+    }
+
+    .copy-button:hover {
+      background-color: var(--color-base-dark);
+      border-color: var(--color-accent-secondary);
+      color: var(--color-accent-secondary);
+    }
+
+    .copy-button[data-copied="true"] {
+      color: var(--color-success);
+      background-color: rgba(143, 168, 152, 0.1);
+      border-color: var(--color-success);
+    }
+    
+    /* Code highlighting */
+    .prose-content figure[data-rehype-pretty-code-figure] pre [data-highlighted-line],
+    .prose-content div[data-rehype-pretty-code-figure] pre [data-highlighted-line] {
+      background-color: rgba(139, 92, 246, 0.3);
+      border-left-color: #a78bfa;
+    }
+    
+    .prose-content figure[data-rehype-pretty-code-figure] pre[data-line-numbers] [data-line]::before,
+    .prose-content div[data-rehype-pretty-code-figure] pre[data-line-numbers] [data-line]::before {
+      color: var(--color-code-line-number, #666666);
+    }
+    
+    /* Task list */
+    .prose-content .task-list-item input[type="checkbox"] {
+      border-color: var(--color-border);
+      background-color: var(--color-base-tertiary);
+    }
+    
+    .prose-content .task-list-item input[type="checkbox"]:checked {
+      background-color: var(--color-accent-secondary);
+      border-color: var(--color-accent-secondary);
+    }
+    
+    /* Blockquote */
+    .prose-content blockquote {
+      border-left-color: var(--color-accent-secondary);
+      color: var(--color-text-secondary);
+    }
+    
+    /* Links with system preference */
+    .prose-content a {
+      color: var(--color-interactive) !important;
+      border-bottom-color: transparent;
+    }
+    
+    .prose-content a:hover {
+      color: var(--color-accent-primary) !important;
+      border-bottom-color: var(--color-accent-primary);
+    }
+    
+    /* Horizontal rule */
+    .prose-content hr {
+      border-top-color: #374151;
+    }
+    
+    /* Tables */
+    .prose-content th,
+    .prose-content td {
+      border-color: #374151;
+    }
+    
+    .prose-content th {
+      background-color: #1f2937;
+      color: #f9fafb;
+    }
+
+    /* Link card */
+    .link-card {
+      border: 1px solid var(--color-border) !important;
+      background-color: var(--color-base-secondary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .link-card:hover {
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+      border-color: var(--color-text-secondary) !important;
+    }
+
+    .link-card-image-wrapper {
+      background-color: var(--color-base-tertiary);
+    }
+
+    .link-card-image-fallback {
+      background-color: var(--color-base-tertiary);
+    }
+
+    .link-card-image-skeleton {
+      background-color: var(--color-border);
+    }
+
+    .link-card-title {
+      color: var(--color-text-primary);
+    }
+
+    .link-card-description {
+      color: var(--color-text-secondary);
+    }
+
+    .link-card-sitename {
+      color: var(--color-text-secondary);
+    }
+
+    .link-card-arrow {
+      color: var(--color-text-secondary);
+    }
+
+    .link-card:hover .link-card-arrow {
+      color: var(--color-interactive);
+    }
+    
+    /* LinkCardに.prose-content aのスタイルが適用されないようにする */
+    .prose-content .link-card {
+      border-bottom: none !important;
+    }
+
+    /* Shiki code highlighting */
+    .shiki,
+    .shiki span {
+      color: var(--shiki-dark) !important;
+      background-color: var(--shiki-dark-bg) !important;
+    }
+  }
+}
