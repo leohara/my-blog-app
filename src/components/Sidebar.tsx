@@ -76,7 +76,7 @@ export function Sidebar({ posts, currentSlug, headings }: SidebarProps) {
 
   return (
     <aside className="!hidden lg:!block w-[200px] flex-shrink-0">
-      <div className="sticky top-0 h-screen overflow-y-auto py-12 px-6">
+      <div className="sticky top-24 h-[calc(100vh-6rem)] overflow-y-auto py-12 px-6">
         <nav className="space-y-8">
           <div>
             <Link
