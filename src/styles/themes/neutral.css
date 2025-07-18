@@ -72,3 +72,30 @@
     background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
   }
 }
+
+/**
+ * Shiki Syntax Highlighting
+ * rehype-pretty-codeは.shikiクラスを削除するため、
+ * data-rehype-pretty-code-figure属性セレクタを使用
+ */
+
+/* Base syntax highlighting - light mode by default */
+[data-rehype-pretty-code-figure] pre span {
+  color: var(--shiki-light);
+}
+
+/* Dark mode support - system preference */
+@media (prefers-color-scheme: dark) {
+  [data-rehype-pretty-code-figure] pre span {
+    color: var(--shiki-dark);
+  }
+}
+
+/* Explicit theme overrides */
+[data-theme="light"] [data-rehype-pretty-code-figure] pre span {
+  color: var(--shiki-light);
+}
+
+[data-theme="dark"] [data-rehype-pretty-code-figure] pre span {
+  color: var(--shiki-dark);
+}
