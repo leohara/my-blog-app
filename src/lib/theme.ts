@@ -3,6 +3,11 @@ export type Theme = "light" | "dark" | "system";
 const THEME_KEY = "theme-preference";
 const COOKIE_NAME = "theme";
 
+// Type guard function for theme validation
+export const isValidTheme = (value: unknown): value is Theme => {
+  return value === "light" || value === "dark" || value === "system";
+};
+
 export const getSystemTheme = (): "light" | "dark" => {
   if (typeof window === "undefined") return "light";
   return window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -14,7 +19,7 @@ export const getStoredTheme = (): Theme | null => {
   if (typeof window === "undefined") return null;
   try {
     const stored = localStorage.getItem(THEME_KEY);
-    if (stored === "light" || stored === "dark" || stored === "system") {
+    if (isValidTheme(stored)) {
       return stored;
     }
   } catch {
@@ -71,24 +76,47 @@ export const initializeTheme = (): Theme => {
 export const setThemeCookie = (theme: Theme): void => {
   if (typeof document === "undefined") return;
 
+  // Validate theme before setting cookie
+  if (!isValidTheme(theme)) {
+    console.error(`Invalid theme value: ${theme}`);
+    return;
+  }
+
   // Set cookie with 1 year expiration
   const date = new Date();
   date.setFullYear(date.getFullYear() + 1);
-  document.cookie = `${COOKIE_NAME}=${theme};expires=${date.toUTCString()};path=/;samesite=lax`;
+
+  // Build cookie string with security flags
+  const isProduction = process.env.NODE_ENV === "production";
+  const isSecure = isProduction && window.location.protocol === "https:";
+
+  const cookieParts = [
+    `${COOKIE_NAME}=${theme}`,
+    `expires=${date.toUTCString()}`,
+    "path=/",
+    "samesite=strict", // Changed from lax to strict for better security
+  ];
+
+  if (isSecure) {
+    cookieParts.push("secure");
+  }
+
+  document.cookie = cookieParts.join(";");
 };
 
 export const getThemeFromCookie = (): Theme | null => {
   if (typeof document === "undefined") return null;
 
-  const cookies = document.cookie.split(";");
-  for (const cookie of cookies) {
-    const [name, value] = cookie.trim().split("=");
-    if (
-      name === COOKIE_NAME &&
-      (value === "light" || value === "dark" || value === "system")
-    ) {
-      return value as Theme;
+  try {
+    const cookies = document.cookie.split(";");
+    for (const cookie of cookies) {
+      const [name, value] = cookie.trim().split("=");
+      if (name === COOKIE_NAME && isValidTheme(value)) {
+        return value;
+      }
     }
+  } catch (error) {
+    console.error("Error parsing theme cookie:", error);
   }
   return null;
 };

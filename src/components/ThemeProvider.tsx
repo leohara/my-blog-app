@@ -15,7 +15,8 @@ import {
 interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
-  effectiveTheme: "light" | "dark";
+  effectiveTheme: "light" | "dark" | null; // null during hydration
+  isHydrated: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -29,45 +30,40 @@ export function ThemeProvider({
 }) {
   // Use the initial theme passed from the server
   const [theme, setThemeState] = useState<Theme>(initialTheme);
-
-  const [effectiveTheme, setEffectiveTheme] = useState<"light" | "dark">(() => {
-    if (initialTheme === "system") {
-      // For SSR, we can't determine the system theme, so default to light
-      if (typeof window === "undefined") return "light";
-      return getSystemTheme();
-    }
-    return initialTheme;
-  });
-
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Initialize theme after hydration
+  // Two-phase rendering: null during SSR/initial render, actual theme after hydration
+  const [effectiveTheme, setEffectiveTheme] = useState<"light" | "dark" | null>(
+    null,
+  );
+
+  // Phase 1: Hydration effect - runs once on client
   useEffect(() => {
     // Check cookie first, then localStorage
     const cookieTheme = getThemeFromCookie();
     const storedTheme = getStoredTheme();
-    const initialTheme = cookieTheme || storedTheme || "system";
+    const clientTheme = cookieTheme || storedTheme || initialTheme;
 
-    setThemeState(initialTheme);
+    setThemeState(clientTheme);
+
+    // Calculate effective theme
+    const effective = clientTheme === "system" ? getSystemTheme() : clientTheme;
+    setEffectiveTheme(effective);
+
+    // Apply theme to DOM
+    applyTheme(clientTheme);
+
+    // Mark as hydrated
     setIsHydrated(true);
+  }, [initialTheme]);
 
-    // Apply theme and update effective theme
-    applyTheme(initialTheme);
-
-    if (initialTheme === "system") {
-      setEffectiveTheme(getSystemTheme());
-    } else {
-      setEffectiveTheme(initialTheme);
-    }
-  }, []);
-
-  // Apply theme when it changes (after initial mount)
+  // Phase 2: Theme changes after hydration
   useEffect(() => {
     if (!isHydrated) return;
 
     applyTheme(theme);
     storeTheme(theme);
-    setThemeCookie(theme); // Also update cookie
+    setThemeCookie(theme);
 
     // Update effective theme
     if (theme === "system") {
@@ -79,7 +75,7 @@ export function ThemeProvider({
 
   // Listen for system theme changes when in system mode
   useEffect(() => {
-    if (theme !== "system") return;
+    if (!isHydrated || theme !== "system") return;
 
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = () => {
@@ -97,16 +93,19 @@ export function ThemeProvider({
       mediaQuery.addListener(handleChange);
       return () => mediaQuery.removeListener(handleChange);
     }
-  }, [theme]);
+  }, [theme, isHydrated]);
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
   };
 
+  const value = React.useMemo(
+    () => ({ theme, setTheme, effectiveTheme, isHydrated }),
+    [theme, effectiveTheme, isHydrated],
+  );
+
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, effectiveTheme }}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 }
 

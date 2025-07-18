@@ -3,7 +3,7 @@
 import { useThemeContext } from "@/components/ThemeProvider";
 
 export function useTheme() {
-  const { theme, setTheme, effectiveTheme } = useThemeContext();
+  const { theme, setTheme, effectiveTheme, isHydrated } = useThemeContext();
 
   const toggleTheme = () => {
     if (theme === "light") {
@@ -34,5 +34,6 @@ export function useTheme() {
     isLight: effectiveTheme === "light",
     isDark: effectiveTheme === "dark",
     isSystem: theme === "system",
+    isHydrated,
   };
 }

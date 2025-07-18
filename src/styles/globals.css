@@ -10,6 +10,7 @@
 @import "./components.css";
 
 /* Theme-specific styles */
+@import "./themes/neutral.css";
 @import "./themes/light.css";
 @import "./themes/dark.css";
 @import "./themes/system.css";

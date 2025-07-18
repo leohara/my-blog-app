@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useTheme } from "@/hooks/useTheme";
 
 export function ThemeToggle() {
-  const { theme, cycleTheme, effectiveTheme } = useTheme();
+  const { theme, cycleTheme, effectiveTheme, isHydrated } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   // Prevent hydration mismatch
@@ -86,37 +86,12 @@ export function ThemeToggle() {
   };
 
   // Show placeholder during SSR/initial render
-  if (!mounted) {
+  if (!mounted || !isHydrated) {
     return (
-      <button
-        className={`
-          relative p-2 rounded-full
-          transition-all duration-300 ease-out
-          text-[var(--color-text-primary)]
-          hover:bg-[var(--color-base-tertiary)] 
-          hover:shadow-md
-          focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-secondary)] focus:ring-offset-2
-          group
-        `}
-        aria-label="テーマを切り替える"
-        type="button"
-        disabled
-      >
-        <div className="relative w-5 h-5">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="12" cy="12" r="5" />
-          </svg>
-        </div>
-      </button>
+      <div
+        className="theme-toggle-placeholder theme-toggle-skeleton"
+        aria-hidden="true"
+      />
     );
   }
 
