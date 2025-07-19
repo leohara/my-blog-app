@@ -20,7 +20,7 @@ export const HamburgerIcon = memo(function HamburgerIcon({
       className={`
         block md:!hidden relative w-10 h-10 p-2
         rounded-full transition-all duration-300
-        hover:bg-pink-100/50 focus:outline-none
+        hover:bg-[var(--color-accent-primary)]/10 focus:outline-none
         group
       `}
       onClick={onClick}
@@ -30,7 +30,7 @@ export const HamburgerIcon = memo(function HamburgerIcon({
 
       <span
         className={`
-          block absolute h-0.5 w-5 bg-[#3E2723] 
+          block absolute h-0.5 w-5 bg-[var(--color-text-primary)] 
           transition-all duration-300 ease-out
           left-1/2 -translate-x-1/2
           ${isOpen ? "top-1/2 -translate-y-1/2 rotate-45" : "top-[12px]"}
@@ -40,7 +40,7 @@ export const HamburgerIcon = memo(function HamburgerIcon({
 
       <span
         className={`
-          block absolute h-0.5 w-5 bg-[#3E2723]
+          block absolute h-0.5 w-5 bg-[var(--color-text-primary)]
           transition-all duration-300 ease-out
           left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2
           ${isOpen ? "opacity-0 scale-0" : "opacity-100 scale-100"}
@@ -50,7 +50,7 @@ export const HamburgerIcon = memo(function HamburgerIcon({
 
       <span
         className={`
-          block absolute h-0.5 w-5 bg-[#3E2723]
+          block absolute h-0.5 w-5 bg-[var(--color-text-primary)]
           transition-all duration-300 ease-out
           left-1/2 -translate-x-1/2
           ${isOpen ? "top-1/2 -translate-y-1/2 -rotate-45" : "top-[27px]"}
@@ -61,7 +61,7 @@ export const HamburgerIcon = memo(function HamburgerIcon({
       {/* Hover effect circle */}
       <span
         className={`
-          absolute inset-0 bg-gradient-to-r from-pink-200/30 to-purple-200/30
+          absolute inset-0 bg-[var(--color-accent-primary)]/10
           rounded-full scale-0 group-hover:scale-100
           transition-transform duration-300
         `}
