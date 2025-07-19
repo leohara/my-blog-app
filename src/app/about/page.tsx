@@ -90,8 +90,10 @@ export default function AboutPage() {
               >
                 Read Articles
               </Link>
-              <Link
-                href="/resume"
+              <a
+                href="/resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="button button-secondary inline-flex items-center gap-2 px-6 py-3 rounded-lg transition-all"
                 style={{
                   backgroundColor: "var(--color-accent-secondary)",
@@ -100,8 +102,8 @@ export default function AboutPage() {
                   fontFamily: "var(--font-nunito)",
                 }}
               >
-                View Resume
-              </Link>
+                View Resume (PDF)
+              </a>
             </div>
           </div>
         </section>
