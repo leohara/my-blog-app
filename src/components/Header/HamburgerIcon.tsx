@@ -33,7 +33,7 @@ export const HamburgerIcon = memo(function HamburgerIcon({
           block absolute h-0.5 w-5 bg-[#3E2723] 
           transition-all duration-300 ease-out
           left-1/2 -translate-x-1/2
-          ${isOpen ? "top-1/2 -translate-y-1/2 rotate-45" : "top-[14px]"}
+          ${isOpen ? "top-1/2 -translate-y-1/2 rotate-45" : "top-[12px]"}
         `}
         aria-hidden="true"
       />
@@ -53,7 +53,7 @@ export const HamburgerIcon = memo(function HamburgerIcon({
           block absolute h-0.5 w-5 bg-[#3E2723]
           transition-all duration-300 ease-out
           left-1/2 -translate-x-1/2
-          ${isOpen ? "top-1/2 -translate-y-1/2 -rotate-45" : "top-[26px]"}
+          ${isOpen ? "top-1/2 -translate-y-1/2 -rotate-45" : "top-[27px]"}
         `}
         aria-hidden="true"
       />
