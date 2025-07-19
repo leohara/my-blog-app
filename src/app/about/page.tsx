@@ -90,6 +90,18 @@ export default function AboutPage() {
               >
                 Read Articles
               </Link>
+              <Link
+                href="/resume"
+                className="button button-secondary inline-flex items-center gap-2 px-6 py-3 rounded-lg transition-all"
+                style={{
+                  backgroundColor: "var(--color-accent-secondary)",
+                  color: "white",
+                  textDecoration: "none",
+                  fontFamily: "var(--font-nunito)",
+                }}
+              >
+                View Resume
+              </Link>
             </div>
           </div>
         </section>
