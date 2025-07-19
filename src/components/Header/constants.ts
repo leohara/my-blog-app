@@ -82,6 +82,33 @@ export const HEADER_SPACING = {
   CONTENT_GAP: 16,
 } as const;
 
+// Hamburger Icon dimensions
+export const HAMBURGER_ICON = {
+  // Component dimensions
+  BUTTON_SIZE: 40, // w-10 h-10 = 40px
+  BUTTON_PADDING: 8, // p-2 = 8px
+  LINE_WIDTH: 20, // w-5 = 20px
+  LINE_HEIGHT: 2, // h-0.5 = 2px
+
+  // Line positions
+  TOP_LINE_POSITION: "12px",
+  BOTTOM_LINE_POSITION: "27px",
+  LINE_SPACING: 8, // 間隔
+
+  // Animation timing
+  TRANSITION_DURATION: 300,
+} as const;
+
+// Hamburger Icon styles
+export const HAMBURGER_STYLES = {
+  BUTTON_BASE:
+    "block md:!hidden relative rounded-full transition-all duration-300 focus:outline-none group",
+  LINE_BASE:
+    "block absolute transition-all duration-300 ease-out left-1/2 -translate-x-1/2",
+  HOVER_EFFECT:
+    "absolute inset-0 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300",
+} as const;
+
 // Export all constants as a single object for convenience
 export const HEADER_CONSTANTS = {
   ANIMATION_TIMING,
@@ -92,4 +119,6 @@ export const HEADER_CONSTANTS = {
   NAV_ITEMS,
   HEADER_PAGES,
   HEADER_SPACING,
+  HAMBURGER_ICON,
+  HAMBURGER_STYLES,
 } as const;

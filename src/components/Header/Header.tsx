@@ -118,10 +118,8 @@ export function Header() {
               `}
             />
 
-            {/* Gradient border */}
-            {animationStage === "expanded" && (
-              <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-[var(--color-accent-primary)]/30 to-transparent opacity-50" />
-            )}
+            {/* Gradient border - always visible */}
+            <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent" />
 
             {/* Content */}
             <div className="relative h-full">
@@ -300,6 +298,8 @@ export function Header() {
             }
           `}
         >
+          {/* Bottom border - always visible */}
+          <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent" />
           {/* Header content - always visible */}
           <div className="flex items-center justify-between px-4 py-3">
             <Link
